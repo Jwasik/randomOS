@@ -1,23 +1,28 @@
-*¯¹dania funkcji piszemy tak: typ zwracany, nazwa funkcji, argumenty, krótki opis, kto ¿¹da (imiê)
+*Å»Ä…dania funkcji piszemy tak: typ zwracany, nazwa funkcji, argumenty, krÃ³tki opis, kto Å¼Ä…da (imiÄ™)
 
-1. Zarz¹dzanie pamiêci¹ (Piotr)
-	std::shared_ptr getMemoryContent() - zwraca wskaŸnik na pierwszy element pamiêci (Jêdrzej)
+1. ZarzÄ…dzanie pamiÄ™ciÄ… (Piotr)
+	std::shared_ptr getMemoryContent() - zwraca wskaÅºnik na pierwszy element pamiÄ™ci (JÄ™drzej)
+	std:shared_ptr<cotamsechcesz> getMemoryForProcess() -przydziela stronnice pamiÄ™ci dla procesu (Mateusz)
+	void freeMemoryFromProcess(std::shared_ptr<PCB> process) - zwalnia stronnice zarezerwowane dla procesu (Mateusz)
 
-2. Zarz¹dzanie systemem plików (Kacper)
+2. ZarzÄ…dzanie systemem plikÃ³w (Kacper)
+	void closeProcessFiles(unsigned int PID) -zamyka wszystkie otwarte przez proces pliki (Mateusz)
+	
+3. ZarzÄ…dzanie procesami (Mateusz)
+	
 
-3. Zarz¹dzanie procesami (Mateusz)
-
-
-4. Zarz¹dzanie procesorem (Maciej)
-
+4. ZarzÄ…dzanie procesorem (Maciej)
+	void addProcessToScheduler(std::shared_ptr<PCB> process) - dodaje stworzony proces do planisty/scheduler'a  (Mateusz)
+	void deleteProcessFromScheduler(std::shared_ptr<PCB> process)- usuwa proces z planisty/scheduler'a (Mateusz)
+	
 5. Interpreter assemblera (Marcin)
 
-6. Pamiêæ wirtualna (Micha³)
+6. PamiÄ™Ä‡ wirtualna (MichaÅ‚)
 
 7. 
 
 
-8. Shell (Jêdrzej)
+8. Shell (JÄ™drzej)
 
 
 Nazwy klas:
