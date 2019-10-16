@@ -1,7 +1,7 @@
-
+*¯¹dania funkcji piszemy tak: typ zwracany, nazwa funkcji, argumenty, krótki opis, kto ¿¹da (imiê)
 
 1. Zarz¹dzanie pamiêci¹ (Piotr)
-	void std::shared_ptr getMemoryContent() - zwraca wskaŸnik na pierwszy element pamiêci
+	std::shared_ptr getMemoryContent() - zwraca wskaŸnik na pierwszy element pamiêci (Jêdrzej)
 
 2. Zarz¹dzanie systemem plików (Kacper)
 
@@ -18,3 +18,14 @@
 
 
 8. Shell (Jêdrzej)
+
+
+Nazwy klas:
+- Memory
+- FileSystem
+- ProcessManagement
+- Scheduler
+- Interpreter
+- VirtualMemory
+- ?
+- Shell
