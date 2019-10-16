@@ -1,0 +1,20 @@
+
+
+1. Zarz¹dzanie pamiêci¹ (Piotr)
+	void std::shared_ptr getMemoryContent() - zwraca wskaŸnik na pierwszy element pamiêci
+
+2. Zarz¹dzanie systemem plików (Kacper)
+
+3. Zarz¹dzanie procesami (Mateusz)
+
+
+4. Zarz¹dzanie procesorem (Maciej)
+
+5. Interpreter assemblera (Marcin)
+
+6. Pamiêæ wirtualna (Micha³)
+
+7. 
+
+
+8. Shell (Jêdrzej)
