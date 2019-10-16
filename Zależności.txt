@@ -4,7 +4,7 @@
 	std::shared_ptr getMemoryContent() - zwraca wskaźnik na pierwszy element pamięci (Jędrzej)
 	std:shared_ptr<cotamsechcesz> getMemoryForProcess() -przydziela stronnice pamięci dla procesu (Mateusz)
 	void freeMemoryFromProcess(std::shared_ptr<PCB> process) - zwalnia stronnice zarezerwowane dla procesu (Mateusz)
-	void loadProgramIntoMemory(string fileName) (Mateusz)
+	void loadProgramIntoMemory(string fileName) (Mateusz) - ładuje program z pliku do pamięci
 
 2. Zarządzanie systemem plików (Kacper)
 	void closeProcessFiles(unsigned int PID) -zamyka wszystkie otwarte przez proces pliki (Mateusz)
