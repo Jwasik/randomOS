@@ -22,7 +22,7 @@
 
 6. Pamięć wirtualna (Michał)
 
-7. 
+7. Semaphore (Tomek)
 
 
 8. Shell (Jędrzej)
