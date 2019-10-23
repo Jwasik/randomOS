@@ -16,7 +16,7 @@ class Semaphore
 private:
 	std::mutex mtx;
 	std::atomic<int> value;
-	std::queue<PCB*> list; //TODO: possible changes due to PCB implemwentation; change to std::shared_ptr
+	std::queue<PCB*> list; //TODO: possible changes due to PCB implementation; change to std::shared_ptr
 
 	void sleep(); //TODO: update to reflect the PCB implementation, might be REDUNDANT
 	void wakeup(std::shared_ptr<PCB> w_pcb); //update to reflect the PCB implementation, might be REDUNDANT
