@@ -10,13 +10,13 @@
 	void closeProcessFiles(unsigned int PID) -zamyka wszystkie otwarte przez proces pliki (Mateusz)
 	
 3. Zarządzanie procesami (Mateusz)
-	std::shared_ptr<PCB> getProcessPtr() - zwraca wskaźnik do obecnego procesu (Tomek)
 	void processSleep() - przełącza proces który wywołał tą funkcję w stan uśpienia; wskaźnik do obecnego procesu mógłby być argumentem, jeżeli ta definicja nie pasuje (Tomek)
 	void processWakeUp(std::shared_ptr<PCB> process) - budzi proces do którego podany został wskaźnik (Tomek)
 	
 4. Zarządzanie procesorem (Maciej)
 	void addProcessToScheduler(std::shared_ptr<PCB> process) - dodaje stworzony proces do planisty/scheduler'a  (Mateusz)
 	void deleteProcessFromScheduler(std::shared_ptr<PCB> process)- usuwa proces z planisty/scheduler'a (Mateusz)
+	std::shared_ptr<PCB> getRunningProcess() - zwraca wskaźnik na obiekt PCB processu który jest aktalnie Running (Marcin, Tomek)
 	
 5. Interpreter assemblera (Marcin)
 
