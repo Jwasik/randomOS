@@ -2,12 +2,14 @@
 
 1. Zarządzanie pamięcią (Piotr)
 	std::shared_ptr getMemoryContent() - zwraca wskaźnik na pierwszy element pamięci (Jędrzej)
-	std:shared_ptr<cotamsechcesz> getMemoryForProcess() -przydziela stronnice pamięci dla procesu (Mateusz)
+	std:shared_ptr<cotamsechcesz> getMemoryForProcess() - przydziela stronnice pamięci dla procesu (Mateusz)
 	void freeMemoryFromProcess(std::shared_ptr<PCB> process) - zwalnia stronnice zarezerwowane dla procesu (Mateusz)
 	void loadProgramIntoMemory(string fileName) (Mateusz) - ładuje program z pliku do pamięci
 
 2. Zarządzanie systemem plików (Kacper)
-	void closeProcessFiles(unsigned int PID) -zamyka wszystkie otwarte przez proces pliki (Mateusz)
+	void closeProcessFiles(unsigned int PID) - zamyka wszystkie otwarte przez proces pliki (Mateusz)
+	void createFile(std::string name) - tworzy plik (Marcin)
+	void deleteFile(std::string name) - usuwa plik (Marcin)
 	
 3. Zarządzanie procesami (Mateusz)
 	void processSleep() - przełącza proces który wywołał tą funkcję w stan uśpienia; wskaźnik do obecnego procesu mógłby być argumentem, jeżeli ta definicja nie pasuje (Tomek)
@@ -15,7 +17,7 @@
 	
 4. Zarządzanie procesorem (Maciej)
 	void addProcessToScheduler(std::shared_ptr<PCB> process) - dodaje stworzony proces do planisty/scheduler'a  (Mateusz)
-	void deleteProcessFromScheduler(std::shared_ptr<PCB> process)- usuwa proces z planisty/scheduler'a (Mateusz)
+	void deleteProcessFromScheduler(std::shared_ptr<PCB> process) - usuwa proces z planisty/scheduler'a (Mateusz)
 	std::shared_ptr<PCB> getRunningProcess() - zwraca wskaźnik na obiekt PCB processu który jest aktalnie Running (Marcin, Tomek)
 	
 5. Interpreter assemblera (Marcin)
