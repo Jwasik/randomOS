@@ -16,9 +16,15 @@
     <ClCompile Include="PCB.cpp">
       <Filter>ProcessManagement</Filter>
     </ClCompile>
+    <ClCompile Include="ProcessManager.cpp">
+      <Filter>ProcessManagement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCB.h">
+      <Filter>ProcessManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessManager.h">
       <Filter>ProcessManagement</Filter>
     </ClInclude>
   </ItemGroup>

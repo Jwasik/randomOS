@@ -1,21 +1,33 @@
 ﻿// randomOS.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
 //
 
-#include <iostream>
+#include "ProcessManager.h"
 
 #include "PCB.h"
 
 int main()
-{	
+{
+	//TEST MANAGERA
+//	ProcessManager tes;
+//	tes.fork("dumm", 0, "xd");
+//	tes.fork("test4", 1, "xd");
+//	tes.fork("test5", 1, "xd");
+//	tes.fork("test6", 2, "xd");
+//	tes.fork("test7", 0, "xd");
+//	tes.fork("ahhaha", 4, "xd");
+//	tes.fork("opop", 4, "xd");
+//	tes.fork("testanty5", 5, "xd");
+//	tes.fork("testanty52", 5, "xd");
+//	tes.fork("child1", 9, "xd");
+//	tes.fork("child2", 9, "xd");
+//	tes.fork("child3", 12, "xd");
+//	tes.fork("child4", 12, "xd");
+//
+////	tes.fork("test6", 5, "xd");
+//
+//	std::cout<<tes.displayTree();
+//
+//	tes.deleteProcess(7);
+//	std::cout << "\n\n---------USUWANIE PID=7 -----\n\n" << tes.displayTree();
 }
 
-// Uruchomienie programu: Ctrl + F5 lub menu Debugowanie > Uruchom bez debugowania
-// Debugowanie programu: F5 lub menu Debugowanie > Rozpocznij debugowanie
-
-// Porady dotyczące rozpoczynania pracy:
-//   1. Użyj okna Eksploratora rozwiązań, aby dodać pliki i zarządzać nimi
-//   2. Użyj okna programu Team Explorer, aby nawiązać połączenie z kontrolą źródła
-//   3. Użyj okna Dane wyjściowe, aby sprawdzić dane wyjściowe kompilacji i inne komunikaty
-//   4. Użyj okna Lista błędów, aby zobaczyć błędy
-//   5. Wybierz pozycję Projekt > Dodaj nowy element, aby utworzyć nowe pliki kodu, lub wybierz pozycję Projekt > Dodaj istniejący element, aby dodać istniejące pliku kodu do projektu
-//   6. Aby w przyszłości ponownie otworzyć ten projekt, przejdź do pozycji Plik > Otwórz > Projekt i wybierz plik sln

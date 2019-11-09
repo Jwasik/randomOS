@@ -1,5 +1,4 @@
 #include "PCB.h"
-#include <string>
 
 PCB::PCB()
 {
@@ -49,7 +48,7 @@ unsigned int PCB::getPID() { return this->PID; }
 
 bool PCB::getHasPID(const unsigned int & PIDtoCompare)
 {
-	if (this->PID==PIDtoCompare) { return true; }
+	if (this->PID==PIDtoCompare) {return true; }
 	return false;
 }
 
@@ -59,6 +58,11 @@ bool PCB::getHasName(const std::string& nameToCompare)
 {
 	if (this->name._Equal(nameToCompare)) { return true; }
 	return false;	
+}
+
+std::string PCB::getNameAndPIDString()
+{
+	return this->name +" [PID: "+std::to_string(this->PID)+"]";
 }
 
 unsigned int PCB::getTimeSpentWaiting(){ return this->timeSpentWaiting;}
@@ -85,12 +89,50 @@ bool PCB::getIsParentOf(unsigned int PID)
 
 std::vector<std::shared_ptr<PCB>> PCB::getChildren()
 {
-	return std::vector<std::shared_ptr<PCB>>();
+	return this->children;
+}
+
+std::vector<std::shared_ptr<PCB>> PCB::getChildrenInReverseOrder()
+{
+	std::vector<std::shared_ptr<PCB>> temp = getChildren();
+	auto first = temp.begin();
+	auto last = temp.end();
+	while ((first != last) && (first != --last)) {
+		std::iter_swap(first++, last);
+	}
+
+	return temp;
 }
 
 bool PCB::getIsChildOf(unsigned int PID)
 {
 	if (this->parent->getPID()==PID) { return true; }
+	return false;
+}
+
+bool PCB::getHasChildren()
+{
+	if (this->children.size() > 0) { return true; }
+	return false;
+}
+
+unsigned int PCB::getLastChildPID()
+{
+	if (children.size() > 0)
+	{
+		return children[children.size()-1]->PID;
+	}
+}
+
+bool PCB::getIsLastChild()
+{
+	if (this->parent != nullptr) {
+		if (this->parent->getLastChildPID() == this->PID)
+		{
+			return true;
+		}
+	}
+		
 	return false;
 }
 
@@ -192,6 +234,19 @@ bool PCB::addChildren(std::vector<std::shared_ptr<PCB>> chlidren)
 		this->children.push_back(child);
 	}
 	return true;
+}
+
+bool PCB::removeChild(std::shared_ptr<PCB> child)
+{
+	for (int i=0;i<children.size();i++)
+	{
+		if (child->getPID() == children[i]->getPID())
+		{
+			children.erase(children.begin() + i);
+			return true;
+		}
+	}
+	return false;
 }
 
 bool PCB::setChildren(std::vector<std::shared_ptr<PCB>> chlidren)

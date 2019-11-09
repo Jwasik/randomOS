@@ -3,6 +3,9 @@
 #include <memory>
 #include <vector>
 #include <array>
+#include <iostream>
+#include <stack>
+#include <algorithm>
 
 class MemoryPage;
 
@@ -63,6 +66,7 @@ public:
 	//-----------|| NAME ||------------||
 	std::string getName();
 	bool getHasName(const std::string& nameToCompare);
+	std::string getNameAndPIDString();
 
 
 	//----|| TIMESPENTWAITING ||-------||
@@ -77,7 +81,11 @@ public:
 
 	//---------|| CHILDREN ||----------||
 	std::vector<std::shared_ptr<PCB>> getChildren();
+	std::vector<std::shared_ptr<PCB>> getChildrenInReverseOrder();
 	bool getIsChildOf(unsigned int PID);
+	bool getHasChildren();
+	unsigned int getLastChildPID();
+	bool getIsLastChild();
 	
 
 	//----|| INSTRUCTION COUNTER ||----||
@@ -135,6 +143,7 @@ public:
 	//---------|| CHILDREN ||----------||
 	bool addChild(std::shared_ptr<PCB> child);
 	bool addChildren(std::vector<std::shared_ptr<PCB>> chlidren);
+	bool removeChild(std::shared_ptr<PCB> child);
 	/**
 	* Overwrites current children of the process.
 	*/
@@ -181,7 +190,7 @@ private:
 	std::string name {};
 	ProcessState state {ProcessState::NEW};
 	std::shared_ptr<PCB> parent=nullptr;
-	std::vector<std::shared_ptr<PCB>> children {};
+	std::vector<std::shared_ptr<PCB>> children;
 	unsigned int basePriority=0; 
 	unsigned int timeSpentWaiting=0;
 	unsigned int instructionCounter=0;
