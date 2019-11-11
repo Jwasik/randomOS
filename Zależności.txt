@@ -33,7 +33,7 @@
 Nazwy klas:
 - Memory
 - FileSystem
-- ProcessManagement
+- ProcessManager
 - Scheduler
 - Interpreter
 - VirtualMemory
