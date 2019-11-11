@@ -42,6 +42,12 @@ public:
 	********************************/
 	PCB();
 	~PCB();
+	/**
+	 * Basic constructor.
+	 * @param name the name of the process that is to be created.
+	 * @param PID the PID that is to be assigned to the process.
+	 * @param parent a poitner to the parent of the process.
+	 */
 	PCB(std::string name, unsigned int PID, std::shared_ptr<PCB> parent);
 
 
@@ -115,8 +121,8 @@ public:
 	 *          MODIFIERS           *
 	 ********************************/
 	//----------|| STATE ||----------||
-	bool setState(unsigned int stateToSet);
-	bool setState(ProcessState stateToSet);
+	bool setState(const unsigned int& stateToSet);
+	bool setState(const ProcessState& stateToSet);
 	bool setStateReady();
 	bool setStateRunning();
 	bool setStateWaiting();
@@ -124,34 +130,34 @@ public:
 	
 
 	//-------=---||  PID  ||-----------||
-	bool setPID(unsigned int PIDtoSet);
+	bool setPID(const unsigned int& PIDtoSet);
 
 
 	//------------|| NAME ||-----------||
-	bool setName(std::string nameToSet);
+	bool setName(const std::string& nameToSet);
 	
 
 	//-----|| TIMESPENTWAITING ||------||
-	bool setTimeSpentWaiting(unsigned int timeToSet);
-	bool incrementTimeSpentWaiting(unsigned int timeToBeIncrementedBy);
+	bool setTimeSpentWaiting(const unsigned int& timeToSet);
+	bool incrementTimeSpentWaiting(const  unsigned int& timeToBeIncrementedBy);
 	
 
 	//----------|| PARENT ||-----------||
-	bool setParent(std::shared_ptr<PCB> parent);
+	bool setParent(const std::shared_ptr<PCB>& parent);
 
 
 	//---------|| CHILDREN ||----------||
-	bool addChild(std::shared_ptr<PCB> child);
-	bool addChildren(std::vector<std::shared_ptr<PCB>> chlidren);
-	bool removeChild(std::shared_ptr<PCB> child);
+	bool addChild(const std::shared_ptr<PCB>& child);
+	bool addChildren(const std::vector<std::shared_ptr<PCB>>& chlidren);
+	bool removeChild(const std::shared_ptr<PCB>& child);
 	/**
 	* Overwrites current children of the process.
 	*/
-	bool setChildren(std::vector<std::shared_ptr<PCB>> chlidren);
+	bool setChildren(const std::vector<std::shared_ptr<PCB>>& chlidren);
 
 
 	//----|| INSTRUCTION COUNTER ||----||
-	bool setInstructionCounter(unsigned int instructionCounter);
+	bool setInstructionCounter(const unsigned int& instructionCounter);
 	/**
 	* Increment the value of IC.
 	* increments the value of the instruction counter by +1.
@@ -161,17 +167,17 @@ public:
 	* Increment the value of IC by argument.
 	* increments the value of the instruction counter by valueTOBeIncrementedByParameter.
 	*/
-	bool incrementInstructionCounter(unsigned int valueToBeIncrementedBy);
+	bool incrementInstructionCounter(const unsigned int& valueToBeIncrementedBy);
 
 
 	//---------|| REGISTERS ||---------||
-	bool setRegisters(std::vector<unsigned int> registers);
-	bool setRegisters(std::array<int, 4> registers);
-	bool setRegisters(unsigned int A, unsigned int B, unsigned int C, unsigned int D);
-	bool setRegisterA(unsigned int A);
-	bool setRegisterB(unsigned int B);
-	bool setRegisterC(unsigned int C);
-	bool setRegisterD(unsigned int D);
+	bool setRegisters(const std::vector<unsigned int>& registers);
+	bool setRegisters(const std::array<int, 4>& registers);
+	bool setRegisters(const unsigned int& A, const unsigned int& B, const  unsigned int& C, const unsigned int& D);
+	bool setRegisterA(const unsigned int& A);
+	bool setRegisterB(const unsigned int& B);
+	bool setRegisterC(const unsigned int& C);
+	bool setRegisterD(const unsigned int& D);
 	/**
 	 * Resets the registers.
 	 * set's all their values to 0.
@@ -180,7 +186,7 @@ public:
 	
 
 	//---------|| MEMORY ||---------||
-	bool setMemoryPages(std::shared_ptr<std::vector<MemoryPage>> memory);
+	bool setMemoryPages(const std::shared_ptr<std::vector<MemoryPage>>& memory);
 private:
 
 	/********************************

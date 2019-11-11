@@ -170,7 +170,7 @@ std::string PCB::getInformation()
 		;
 }
 
-bool PCB::setState(unsigned int stateToSet) 
+bool PCB::setState(const unsigned int& stateToSet)
 { 
 	if (stateToSet<NUMBER_OF_PROCESS_STATES) {
 		this->state = (ProcessState)stateToSet;
@@ -178,20 +178,20 @@ bool PCB::setState(unsigned int stateToSet)
 	}
 	return false;
 }
-bool PCB::setState(ProcessState stateToSet){ this->state = stateToSet; return true;}
+bool PCB::setState(const ProcessState& stateToSet){ this->state = stateToSet; return true;}
 
 bool PCB::setStateReady() { this->state = ProcessState::READY; return true; }
 bool PCB::setStateRunning() { this->state = ProcessState::RUNNING; return true;}
 bool PCB::setStateWaiting() { this->state = ProcessState::WAITING; return true;}
 bool PCB::setStateTerminated() { this->state = ProcessState::TERMINATED; return true;}
 
-bool PCB::setPID(unsigned int PIDtoSet)
+bool PCB::setPID(const unsigned int& PIDtoSet)
 {
 	this->PID = PIDtoSet;
 	return true;
 }
 
-bool PCB::setName(std::string nameToSet)
+bool PCB::setName(const std::string& nameToSet)
 {
 	if (nameToSet.length() < MAX_PROCESS_NAME_LENGHT)
 	{
@@ -201,13 +201,13 @@ bool PCB::setName(std::string nameToSet)
 	return false;
 }
 
-bool PCB::setTimeSpentWaiting(unsigned int timeToSet)
+bool PCB::setTimeSpentWaiting(const unsigned int& timeToSet)
 {
 	this->timeSpentWaiting = timeToSet;
 	return true;
 }
 
-bool PCB::incrementTimeSpentWaiting(unsigned int timeToBeIncrementedBy)
+bool PCB::incrementTimeSpentWaiting(const unsigned int& timeToBeIncrementedBy)
 {
 	if (checkWontOverflowUnsignedInt(timeSpentWaiting, timeToBeIncrementedBy)) {
 		return false;
@@ -216,19 +216,19 @@ bool PCB::incrementTimeSpentWaiting(unsigned int timeToBeIncrementedBy)
 	return true;
 }
 
-bool PCB::setParent(std::shared_ptr<PCB> parent)
+bool PCB::setParent(const std::shared_ptr<PCB>& parent)
 {
 	this->parent = parent;
 	return true;
 }
 
-bool PCB::addChild(std::shared_ptr<PCB> child)
+bool PCB::addChild(const std::shared_ptr<PCB>& child)
 {
 	this->children.push_back(child);
 	return true;
 }
 
-bool PCB::addChildren(std::vector<std::shared_ptr<PCB>> chlidren)
+bool PCB::addChildren(const std::vector<std::shared_ptr<PCB>>& chlidren)
 {
 	for (auto child : children) {
 		this->children.push_back(child);
@@ -236,7 +236,7 @@ bool PCB::addChildren(std::vector<std::shared_ptr<PCB>> chlidren)
 	return true;
 }
 
-bool PCB::removeChild(std::shared_ptr<PCB> child)
+bool PCB::removeChild(const std::shared_ptr<PCB>& child)
 {
 	for (int i=0;i<children.size();i++)
 	{
@@ -249,13 +249,13 @@ bool PCB::removeChild(std::shared_ptr<PCB> child)
 	return false;
 }
 
-bool PCB::setChildren(std::vector<std::shared_ptr<PCB>> chlidren)
+bool PCB::setChildren(const std::vector<std::shared_ptr<PCB>>& chlidren)
 {
 	this->children = children;
 	return true;
 }
 
-bool PCB::setInstructionCounter(unsigned int instructionCounter)
+bool PCB::setInstructionCounter(const unsigned int& instructionCounter)
 {
 	this->instructionCounter = instructionCounter;
 	return true;
@@ -267,7 +267,7 @@ bool PCB::incrementInstructionCounter()
 	return true;
 }
 
-bool PCB::incrementInstructionCounter(unsigned int valueToBeIncrementedBy)
+bool PCB::incrementInstructionCounter(const unsigned int& valueToBeIncrementedBy)
 {
 	if (checkWontOverflowUnsignedInt(this->instructionCounter, valueToBeIncrementedBy)) {
 		this->instructionCounter += valueToBeIncrementedBy;
@@ -276,7 +276,7 @@ bool PCB::incrementInstructionCounter(unsigned int valueToBeIncrementedBy)
 	return false;
 }
 
-bool PCB::setRegisters(std::vector<unsigned int> registers)
+bool PCB::setRegisters(const std::vector<unsigned int>& registers)
 {
 	if (registers.size() > registers.size()) { return false; }
 
@@ -286,7 +286,7 @@ bool PCB::setRegisters(std::vector<unsigned int> registers)
 	return true;
 }
 
-bool PCB::setRegisters(std::array<int, 4> registers)
+bool PCB::setRegisters(const std::array<int, 4>& registers)
 {
 	if (registers.size() > registers.size()) { return false; }
 
@@ -296,7 +296,7 @@ bool PCB::setRegisters(std::array<int, 4> registers)
 	return true;
 }
 
-bool PCB::setRegisters(unsigned int A, unsigned int B, unsigned int C, unsigned int D)
+bool PCB::setRegisters(const unsigned int& A, const unsigned int& B, const unsigned int& C, const unsigned int& D)
 {
 	this->registers[0] = A;
 	this->registers[1] = B;
@@ -305,25 +305,25 @@ bool PCB::setRegisters(unsigned int A, unsigned int B, unsigned int C, unsigned 
 	return true;
 }
 
-bool PCB::setRegisterA(unsigned int A)
+bool PCB::setRegisterA(const unsigned int& A)
 {
 	this->registers[0] = A;
 	return true;
 }
 
-bool PCB::setRegisterB(unsigned int B)
+bool PCB::setRegisterB(const unsigned int& B)
 {
 	this->registers[1] = B;
 	return true;
 }
 
-bool PCB::setRegisterC(unsigned int C)
+bool PCB::setRegisterC(const unsigned int& C)
 {
 	this->registers[2] = C;
 	return true;
 }
 
-bool PCB::setRegisterD(unsigned int D)
+bool PCB::setRegisterD(const unsigned int& D)
 {
 	this->registers[3] = D;
 	return true;
@@ -337,7 +337,7 @@ bool PCB::resetRegisters()
 	return true;
 }
 
-bool PCB::setMemoryPages(std::shared_ptr<std::vector<MemoryPage>> memory)
+bool PCB::setMemoryPages(const std::shared_ptr<std::vector<MemoryPage>>& memory)
 {
 	this->memory = memory;
 	return true;
