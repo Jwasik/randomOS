@@ -1,11 +1,13 @@
 ﻿// randomOS.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
 //
 
-#include <iostream>
+#include "Memory.h"
+#include "Includes.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	Memory mem;
+	mem.printMemory();
 }
 
 // Uruchomienie programu: Ctrl + F5 lub menu Debugowanie > Uruchom bez debugowania

@@ -1,10 +1,10 @@
-*Żądania funkcji piszemy tak: typ zwracany, nazwa funkcji, argumenty, krótki opis, kto żąda (imię)
+﻿*Żądania funkcji piszemy tak: typ zwracany, nazwa funkcji, argumenty, krótki opis, kto żąda (imię)
 
 1. Zarządzanie pamięcią (Piotr)
 	std::shared_ptr getMemoryContent() - zwraca wskaźnik na pierwszy element pamięci (Jędrzej)
 	void freeMemoryFromProcess(std::shared_ptr<PCB> process) - zwalnia stronnice zarezerwowane dla procesu (Mateusz)
-	std::shared_ptr<std::vector<MemoryPage>> loadProgramIntoMemory(const std::string& filePath);) (Mateusz) - 
-	ładuje program z pliku do pamięci i zwraca stronnice do niego przypisane, aby można je było dodać do PCB
+	std::shared_ptr<std::vector<uint16_t>> loadProgramIntoMemory(const std::string& filePath);) (Mateusz) - 
+	ładuje program z pliku do pamięci i wektor numerów stron
 
 2. Zarządzanie systemem plików (Kacper)
 	void closeProcessFiles(unsigned int PID) - zamyka wszystkie otwarte przez proces pliki (Mateusz)
@@ -19,6 +19,7 @@
 	void addProcessToScheduler(std::shared_ptr<PCB> process) - dodaje stworzony proces do planisty/scheduler'a  (Mateusz)
 	void deleteProcessFromScheduler(std::shared_ptr<PCB> process) - usuwa proces z planisty/scheduler'a (Mateusz)
 	std::shared_ptr<PCB> getRunningProcess() - zwraca wskaźnik na obiekt PCB processu który jest aktalnie Running (Marcin, Tomek)
+	void go() - wykonuje jeden obrót procesora (jedna instrukcja z procesu, łącznie ze zmianą kontekstu)
 	
 5. Interpreter assemblera (Marcin)
 
