@@ -151,8 +151,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="randomOS.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Interpreter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Includes.h" />
