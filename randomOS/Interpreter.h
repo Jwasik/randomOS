@@ -1,7 +1,6 @@
 #pragma once
-
-#include <iostream>
-#include <vector>
+#include "Includes.h"
+#include "PCB.h"
 
 class Interpreter
 { 

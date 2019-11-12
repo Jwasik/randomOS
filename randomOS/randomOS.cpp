@@ -1,19 +1,21 @@
 ﻿// randomOS.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
 //
 
-#include "Memory.h"
 #include "Includes.h"
-#include "Interpreter.h"
-#include "ProcessManager.h"
 
-#include "PCB.h"
+#include "Memory.h"
+#include "ProcessManager.h"
+#include "Interpreter.h"
+
 
 int main()
 {
-	Memory mem;
-	//TEST MANAGERA PROCESOW
+	//TEST PAMIĘCI RAM
+	/*Memory mem;
+	mem.printMemory();*/
 
-	ProcessManager tes;
+	//TEST MANAGERA PROCESOW
+	/*ProcessManager tes;
 	std::pair<int8_t,unsigned int> processReturn= std::make_pair(0,0);
 	unsigned int PIDOFTHECREATED=0;
 
@@ -65,8 +67,7 @@ int main()
 			std::cout << "\n---------NEW TREE-----\n" << tes.displayTree() <<"\n\n-------------------";
 		}
 	
-	}
-	
-	mem.printMemory();
+	}*/
+
 }
 

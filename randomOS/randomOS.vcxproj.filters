@@ -33,18 +33,8 @@
     <ClInclude Include="ProcessManager.h">
       <Filter>ProcessManagement</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Interpreter.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Memory.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
+    <ClInclude Include="Interpreter.h" />
+    <ClInclude Include="Includes.h" />
+    <ClInclude Include="Memory.h" />
   </ItemGroup>
 </Project>

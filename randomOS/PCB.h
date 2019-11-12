@@ -1,11 +1,5 @@
 #pragma once
-#include <string>
-#include <memory>
-#include <vector>
-#include <array>
-#include <iostream>
-#include <stack>
-#include <algorithm>
+#include "Includes.h"
 
 class MemoryPage;
 
