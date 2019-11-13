@@ -21,6 +21,8 @@
 	int touch(string ścieżka, string nazwa_pliku) - tworzy plik o podanej nazwie w podanej lokalizacji
 	pair<int,string> cat(string ścieżka) - zwraca zawartość podanego pliku i kod operacji (gdy plik nie istnieje zwraca pusty string i kod błędu)	
 	int rename(string ścieżka, string nazwa) - zmienia nazwę pliku lub katalogu na podaną. Końcówka .txt oznacza plik
+	int removeDirectory(string ścieżka) - usuwa podany folder, jeśli się nie da to zwraca kod błędu
+	int removeFilie(string ścieżka) - usuwa podany folder, jeśli się nie da to zwraca kod błędu
 	}	
 
 3. Zarządzanie procesami (Mateusz)
@@ -34,6 +36,7 @@
 	void go() - wykonuje jeden obrót procesora (jedna instrukcja z procesu, łącznie ze zmianą kontekstu)
 	
 5. Interpreter assemblera (Marcin)
+	void go() - wykonuje jeden rozkaz assemblerowy, czytany z PCB procesu running
 
 6. Pamięć wirtualna (Michał)
 
