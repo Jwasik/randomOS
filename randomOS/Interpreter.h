@@ -7,18 +7,22 @@ class Interpreter
 { 
 private:
 
+	std::shared_ptr<Scheduler> scheduler;
+	std::shared_ptr<Memory> memory;
+	std::shared_ptr<FileSystem> filesystem;
+
 	std::shared_ptr<PCB> PCB;
 	char AX, BX, CX, DX;
 	unsigned int PC;
-	char code;
+	unsigned char code;
 	std::vector<char> arg;
 
 	void loadPCB();
 	void loadCode();
-	void loadArguments(int n);
+	char& loadArgAdrOrReg();
+	char loadArgNumOrText();
 	void interpret();
 	void returnToPCB();
-	void interruption();
 
 	void HLT(); //Zatrzymaj siê
 	void MOV(); //Przenieœ
@@ -41,7 +45,7 @@ private:
 	std::string converToMnem(char code, std::vector<char> arg);
 
 public:
-	Interpreter();
+	Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileSystem> filesystem);
 	std::vector<char> convertToMachine(std::string m);
 	int exec();
 	
