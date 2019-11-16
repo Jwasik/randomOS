@@ -66,7 +66,7 @@ bool PCB::getHasName(const std::string& nameToCompare)
 	return false;	
 }
 
-std::string PCB::getNameAndPIDString()
+std::string PCB::toStringNameAndPID()
 {
 	return this->name +" [PID: "+std::to_string(this->PID)+"]";
 }
@@ -163,7 +163,7 @@ int PCB::getRegisterD()
 }
 
 
-std::string PCB::getInformation()
+std::string PCB::toStringAll()
 {
 	return
 		"\nName: " + this->name +
@@ -367,7 +367,7 @@ std::string PCB::getChildrenAsString()
 	if (children.size() < 1) { return "----"; }
 	std::string result{};
 	for (auto child : children) {
-		result += "\n  "+child->getName() + "  (" + std::to_string(child->PID) + ")";
+		result += "\n  "+child->toStringNameAndPID();
 	}
 
 	return result;
@@ -379,7 +379,7 @@ std::string PCB::getParentAsString()
 
 	if (this->parent != nullptr)
 	{
-		result = this->parent->getName() + "  (" + std::to_string(this->parent->getPID())+")";
+		result = this->parent->toStringNameAndPID();
 	}
 	return result;
 }

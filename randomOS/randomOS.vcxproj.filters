@@ -1,23 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Pliki źródłowe">
+    <Filter Include="ProcessManagement">
+      <UniqueIdentifier>{2b9eae54-1afc-4781-b35b-73e8236b1a7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{d15f92ee-1333-4831-b5da-c155246be06d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MAIN">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="ProcessManagement">
-      <UniqueIdentifier>{2b9eae54-1afc-4781-b35b-73e8236b1a7c}</UniqueIdentifier>
+    <Filter Include="Semaphore">
+      <UniqueIdentifier>{33e12bb0-defa-4147-a91f-b54324ce88dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interpreter">
+      <UniqueIdentifier>{a01965e8-180c-4d8d-a13b-84d6bf59523d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="randomOS.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>MAIN</Filter>
     </ClCompile>
     <ClCompile Include="PCB.cpp">
       <Filter>ProcessManagement</Filter>
     </ClCompile>
     <ClCompile Include="ProcessManager.cpp">
       <Filter>ProcessManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="semaphore.cpp">
+      <Filter>Semaphore</Filter>
+    </ClCompile>
+    <ClCompile Include="Interpreter.cpp">
+      <Filter>Interpreter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -26,6 +44,18 @@
     </ClInclude>
     <ClInclude Include="ProcessManager.h">
       <Filter>ProcessManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="semaphore.h">
+      <Filter>Semaphore</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes.h">
+      <Filter>MAIN</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpreter.h">
+      <Filter>Interpreter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
