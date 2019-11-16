@@ -15,24 +15,24 @@ Semaphore::Semaphore(int new_value)
 
 void Semaphore::wait()
 {
-	mtx.lock; //mutex locks provide protection for critical sections of the semaphores
+	mtx.lock(); //mutex locks provide protection for critical sections of the semaphores
 	value--;
 	if (value < 0)
 	{
 		list.push(&pcb);
 		sleep();
 	}
-	mtx.unlock;
+	mtx.unlock();
 }
 
 void Semaphore::signal() 
 {
-	mtx.lock;
+	mtx.lock();
 	value++;
 	if (value <= 0)
 	{
-		wakeup(list.front);
-		list.pop;
+		//wakeup(list.front);
+		list.pop();
 	}
-	mtx.unlock;
+	mtx.unlock();
 }

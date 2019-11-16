@@ -67,7 +67,6 @@ public:
 	//-----------|| NAME ||------------||
 	std::string getName();
 	bool getHasName(const std::string& nameToCompare);
-	std::string getNameAndPIDString();
 
 
 	//----|| TIMESPENTWAITING ||-------||
@@ -107,14 +106,20 @@ public:
 	//----------|| CONSOLE ||---------||
 	/**
 	 * Get data about the process.
-	 * basically a to string method, for use in step-mode.
+	 * returns all information about the process, for use in step-mode.
 	 */
-	std::string getInformation();
+	std::string toStringAll();
+	/**
+	* Get the process' name and PID.
+	* returns just the name and PID of the process in string.
+	*/
+	std::string toStringNameAndPID();
 
 
 	/********************************
 	 *          MODIFIERS           *
 	 ********************************/
+
 	//----------|| STATE ||----------||
 	bool setState(const unsigned int& stateToSet);
 	bool setState(const ProcessState& stateToSet);
@@ -123,7 +128,6 @@ public:
 	bool setStateWaiting();
 	bool setStateTerminated();
 	
-
 	//-------=---||  PID  ||-----------||
 
 
@@ -197,7 +201,7 @@ private:
 	/**
 	 * Processor registers.
 	 * holds the states of FOUR of processor's registers, initially filled with zero's
-	 * [0] - register A |[1] - register B |[2] - register C |[3] - register D.
+	 * [0] - register A [1] - register B [2] - register C [3] - register D.
 	 */
 	std::array<int, 4> registers{0, 0, 0, 0}; 
 	std::shared_ptr<std::vector<MemoryPage>> memory=nullptr; 
@@ -206,15 +210,7 @@ private:
 	/********************************
 	 *      ADDITIONAL METHODS      *
 	 ********************************/
-	/**
-	 * Check for overflow when adding two unsigned ints.
-	 * will return 0 if the operation WILL OVERFLOW, and 1 if it won't.
-	 */
 	bool checkWontOverflowUnsignedInt(unsigned int currentValue, unsigned int valueToBeAdded);
-	/**
-	* Check for overflow when adding two ints.
-	* will return 0 if the operation WILL OVERFLOW, and 1 if it won't.
-	*/
 	bool checkWontOverflowInt(int currentValue, int valueToBeAdded);
 	std::string getStateAsString();
 	std::string getChildrenAsString();
