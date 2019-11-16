@@ -3,8 +3,7 @@
 1. Zarządzanie pamięcią (Piotr)
 	std::shared_ptr getMemoryContent() - zwraca wskaźnik na pierwszy element pamięci (Jędrzej)
 	void freeMemoryFromProcess(std::shared_ptr<PCB> process) - zwalnia strony zarezerwowane dla procesu (Mateusz)
-	std::shared_ptr<std::vector<uint16_t>> loadProgramIntoMemory(const std::string& filePath) - 
-	ładuje program z pliku do pamięci i wektor numerów stron (Mateusz)
+	std::shared_ptr<std::vector<uint16_t>> loadProgramIntoMemory(const std::string& filePath) - ładuje program z pliku do pamięci i wektor numerów stron (Mateusz)
 	char& getLogicalMemory(unsigned int PC, unsigned int PID) - zwróć referencje na element pamięci o danym adresie logicznym (Marcin)
 
 2. Zarządzanie systemem plików (Kacper)
