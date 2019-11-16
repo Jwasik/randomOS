@@ -12,7 +12,7 @@
 	void deleteFile(std::string name) - usuwa plik (Marcin)
 	void openFile(std::string name, unsigned int PID) - otwórz plik (Marcin)
 	void closeFile(std::string name, unsigned int PID) - zamknij plik (Marcin)
-	void writeToFile(std::string text, unsigned int PID) - wpisz do pliku (Marcin)
+	void writeToFile(char byte, unsigned int PID) - wpisz bajt do otwartego pliku (Marcin)
 
 	namespace Jędrzej 
 	{
