@@ -2,6 +2,8 @@
 #include "Includes.h"
 // #include "Scheduler"
 // #include "FileSystem"
+#include "Memory.h"
+#include "ProcessManager.h"
 #include "PCB.h"
 
 class Interpreter
@@ -10,45 +12,53 @@ private:
 
 	std::shared_ptr<Scheduler> scheduler;
 	std::shared_ptr<Memory> memory;
-	std::shared_ptr<FileSystem> filesystem;
+	std::shared_ptr<FileSystem> fileSystem;
+	std::shared_ptr<ProcessManager> processManager;
 
 	std::shared_ptr<PCB> PCB;
 	char AX, BX, CX, DX;
 	unsigned int PC;
+	unsigned int PID;
 	unsigned char code;
-	std::vector<char> arg;
+	bool isRET;
+	std::vector<char> instructionHex;
+	std::string instructionString;
 
 	void loadPCB();
 	void loadCode();
+	int interpret();
 	char& loadArgAdrOrReg();
-	char loadArgNumOrText();
-	void interpret();
+	char loadArgNum();
+	std::string loadArgText(int n);
 	void returnToPCB();
 
-	void HLT(); //Zatrzymaj siê
-	void MOV(); //Przenieœ
-	void WRI(); //Wpisz
-	void ADD(); //Dodaj 
-	void SUB(); //Odejmij
-	void MUL(); //Pomnó¿
-	void DIV(); //Podziel
-	void MOD(); //Reszta z dzielenia
-	void INC(); //Dodaj 1
-	void DEC(); //Odejmnij 1
-	void JUM(); //Skok bezwarunkowy (liczba)
-	void JUA(); //Skok bezwarunkowy (adres lub rejestr)
-	void JIF(); //Skok warunkowy (liczba)
-	void JIA(); //Skok warunkowy (adres lub rejestr)
-	void CFI(); //Stwórz plik
-	void WFI(); //Wpisz do pliku
-	void CPR(); //Stwórz proces
+	void RET(); //Zatrzymaj siê                             (0   | 0x00)
+	void MOV(); //Przenieœ                                  (1   | 0x01)
+	void WRI(); //Wpisz                                     (2   | 0x02)
+	void ADD(); //Dodaj                                     (3   | 0x03)
+	void SUB(); //Odejmij                                   (4   | 0x04)
+	void MUL(); //Pomnó¿                                    (5   | 0x05)
+	void DIV(); //Podziel                                   (6   | 0x06)
+	void MOD(); //Reszta z dzielenia                        (7   | 0x07)
+	void INC(); //Dodaj 1                                   (8   | 0x08)
+	void DEC(); //Odejmnij 1                                (9   | 0x09)
+	void JUM(); //Skok bezwarunkowy (liczba)                (10  | 0x0A)
+	void JUA(); //Skok bezwarunkowy (adres lub rejestr)     (11  | 0x0B)
+	void JIF(); //Skok warunkowy (liczba)                   (12  | 0x0C)
+	void JIA(); //Skok warunkowy (adres lub rejestr)        (13  | 0x0D)
+	void CFI(); //Stwórz plik                               (14  | 0x0E)
+	void DFI(); //Usuñ plik                                 (16  | 0x0F)
+	void OFI(); //Otwórz plik                               (17  | 0x10)
+	void SFI(); //Zamknij plik                              (18  | 0x11)
+	void WFI(); //Wpisz do pliku                            (19  | 0x12)
+	void CPR(); //Stwórz proces                             (20  | 0x13)
 
-	std::string converToMnem(char code, std::vector<char> arg);
+	void NOP(); //Nic nie rób                               (255 | 0xFF)
 
 public:
-	Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileSystem> filesystem);
+	Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileSystem> filesystem, std::shared_ptr<ProcessManager> processManager);
 	std::vector<char> convertToMachine(std::string m);
-	int exec();
+	int go();
 	
 
 
