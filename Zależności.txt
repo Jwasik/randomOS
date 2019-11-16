@@ -11,6 +11,8 @@
 	void closeProcessFiles(unsigned int PID) - zamyka wszystkie otwarte przez proces pliki (Mateusz)
 	void createFile(std::string name) - tworzy plik (Marcin)
 	void deleteFile(std::string name) - usuwa plik (Marcin)
+	void openFile(std::string name, unsigned int PID) - otwórz plik (Marcin)
+	void closeFile(std::string name, unsigned int PID) - zamknij plik (Marcin)
 
 	namespace Jędrzej 
 	{
