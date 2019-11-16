@@ -44,6 +44,12 @@ bool PCB::getIsTerminated()
 	return false;
 }
 
+bool PCB::getHasState(ProcessState state)
+{
+	if (this->state == state) { return true; }
+	return false;
+}
+
 unsigned int PCB::getPID() { return this->PID; }
 
 bool PCB::getHasPID(const unsigned int & PIDtoCompare)
@@ -185,11 +191,6 @@ bool PCB::setStateRunning() { this->state = ProcessState::RUNNING; return true;}
 bool PCB::setStateWaiting() { this->state = ProcessState::WAITING; return true;}
 bool PCB::setStateTerminated() { this->state = ProcessState::TERMINATED; return true;}
 
-bool PCB::setPID(const unsigned int& PIDtoSet)
-{
-	this->PID = PIDtoSet;
-	return true;
-}
 
 bool PCB::setName(const std::string& nameToSet)
 {

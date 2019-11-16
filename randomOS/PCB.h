@@ -56,6 +56,7 @@ public:
 	bool getIsRunning();
 	bool getIsWaiting();
 	bool getIsTerminated();
+	bool getHasState(ProcessState state);
 	
 
 	//-----------|| PID ||-------------||
@@ -124,7 +125,6 @@ public:
 	
 
 	//-------=---||  PID  ||-----------||
-	bool setPID(const unsigned int& PIDtoSet);
 
 
 	//------------|| NAME ||-----------||

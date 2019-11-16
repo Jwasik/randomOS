@@ -209,6 +209,32 @@ std::string ProcessManager::displayTree()
 	return result;
 }
 
+std::string ProcessManager::displayWithState(PCB::ProcessState state)
+{
+	std::string result{ "\n" };
+
+	std::stack<std::shared_ptr<PCB>> allProcesses;
+	allProcesses.push(init);
+
+	std::shared_ptr<PCB> currentProcess;
+	while (!allProcesses.empty())
+	{
+		currentProcess = allProcesses.top();
+		allProcesses.pop();
+		if (currentProcess->getHasState(state))
+		{
+			result += "\n-" + currentProcess->getNameAndPIDString();
+		}
+
+		//add all of its children to the queue
+		std::vector<std::shared_ptr<PCB>> childrenOfCurrent = currentProcess->getChildren();
+		for (auto child : childrenOfCurrent) {
+			allProcesses.push(child);
+		}
+	}
+	return result;
+}
+
 std::shared_ptr<PCB> ProcessManager::getInit()
 {
 	return this->init;
