@@ -1,16 +1,30 @@
-*Żądania funkcji piszemy tak: typ zwracany, nazwa funkcji, argumenty, krótki opis, kto żąda (imię)
+﻿*Żądania funkcji piszemy tak: typ zwracany, nazwa funkcji, argumenty, krótki opis, kto żąda (imię)
 
 1. Zarządzanie pamięcią (Piotr)
 	std::shared_ptr getMemoryContent() - zwraca wskaźnik na pierwszy element pamięci (Jędrzej)
-	std:shared_ptr<cotamsechcesz> getMemoryForProcess() - przydziela stronnice pamięci dla procesu (Mateusz)
-	void freeMemoryFromProcess(std::shared_ptr<PCB> process) - zwalnia stronnice zarezerwowane dla procesu (Mateusz)
-	void loadProgramIntoMemory(string fileName) (Mateusz) - ładuje program z pliku do pamięci
+	void freeMemoryFromProcess(std::shared_ptr<PCB> process) - zwalnia strony zarezerwowane dla procesu (Mateusz)
+	std::shared_ptr<std::vector<uint16_t>> loadProgramIntoMemory(const std::string& filePath);) (Mateusz) - 
+	ładuje program z pliku do pamięci i wektor numerów stron
 
 2. Zarządzanie systemem plików (Kacper)
 	void closeProcessFiles(unsigned int PID) - zamyka wszystkie otwarte przez proces pliki (Mateusz)
 	void createFile(std::string name) - tworzy plik (Marcin)
 	void deleteFile(std::string name) - usuwa plik (Marcin)
-	
+
+	namespace Jędrzej 
+	{
+	int cd(string ścieżka) - wskazuje czy folder o podanej ścieżce istnieje i zwraca kod błędu
+	int back(string ścieżka) - wskazuje czy istnieje folder rodzic dla podanej ścieśki (ultra proste, tylko nie mogę zrobić u siebie bo to zadanie systemu plików)
+	int md(string ścieżka, string nazwa) - tworzy folder o podanej ścieżce i zwraca kod operacji (zrobione albo nie)
+	vector<string> ls(string ścieżka) - zwraca zawartosć folderu (pliki i podkatalogi)
+	vector<string> tree() - zwraca nazwy wszystkich folderów (potrzebne do utworzenia drzewa, ale mamy tylko jeden poziom więc tyle wystarczy)
+	int touch(string ścieżka, string nazwa_pliku) - tworzy plik o podanej nazwie w podanej lokalizacji
+	pair<int,string> cat(string ścieżka) - zwraca zawartość podanego pliku i kod operacji (gdy plik nie istnieje zwraca pusty string i kod błędu)	
+	int rename(string ścieżka, string nazwa) - zmienia nazwę pliku lub katalogu na podaną. Końcówka .txt oznacza plik
+	int removeDirectory(string ścieżka) - usuwa podany folder, jeśli się nie da to zwraca kod błędu
+	int removeFilie(string ścieżka) - usuwa podany folder, jeśli się nie da to zwraca kod błędu
+	}	
+
 3. Zarządzanie procesami (Mateusz)
 	void processSleep() - przełącza proces który wywołał tą funkcję w stan uśpienia; wskaźnik do obecnego procesu mógłby być argumentem, jeżeli ta definicja nie pasuje (Tomek)
 	void processWakeUp(std::shared_ptr<PCB> process) - budzi proces do którego podany został wskaźnik (Tomek)
@@ -19,8 +33,10 @@
 	void addProcessToScheduler(std::shared_ptr<PCB> process) - dodaje stworzony proces do planisty/scheduler'a  (Mateusz)
 	void deleteProcessFromScheduler(std::shared_ptr<PCB> process) - usuwa proces z planisty/scheduler'a (Mateusz)
 	std::shared_ptr<PCB> getRunningProcess() - zwraca wskaźnik na obiekt PCB processu który jest aktalnie Running (Marcin, Tomek)
+	void go() - wykonuje jeden obrót procesora (jedna instrukcja z procesu, łącznie ze zmianą kontekstu)
 	
 5. Interpreter assemblera (Marcin)
+	void go() - wykonuje jeden rozkaz assemblerowy, czytany z PCB procesu running
 
 6. Pamięć wirtualna (Michał)
 
@@ -33,7 +49,7 @@
 Nazwy klas:
 - Memory
 - FileSystem
-- ProcessManagement
+- ProcessManager
 - Scheduler
 - Interpreter
 - VirtualMemory
