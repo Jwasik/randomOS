@@ -5,19 +5,13 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="ProcessManagement">
-      <UniqueIdentifier>{2b9eae54-1afc-4781-b35b-73e8236b1a7c}</UniqueIdentifier>
+    <Filter Include="Pliki nagłówkowe">
+      <UniqueIdentifier>{3a383c0b-a36b-464c-9fed-616bd8e6bd50}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="randomOS.cpp">
       <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="PCB.cpp">
-      <Filter>ProcessManagement</Filter>
-    </ClCompile>
-    <ClCompile Include="ProcessManager.cpp">
-      <Filter>ProcessManagement</Filter>
     </ClCompile>
     <ClCompile Include="Interpreter.cpp">
       <Filter>Pliki źródłowe</Filter>
@@ -25,16 +19,28 @@
     <ClCompile Include="Memory.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="PCB.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessManager.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PCB.h">
-      <Filter>ProcessManagement</Filter>
+    <ClInclude Include="Includes.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpreter.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory.h">
+      <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="ProcessManager.h">
-      <Filter>ProcessManagement</Filter>
+      <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="Interpreter.h" />
-    <ClInclude Include="Includes.h" />
-    <ClInclude Include="Memory.h" />
+    <ClInclude Include="PCB.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
