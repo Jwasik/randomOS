@@ -1,11 +1,5 @@
 #pragma once
-#include <string>
-#include <memory>
-#include <vector>
-#include <array>
-#include <iostream>
-#include <stack>
-#include <algorithm>
+#include "Includes.h"
 
 class MemoryPage;
 
@@ -62,6 +56,7 @@ public:
 	bool getIsRunning();
 	bool getIsWaiting();
 	bool getIsTerminated();
+	bool getHasState(ProcessState state);
 	
 
 	//-----------|| PID ||-------------||
@@ -130,7 +125,6 @@ public:
 	
 
 	//-------=---||  PID  ||-----------||
-	bool setPID(const unsigned int& PIDtoSet);
 
 
 	//------------|| NAME ||-----------||

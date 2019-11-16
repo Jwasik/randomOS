@@ -1,4 +1,5 @@
 #pragma once
+#include "Includes.h"
 #include "PCB.h"
 
 
@@ -36,7 +37,7 @@ public:
 	*      PRINTING TO CONSOLE      *
 	********************************/
 	std::string displayTree();
-
+	std::string displayWithState(PCB::ProcessState state);
 
 	/********************************
 	*            GETTERS            *
