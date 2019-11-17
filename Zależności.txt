@@ -13,8 +13,8 @@
 	void openFile(std::string name, unsigned int PID) - otwórz plik (Marcin)
 	void closeFile(std::string name, unsigned int PID) - zamknij plik (Marcin)
 	void writeToEndFile(uint16_t byte, unsigned int PID) - wpisz bajt do otwartego pliku (na koniec) (Marcin)
-	void writeToFile(uint16_t byte, uint16_t pos, unsigned int PID) - wpisz bajt do otwartego pliku (na danej pozycji) (Marcin)
-	void readFile(uint16_t addr, uint16_t pos, unsigned int n, unsigned int PID) - odczytaj n bajtów z otwartego pliku (z danej pozycji) i wpisz do komórek pamięci z podanym adresem pierwszej 
+	void writeToFile(uint16_t byte, uint8_t pos, unsigned int PID) - wpisz bajt do otwartego pliku (na danej pozycji) (Marcin)
+	void readFile(uint16_t addr, uint8_t pos, unsigned int n, unsigned int PID) - odczytaj n bajtów z otwartego pliku (z danej pozycji) i wpisz do komórek pamięci z podanym adresem pierwszej 
 
 	namespace Jędrzej 
 	{
