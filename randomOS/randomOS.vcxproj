@@ -128,6 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Windows Kits\10\Include\Version\km\crt\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,20 +157,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Interpreter.cpp" />
-    <ClCompile Include="Memory.cpp" />
     <ClCompile Include="PCB.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
+    <ClCompile Include="Interpreter.cpp" />
+    <ClCompile Include="Memory.cpp" />
     <ClCompile Include="randomOS.cpp" />
-    <ClCompile Include="semaphore.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PCB.h" />
+    <ClInclude Include="ProcessManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Interpreter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Includes.h" />
-    <ClInclude Include="Interpreter.h" />
     <ClInclude Include="Memory.h" />
-    <ClInclude Include="PCB.h" />
-    <ClInclude Include="ProcessManager.h" />
-    <ClInclude Include="semaphore.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileSystem.h" />
