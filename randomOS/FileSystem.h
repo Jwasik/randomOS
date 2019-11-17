@@ -1,21 +1,12 @@
 #pragma once
-#include <memory>
-#include <array>
-#include <bitset>
-#include <iostream>
-#include <string>
-#include <string>
-#include <math.h>  
-#include <vector>
-#include <algorithm>
+#include "Includes.h"
+#include "semaphore.h"
 
 #define BlockSize 32 //Wielkoœæ bloku wyrazona w bajtach
 #define DiskSize  1024 //Wielkoœæ dysku wyra¿ona w bajtach
 #define MaxFileSize  512 //Max wielkosc pliku w bajtach
-#define MaxFileNumber  1000
+#define MaxFileNumber  32
 #define MaxOpenedFiles  15
-#define MaxCatalogNumber  12
-
 
 
 
@@ -38,7 +29,7 @@ static std::array<int,DiskSize/BlockSize> bit_vector; // Mapa bitowa
 
 static std::array<char, DiskSize> DiskArray; //Tablica reprezentujca dysk 
 
-static std::vector<File*> open_file_table; //Tablic otwartych plików
+static std::vector<int> open_file_table; //Tablic otwartych plików
 
 
 class FileMenager
@@ -50,16 +41,19 @@ private:
 public:
 	FileMenager();
 
-	int touch(std::string nazwa_pliku); // tworzy plik o podanej nazwie w podanej lokalizacji
-	int writeFile(std::string name, std::string data);
-	int readFile(std::string name, int buffor, int numOfBytes);
-	int closeFile(std::string name); // Gdy nikt nie uzywa usuwa z TABLICY OTWARTYCH PLIKOW oraz wywoluje funkcje 
-	File* openFile(std::string name); // Przed pierwszym wywolaniem pliku dodaje go do TABLICY OTWARTYCH PLIKOW //Przekazuje wskanizk do tablic otwartych plikow
-	int removeFile(std::string name);//usuwa podany plik, jeœli siê nie da to zwraca kod b³êdu
-	int rename(std::string sciezka, std::string nazwa);  //zmienia nazwê pliku lub katalogu na podan¹.Koñcówka.txt oznacza plik
 	void closeProcessFiles(unsigned int PID); // zamyka wszystkie pliki u¿ywane przez proces o podanym ID
 
-	int touch(std::string nazwa_pliku);
+
+	int writeFile(int PID,);
+	int readFile(int PID,int adress,int position);
+	int closeFile(std::string name); // Gdy nikt nie uzywa usuwa z TABLICY OTWARTYCH PLIKOW oraz wywoluje funkcje 
+	int openFile(std::string name,int PID); // Przed pierwszym wywolaniem pliku dodaje go do TABLICY OTWARTYCH PLIKOW //Przekazuje wskanizk do tablic otwartych plikow
+	
+	
+	int removeFile(std::string name);//usuwa podany plik, jeœli siê nie da to zwraca kod b³êdu
+	int rename(std::string nazwa);  //zmienia nazwê pliku lub katalogu na podan¹.Koñcówka.txt oznacza plik
+	std::pair<int,std::string> cat(std::string name);
+	int createFile(std::string nazwa_pliku); // tworzy plik o podanej nazwie w podanej lokalizacji
 	std::vector<std::string> ls(); // zwraca zawartosæ folderu(pliki)
 	int deleteFolder();
 
@@ -73,7 +67,5 @@ bool checkFileName(std::string file_name,std::string catalog_name);
 
 
 
-
-std::pair<int, std::string> cat(std::string sciezka);  //zwraca zawartoœæ podanego pliku i kod operacji(gdy plik nie istnieje zwraca pusty string i kod b³êdu)
 
 
