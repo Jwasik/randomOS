@@ -12,13 +12,19 @@ ProcessManager::~ProcessManager()
 {
 }
 
-void ProcessManager::createInit()
+int8_t ProcessManager::createInit()
 {
 	this->init = std::make_shared<PCB>("Init", 0, nullptr);
+
+
+	int8_t errorHandling = 0;
 	//adds the program code to init's memory
 	init->setMemoryPages(loadProgramIntoMemory("init_Path"));
 	//ads innit to scheduler
 	addProcessToScheduler(init);
+
+
+	return 0;
 }
 
 std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processName,const unsigned int& parentPID,const std::string& filePath)
@@ -62,9 +68,6 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 
 int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 {
-	//helper variable for returning errors to shell
-	//0 if no errors occur, else error code
-	_int8 errorHandling = 0;
 
 	//If the process that is to be deleted is init, it cannot be done
 	if (PID == 0){ return  ERROR_PM_INIT_CANNOT_BE_DELETED;}
@@ -73,14 +76,9 @@ int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 	std::shared_ptr<PCB> found = getPCBByPID(PID);
 	if (found != nullptr) 
 	{
-		errorHandling = checkIfProcessCanBeClosed(found);
-		if(errorHandling==0)
-		{
 			//call for reccurent deletion of the process and its children
 			deleteProcess(found);
 			return 0;
-		}
-		return errorHandling;
 	}
 	//if the process couldn't be found
 	return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND;
@@ -92,30 +90,19 @@ bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
 		//check if the process has any children
 		if (process->getHasChildren())
 		{
+			//call for deletion of first child 
 			std::shared_ptr<PCB> child = process->getChildren()[0];
-			if (checkIfProcessCanBeClosed(child)==0)
-			{
-				deleteProcess(child);
-				deleteProcess(process);
-			}
-			else
-			{
-				child->setParent(init);
-				init->addChild(child);
-				process->removeChild(child);
-				deleteProcess(process);
-			}
+			deleteProcess(child);
+			deleteProcess(process);
+			return false;
 		}
 		//if the process doesn't have children it can simply be deleted
-		else
-		{
-			//freeMemoryFromProcess(process)
-			//deleteProcessFromScheduler(process)
-			process->getParentPCB()->removeChild(process);
-			return true;
-		}
-	
-	return false;
+
+		//freeMemoryFromProcess(process)
+		//closeAllFiles()
+		process->setStateTerminated();
+		process->getParentPCB()->removeChild(process);
+		return true;
 }
 
 int8_t ProcessManager::addProcessToScheduler(const std::shared_ptr<PCB>& process)
@@ -153,31 +140,53 @@ std::shared_ptr<PCB> ProcessManager::getPCBByPID(const unsigned int& PID)
 	return nullptr;
 }
 
+std::shared_ptr<PCB> ProcessManager::getPCBByName(const std::string & name)
+{
+	std::stack<std::shared_ptr<PCB>> allProcesses;
+	allProcesses.push(init);
+
+	std::shared_ptr<PCB> currentProcess;
+	while (!allProcesses.empty())
+	{
+		currentProcess = allProcesses.top();
+		allProcesses.pop();
+
+		if (currentProcess->getHasName(name)) { return currentProcess; }
+
+		//add all of its children to the queue
+		std::vector<std::shared_ptr<PCB>> childrenOfCurrent = currentProcess->getChildren();
+		for (auto child : childrenOfCurrent) {
+			allProcesses.push(child);
+		}
+	}
+	return nullptr;
+}
+
+struct  ProcessManager::informationForDisplay {
+	std::shared_ptr<PCB> process;
+	unsigned int ammountOfIndention;
+	std::vector<unsigned int> skipsIndentionBites;
+
+	informationForDisplay() {};
+	informationForDisplay(std::shared_ptr<PCB> process, unsigned int ammountOfIndention) :
+		process(process), ammountOfIndention(ammountOfIndention) {}
+	informationForDisplay(std::shared_ptr<PCB> process, unsigned int ammountOfIndention, std::vector<unsigned int> skipsIndentionBites) :
+		process(process), ammountOfIndention(ammountOfIndention), skipsIndentionBites(skipsIndentionBites) {}
+
+	void addSkip(unsigned int skip) { skipsIndentionBites.push_back(skip); }
+	std::string skipsIndentionBitesToString() {
+		std::string result{ " (" };
+		for (auto s : skipsIndentionBites)
+		{
+			result += std::to_string(s) + "";
+		}
+		return result + ")";
+	}
+};
+
 std::string ProcessManager::displayTree()
 {
 	std::string result{"\n"};
-
-	struct informationForDisplay {
-		std::shared_ptr<PCB> process;
-		unsigned int ammountOfIndention;
-		std::vector<unsigned int> skipsIndentionBites;
-
-		informationForDisplay() {};
-		informationForDisplay(std::shared_ptr<PCB> process, unsigned int ammountOfIndention): 
-		process(process), ammountOfIndention(ammountOfIndention){}
-		informationForDisplay(std::shared_ptr<PCB> process, unsigned int ammountOfIndention, std::vector<unsigned int> skipsIndentionBites) :
-		process(process), ammountOfIndention(ammountOfIndention), skipsIndentionBites(skipsIndentionBites) {}
-
-		void addSkip(unsigned int skip) { skipsIndentionBites.push_back(skip); }
-		std::string skipsIndentionBitesToString() {
-			std::string result{" ("};
-			for (auto s : skipsIndentionBites)
-			{
-				result += std::to_string(s)+ "" ;
-			}
-			return result + ")";
-		}
-	};
 
 	std::stack<informationForDisplay> toBeDisplayed;
 	toBeDisplayed.push(informationForDisplay(init,0));
@@ -195,7 +204,7 @@ std::string ProcessManager::displayTree()
 		if(currentlyDisplayed.process->getIsLastChild()){ isLastInCurrentIndention = true; }
 
 		result +=  getIndentation(parentsAmmountOfIndentation, 0, currentlyDisplayed.skipsIndentionBites);
-		result += getIndentation(parentsAmmountOfIndentation, 1, currentlyDisplayed.skipsIndentionBites) + currentlyDisplayed.process->getNameAndPIDString();
+		result += getIndentation(parentsAmmountOfIndentation, 1, currentlyDisplayed.skipsIndentionBites) + currentlyDisplayed.process->toStringNameAndPID();
 		
 		//add all of its children to the queue
 		std::vector<std::shared_ptr<PCB>> childrenOfCurrent = currentlyDisplayed.process->getChildrenInReverseOrder();
@@ -209,7 +218,7 @@ std::string ProcessManager::displayTree()
 	return result;
 }
 
-std::string ProcessManager::displayWithState(PCB::ProcessState state)
+std::string ProcessManager::displayWithState(const PCB::ProcessState& state)
 {
 	std::string result{ "\n" };
 
@@ -223,7 +232,7 @@ std::string ProcessManager::displayWithState(PCB::ProcessState state)
 		allProcesses.pop();
 		if (currentProcess->getHasState(state))
 		{
-			result += "\n-" + currentProcess->getNameAndPIDString();
+			result += "\n-" + currentProcess->toStringNameAndPID();
 		}
 
 		//add all of its children to the queue
@@ -233,6 +242,24 @@ std::string ProcessManager::displayWithState(PCB::ProcessState state)
 		}
 	}
 	return result;
+}
+
+std::pair<int8_t, std::string>  ProcessManager::displayDetailsOfAProcess(const unsigned int & PID)
+{
+	std::shared_ptr<PCB> temp = this->getPCBByPID(PID);
+	if (temp != nullptr) {
+		return std::make_pair(0,temp->toStringAll());
+	}
+	return std::make_pair(ERROR_PM_PROCESS_COULD_NOT_BE_FOUND, "");;
+}
+
+std::pair<int8_t, std::string> ProcessManager::displayDetailsOfAProcess(const std::string & name)
+{
+	std::shared_ptr<PCB> temp = this->getPCBByName(name);
+	if (temp != nullptr) {
+		return std::make_pair(0, temp->toStringAll());
+	}
+	return std::make_pair(ERROR_PM_PROCESS_COULD_NOT_BE_FOUND, "");;
 }
 
 std::shared_ptr<PCB> ProcessManager::getInit()
@@ -256,11 +283,6 @@ std::string ProcessManager::getIndentation(const unsigned int& ammountOfIndentat
 	return result += "  ";
 }
 
-int8_t ProcessManager::checkIfProcessCanBeClosed(const std::shared_ptr<PCB>& process)
-{
-	//check for open files in file manager
-	return 0;
-}
 
 int8_t ProcessManager::isThisNameSutableForAProcess(const std::string & processName)
 {
@@ -270,7 +292,7 @@ int8_t ProcessManager::isThisNameSutableForAProcess(const std::string & processN
 	if (processName.length()>MAX_PROCESS_NAME_LENGHT) { return ERROR_PM_PROCESS_NAME_TOO_LONG;}
 	//check if doesn't contain notAllowedcharacters
 	for (auto it = processName.begin(); it != processName.end(); it++) {
-		if (*it == ' ') { return ERROR_PM_PROCESS_NAME_CONTAINS_UNALLOWED_CHARACTERS; }
+		if (*it == ' ' || *it == '.') { return ERROR_PM_PROCESS_NAME_CONTAINS_UNALLOWED_CHARACTERS; }
 	}
 
 	return isProcessNameUnique(processName);
@@ -299,5 +321,4 @@ int8_t ProcessManager::isProcessNameUnique(const std::string & processName)
 	//if the process cannot be found return 0 
 	return 0;
 }
-
 
