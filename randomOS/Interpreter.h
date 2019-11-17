@@ -16,23 +16,23 @@ private:
 	std::shared_ptr<ProcessManager> processManager;
 
 	std::shared_ptr<PCB> PCB;
-	char AX, BX, CX, DX;
-	unsigned int PC;
+	int8_t AX, BX, CX, DX;
+	uint8_t PC;
 	unsigned int PID;
-	unsigned char code;
-	bool isRET;
-	std::vector<char> instructionHex;
+	uint8_t code;
+	bool changeToTerminated;
+	std::vector<uint8_t> instructionHex;
 	std::string instructionString;
 
 	void loadPCB();
 	void loadCode();
 	int interpret();
-	char& loadArgAdrOrReg();
-	char loadArgNum();
+	int8_t& loadArgAdrOrReg();
+	int8_t loadArgNum();
 	std::string loadArgText(int n);
 	void returnToPCB();
 
-	void RET(); //Zatrzymaj siê                             (0   | 0x00)
+	void RET(); //Koniec                                    (0   | 0x00)
 	void MOV(); //Przenieœ                                  (1   | 0x01)
 	void WRI(); //Wpisz                                     (2   | 0x02)
 	void ADD(); //Dodaj                                     (3   | 0x03)
@@ -50,15 +50,19 @@ private:
 	void DFI(); //Usuñ plik                                 (16  | 0x0F)
 	void OFI(); //Otwórz plik                               (17  | 0x10)
 	void SFI(); //Zamknij plik                              (18  | 0x11)
-	void WFI(); //Wpisz do pliku                            (19  | 0x12)
-	void CPR(); //Stwórz proces                             (20  | 0x13)
+	void EFI(); //Wpisz do pliku (na koniec)                (19  | 0x12)
+	void WFI(); //Wpisz do pliku (liczba)                   (20  | 0x13)
+	void CPR(); //Stwórz proces                             (21  | 0x14)
 
 	void NOP(); //Nic nie rób                               (255 | 0xFF)
 
 public:
+
 	Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileSystem> filesystem, std::shared_ptr<ProcessManager> processManager);
-	std::vector<char> convertToMachine(std::string m);
 	int go();
+	std::vector<uint8_t> convertToMachine(std::string m);
+	
+	
 	
 
 

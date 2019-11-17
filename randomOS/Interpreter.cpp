@@ -15,7 +15,7 @@ Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<M
 	this->PC = 0;
 	this->PID = 0;
 	this->code = 0x00;
-	this->isRET = false;
+	this->changeToTerminated = false;
 	this->instructionHex.clear();
 	this->instructionString = "";
 }
@@ -28,7 +28,7 @@ void Interpreter::loadPCB() {
 	DX = PCB->getRegisterD();
 	PC = PCB->getInstructionCounter();
 	PID = PCB->getPID();
-	isRET = false;
+	changeToTerminated = false;
 	instructionString = "";
 	instructionHex.clear();
 }
@@ -114,15 +114,19 @@ int Interpreter::interpret() {
 		SFI();
 		break;
 	case 0x12:
+		instructionString += "EFI";
+		EFI();
+		break;
+	case 0x13:
 		instructionString += "WFI";
 		WFI();
 		break;
-	case 0x13:
+	case 0x14:
 		instructionString += "CPR";
 		CPR();
 		break;
 	case 0xFF:
-		instructionString += "CPR";
+		instructionString += "NOP";
 		NOP();
 		break;
 	default:
@@ -133,8 +137,8 @@ int Interpreter::interpret() {
 	return 0;
 }
 
-char& Interpreter::loadArgAdrOrReg() {
-	char& adr = memory->getLogicalMemory(PC, PID);
+int8_t& Interpreter::loadArgAdrOrReg() {
+	int8_t& adr = memory->getLogicalMemory(PC, PID);
 	PC++;
 
 	instructionHex.push_back(adr);
@@ -163,17 +167,29 @@ char& Interpreter::loadArgAdrOrReg() {
 	}
 }
 
-char Interpreter::loadArgNum() {
-	char num = memory->getLogicalMemory(PC, PID);
+int8_t Interpreter::loadArgNum() {
+	int8_t num = memory->getLogicalMemory(PC, PID);
 	PC++;
+
+	instructionHex.push_back(num);
+	instructionString += " " + std::to_string(num);
+
 	return num;
 }
 
 std::string Interpreter::loadArgText(int n) {
 	std::string text = "";
+	char t;
+
+	instructionString += " ";
+
 	for (int i = 0; i < n; i++) {
-		text += memory->getLogicalMemory(PC, PID);
+		t = memory->getLogicalMemory(PC, PID);
 		PC++;
+		text += t;
+
+		instructionHex.push_back(t);
+		instructionString += t;
 	}
 	return text;
 }
@@ -191,80 +207,80 @@ void Interpreter::returnToPCB() {
 // *****************************************
 
 void Interpreter::RET() {
-	isRET = true;
+	changeToTerminated = true;
 }
 
 void Interpreter::MOV() {
-	char& a = loadArgAdrOrReg();
-	char& b = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
+	int8_t& b = loadArgAdrOrReg();
 	a = b;
 }
 
 void Interpreter::WRI() {
-	char& a = loadArgAdrOrReg();
-	char b = loadArgNum();
+	int8_t& a = loadArgAdrOrReg();
+	int8_t b = loadArgNum();
 	a = b;
 }
 
 void Interpreter::ADD() {
-	char& a = loadArgAdrOrReg();
-	char& b = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
+	int8_t& b = loadArgAdrOrReg();
 	a = a + b;
 }
 
 void Interpreter::SUB() {
-	char& a = loadArgAdrOrReg();
-	char& b = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
+	int8_t& b = loadArgAdrOrReg();
 	a = a - b;
 }
 
 void Interpreter::MUL() {
-	char& a = loadArgAdrOrReg();
-	char& b = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
+	int8_t& b = loadArgAdrOrReg();
 	a = a * b;
 }
 
 void Interpreter::DIV() {
-	char& a = loadArgAdrOrReg();
-	char& b = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
+	int8_t& b = loadArgAdrOrReg();
 	a = a / b;
 }
 
 void Interpreter::MOD() {
-	char& a = loadArgAdrOrReg();
-	char& b = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
+	int8_t& b = loadArgAdrOrReg();
 	a = a % b;
 }
 
 void Interpreter::INC() {
-	char& a = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
 	a = a + 1;
 }
 
 void Interpreter::DEC() {
-	char& a = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
 	a = a - 1;
 }
 
 void Interpreter::JUM() {
-	char a = loadArgNum(); 
+	int8_t a = loadArgNum(); 
 	PC = a;
 }
 
 void Interpreter::JUA() {
-	char& a = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
 	PC = a;
 }
 
 void Interpreter::JIF() {
-	char& a = loadArgAdrOrReg();
-	char b = loadArgNum();
+	int8_t& a = loadArgAdrOrReg();
+	int8_t b = loadArgNum();
 	if (a == 0) PC = b;
 }
 
 void Interpreter::JIA() {
-	char& a = loadArgAdrOrReg();
-	char& b = loadArgAdrOrReg();
+	int8_t& a = loadArgAdrOrReg();
+	int8_t& b = loadArgAdrOrReg();
 	if (a == 0) PC = b;
 }
 
@@ -280,7 +296,7 @@ void Interpreter::DFI() {
 
 void Interpreter::OFI() {
 	std::string a = loadArgText(2);
-	fileSystem->openFile(a, PID);
+	if (fileSystem->openFile(a, PID) != 0) PC--;
 }
 
 void Interpreter::SFI() {
@@ -288,13 +304,119 @@ void Interpreter::SFI() {
 	fileSystem->closeFile(a, PID);
 }
 
+void Interpreter::EFI() {
+	int8_t &a = loadArgAdrOrReg();
+	fileSystem->writeToFileByte(a, PID);
+}
+
 void Interpreter::WFI() {
-	char &a = loadArgAdrOrReg();
-	fileSystem->writeToFile(std::to_string(a), PID);
+	int8_t& a = loadArgAdrOrReg();
+	fileSystem->writeToFileByte(a, PID);
 }
 
 void Interpreter::CPR() {
 	std::string a = loadArgText(2);
 	std::string b = loadArgText(2);
 	processManager->fork(a, PID, b);
+}
+
+void Interpreter::NOP() {}
+
+// ******************************************
+// ******************* GO *******************
+// ******************************************
+
+int Interpreter::go() {
+	int error;
+
+	loadPCB();
+	loadCode();
+	error = interpret();
+	returnToPCB();
+
+	if (changeToTerminated) PCB->setStateTerminated();
+
+	return error;
+}
+
+// *******************************************
+// **************** KONWERSJA ****************
+// *******************************************
+
+std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
+	std::vector<uint8_t> machine;
+	std::vector<std::string> arg;
+	
+	std::string code = m.substr(0, 3);
+
+	if (m.length() > 3) {
+
+		for (int i = 3; i < m.length(); i++) {
+			if (m[i] >= 48 && m[i] <= 57) {
+				arg.push_back("");
+				for (int j = i; m[j] != ' '; j++) {
+					arg.back() += m[j];
+				}
+				i += arg.back().length();
+			}
+			else if (m[i] == '[') {
+				arg.push_back("");
+				for (int j = i + 1; m[j] != ']'; j++) {
+					arg.back() += m[j];
+				}
+				i += arg.back().length() + 1;
+			}
+			else if (m[i] >= 65 && m[i] <= 68) {
+				arg.push_back("");
+				arg.back() += m[i];
+				arg.back() += m[i + 1];
+				i += 2;
+			}
+			else if (m[i] == '"') {
+				arg.push_back("");
+				arg.back() += m[i + 1];
+				arg.back() += m[i + 2];
+				i += 3;
+			}
+			
+		}
+	}
+
+	if (code == "RET") machine.push_back(0x00);
+	if (code == "MOV") machine.push_back(0x01);
+	if (code == "WRI") machine.push_back(0x02);
+	if (code == "ADD") machine.push_back(0x03);
+	if (code == "SUB") machine.push_back(0x04);
+	if (code == "MUL") machine.push_back(0x05);
+	if (code == "DIV") machine.push_back(0x06);
+	if (code == "MOD") machine.push_back(0x07);
+	if (code == "INC") machine.push_back(0x08);
+	if (code == "DEC") machine.push_back(0x09);
+	if (code == "JUM") machine.push_back(0x0A);
+	if (code == "JUA") machine.push_back(0x0B);
+	if (code == "JIF") machine.push_back(0x0C);
+	if (code == "JIA") machine.push_back(0x0D);
+	if (code == "CFI") machine.push_back(0x0E);
+	if (code == "DFI") machine.push_back(0x0F);
+	if (code == "OFI") machine.push_back(0x10);
+	if (code == "SFI") machine.push_back(0x11);
+	if (code == "EFI") machine.push_back(0x12);
+	if (code == "WFI") machine.push_back(0x13);
+	if (code == "CPR") machine.push_back(0x14);
+	if (code == "NOP") machine.push_back(0xFF);
+
+	if (arg.size() > 0) {
+		for (int i = 0; i < arg.size(); i++) {
+			if (arg[i] == "AX") machine.push_back(0xFF);
+			else if (arg[i] == "BX") machine.push_back(0xFE);
+			else if (arg[i] == "CX") machine.push_back(0xFD);
+			else if (arg[i] == "DX") machine.push_back(0xFC);
+			else if (arg[i][0] >= 65 && arg[i][0] <= 90) {
+				machine.push_back(arg[i][0]);
+				machine.push_back(arg[i][1]);
+			}
+			else machine.push_back(std::stoi(arg[i]));
+		}
+	}
+	return machine;
 }
