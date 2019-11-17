@@ -13,9 +13,7 @@
 struct File
 {
 	std::string name;
-	int size, process_id;
-	char* reading_pointer = nullptr;
-	char* writing_pointer = nullptr;
+	int size, PID;
 	std::vector<char*> i_node;
 	//Kontrola dostepu
 };
@@ -43,19 +41,20 @@ public:
 
 	void closeProcessFiles(unsigned int PID); // zamyka wszystkie pliki u¿ywane przez proces o podanym ID
 
-
-	int writeFile(int PID,);
-	int readFile(int PID,int adress,int position);
-	int closeFile(std::string name); // Gdy nikt nie uzywa usuwa z TABLICY OTWARTYCH PLIKOW oraz wywoluje funkcje 
-	int openFile(std::string name,int PID); // Przed pierwszym wywolaniem pliku dodaje go do TABLICY OTWARTYCH PLIKOW //Przekazuje wskanizk do tablic otwartych plikow
+	int deleteFile(std::string name); // usuwa plik(Marcin)
+	int openFile(std::string name, unsigned int PID);// otwórz plik(Marcin)
+	int closeFile(std::string name, unsigned int PID); // zamknij plik(Marcin)
+	int writeToEndFile(uint16_t byte, unsigned int PID);// wpisz bajt do otwartego pliku(na koniec) (Marcin)
+	int writeToFile(uint8_t byte, uint8_t pos, unsigned int PID); // wpisz bajt do otwartego pliku(na danej pozycji) (Marcin)
+	int readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID); // odczytaj n bajtów z otwartego pliku(z danej pozycji) i wpisz do komórek pamiêci z podanym adresem pierwszej
 	
 	
 	int removeFile(std::string name);//usuwa podany plik, jeœli siê nie da to zwraca kod b³êdu
 	int rename(std::string nazwa);  //zmienia nazwê pliku lub katalogu na podan¹.Koñcówka.txt oznacza plik
-	std::pair<int,std::string> cat(std::string name);
+	std::pair<int,std::string> cat(std::string name); 
 	int createFile(std::string nazwa_pliku); // tworzy plik o podanej nazwie w podanej lokalizacji
 	std::vector<std::string> ls(); // zwraca zawartosæ folderu(pliki)
-	int deleteFolder();
+
 
 	char* FindFreeBlock(File* file);
 	bool isNameColision(std::string name);
