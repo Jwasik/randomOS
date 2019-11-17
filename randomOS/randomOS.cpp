@@ -1,6 +1,4 @@
-﻿// randomOS.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
-//
-
+﻿
 #include "Includes.h"
 
 #include "Memory.h"
