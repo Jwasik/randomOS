@@ -165,7 +165,6 @@
     <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="randomOS.cpp" />
-    <ClCompile Include="semaphore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileMenager.h" />
@@ -178,7 +177,7 @@
     <ClInclude Include="Interpreter.h" />
   </ItemGroup>
   <ItemGroup>
-    
+    <ClInclude Include="Interpreter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Includes.h" />
