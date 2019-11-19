@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileMenager.cpp" />
     <ClCompile Include="PCB.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="Interpreter.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="randomOS.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileMenager.h" />
     <ClInclude Include="PCB.h" />
     <ClInclude Include="ProcessManager.h" />
   </ItemGroup>
