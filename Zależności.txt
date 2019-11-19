@@ -42,6 +42,13 @@
 	
 5. Interpreter assemblera (Marcin)
 	void go() - wykonuje jeden rozkaz assemblerowy, czytany z PCB procesu running (Jędrzej)
+	Maciej:
+	{
+		void schedule() //sprawdza czy czas aktaulnie aktywnego procesu minął, jeśli tak to wchodzi inny do RUNNING;
+		void endActualProcess() //usówa proces aktualnie w RUNNING, wywołaj tą metodę kiedy proces się kończy
+		
+	}
+		
 
 6. Pamięć wirtualna (Michał)
 
