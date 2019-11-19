@@ -175,9 +175,10 @@
     <ClInclude Include="PCB.h" />
     <ClInclude Include="ProcessManager.h" />
     <ClInclude Include="semaphore.h" />
+    <ClInclude Include="Interpreter.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Interpreter.h" />
+    
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Includes.h" />
