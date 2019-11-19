@@ -13,6 +13,7 @@
     </Filter>
     <Filter Include="Pliki nagłówkowe">
       <UniqueIdentifier>{3a383c0b-a36b-464c-9fed-616bd8e6bd50}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Semaphore">
       <UniqueIdentifier>{33e12bb0-defa-4147-a91f-b54324ce88dc}</UniqueIdentifier>
     </Filter>
@@ -24,43 +25,31 @@
     <ClCompile Include="randomOS.cpp">
       <Filter>MAIN</Filter>
     </ClCompile>
+    <ClCompile Include="FileMenager.cpp">
+      <Filter>MAIN</Filter>
+    </ClCompile>
     <ClCompile Include="Interpreter.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>MAIN</Filter>
     </ClCompile>
     <ClCompile Include="Memory.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>MAIN</Filter>
     </ClCompile>
     <ClCompile Include="PCB.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>MAIN</Filter>
     </ClCompile>
     <ClCompile Include="ProcessManager.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="FileSystem.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>MAIN</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FileSystem.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClCompile Include="Memory.cpp">
       <Filter>Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="semaphore.cpp">
-      <Filter>Semaphore</Filter>
     </ClCompile>
     <ClCompile Include="Interpreter.cpp">
       <Filter>Interpreter</Filter>
     </ClCompile>
-    <ClCompile Include="FileMenager.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Includes.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="Interpreter.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
