@@ -8,7 +8,7 @@
 
 int main()
 {
-
+	/* *************TEST MENADZERA PLIKOW******************
 	FileMenager f;
 	f.createFile("ja");
 	f.openFile("ja",1);
@@ -29,7 +29,7 @@ int main()
 	//f.deleteFile("ja");
 	std::string t = f.cat("ja");
 	std::cout << t;
-
+	*/
 
 
 	////TEST PAMIĘCI RAM
