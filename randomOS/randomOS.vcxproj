@@ -157,21 +157,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="PCB.cpp" />
-    <ClCompile Include="ProcessManager.cpp" />
+    <ClCompile Include="FileMenager.cpp" />
     <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="PCB.cpp" />
+    <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="randomOS.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileMenager.h" />
+    <ClInclude Include="Interpreter.h" />
+    <ClInclude Include="Memory.h" />
     <ClInclude Include="PCB.h" />
     <ClInclude Include="ProcessManager.h" />
+    <ClInclude Include="semaphore.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Interpreter.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Includes.h" />
     <ClInclude Include="Memory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
