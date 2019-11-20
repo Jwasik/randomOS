@@ -1,5 +1,5 @@
 #include "Interpreter.h"
-
+/*
 Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileSystem> fileSystem, std::shared_ptr<ProcessManager> processManager) {
 
 	this->scheduler = scheduler;
@@ -419,4 +419,4 @@ std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
 		}
 	}
 	return machine;
-}
+}*/

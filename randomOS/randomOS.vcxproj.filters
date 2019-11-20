@@ -68,14 +68,12 @@
     <ClInclude Include="semaphore.h">
       <Filter>Semaphore</Filter>
     </ClInclude>
-    <ClInclude Include="Includes.h">
-      <Filter>MAIN</Filter>
-    </ClInclude>
     <ClInclude Include="Interpreter.h">
       <Filter>Interpreter</Filter>
     </ClInclude>
     <ClInclude Include="FileMenager.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="Memory.h" />
   </ItemGroup>
 </Project>
