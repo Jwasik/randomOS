@@ -3,23 +3,24 @@
 void Semaphore::sleep()
 {
 }
-
-void Semaphore::wakeup(std::shared_ptr<PCB> w_pcb)
+void Semaphore::wakeup(std::shared_ptr<PCB> pcbPtr)
 {
 }
 
 Semaphore::Semaphore(int new_value)
 {
-	value = new_value; //equivalent to std::atomic.store()
+	mtx.lock;
+	value = new_value;
+	mtx.unlock;
 }
 
 void Semaphore::wait()
 {
-	mtx.lock; //mutex locks provide protection for critical sections of the semaphores
+	mtx.lock;
 	value--;
 	if (value < 0)
 	{
-		list.push(&pcb);
+		list.push(pcbPtr);
 		sleep();
 	}
 	mtx.unlock;
@@ -35,4 +36,14 @@ void Semaphore::signal()
 		list.pop;
 	}
 	mtx.unlock;
+}
+
+const int & Semaphore::getValue()
+{
+	return value;
+}
+
+const std::queue<std::shared_ptr<PCB>>& Semaphore::getList()
+{
+	return list;
 }
