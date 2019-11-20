@@ -68,7 +68,9 @@ public:
 	//   1 udalo sie zmienic nazwe pliku
 
 	int readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID); //odczytaj n bajtów z otwartego pliku(z danej pozycji) i wpisz do komórek pamiêci z podanym adresem pierwszej
-
+	//  -1 zakres z poza pliku
+	//  -2 plik nie jst otwarty
+	//   1 udalo sie odczytac dane z pliku
 
 	std::vector<std::string> ls(); //zwraca wszystkie nazwy plikow jakie istnieja w folderze glownym
 	std::string cat(std::string name); //zwraca zawartosc calego pliku jako string

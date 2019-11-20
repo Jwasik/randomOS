@@ -8,7 +8,7 @@
 
 int main()
 {
-	/* *************TEST MENADZERA PLIKOW******************
+	////TEST MENADERA PLIKOW
 	FileMenager f;
 	f.createFile("ja");
 	f.openFile("ja",1);
@@ -21,15 +21,20 @@ int main()
 
 	f.createFile("jak");
 	f.openFile("jak", 2);
-	for (int i = 0; i < 150; i++)
+	for (int i = 0; i < 80; i++)
 	{
 		f.writeToEndFile(70, 2);
 	}
+	for (int i = 0; i < 80; i++)
+	{
+		f.writeToEndFile(67, 2);
+	}
 	f.closeFile("ja",1);
 	//f.deleteFile("ja");
-	std::string t = f.cat("ja");
-	std::cout << t;
-	*/
+	//std::string t = f.cat("ja");
+	//std::cout << t;
+	//f.readFile(0,70,20,2);
+	
 
 
 	////TEST PAMIĘCI RAM

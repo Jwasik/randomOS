@@ -130,6 +130,44 @@ int FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
 	return -2;
 }
 
+int FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID)
+{
+	int phycial = 0;
+	int curr_pos = pos;
+	int ret = 0;
+	for (auto i : open_file_table)
+	{
+		if (MainFileCatalog[i].PID == PID)
+		{
+			if((pos + n) > MainFileCatalog[i].size - pos) return -1;
+			ret = 1;
+			while (curr_pos < pos + n)
+			{
+				if (curr_pos < 32)
+				{
+					phycial = (MainFileCatalog[i].i_node[0] * BlockSize) + (curr_pos%BlockSize);
+					std::cout << DiskArray[phycial]; // tu write do ramu
+				}
+				else if (curr_pos < 64)
+				{
+					phycial = (MainFileCatalog[i].i_node[1] * BlockSize) + (curr_pos % BlockSize);
+					std::cout << DiskArray[phycial]; // tu write do ramu
+				}
+				else
+				{
+					phycial = (MainFileCatalog[i].i_node[2] * BlockSize) + (curr_pos/BlockSize) - 2;
+					phycial = DiskArray[phycial];
+					phycial = (phycial * BlockSize) + (curr_pos % BlockSize);
+					std::cout << DiskArray[phycial]; // tu write do ramu
+				}
+				curr_pos++;
+			}
+		}
+	}
+	if(ret == 1) return 1;
+	else return -2;
+}
+
 int FileMenager::deleteFile(std::string name)
 {
 	for (int i = 0; i < (int)MainFileCatalog.size(); i++)
