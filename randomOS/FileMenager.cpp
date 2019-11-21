@@ -10,7 +10,7 @@ int FileMenager::createFile(std::string nazwa_pliku)
 {
 	if (isNameColision(nazwa_pliku)) 
 	{
-		return -1; //-1 istnieje plik o danej nazwie
+		return ERROR_ALREADY_EXISTING_FILE; //istnieje plik o danej nazwie
 	}
 	else
 	{
@@ -18,7 +18,7 @@ int FileMenager::createFile(std::string nazwa_pliku)
 		File file;
 		if (FindFreeBlock(&file) == -1)
 		{
-			return -2; //-2 brak miejsca na dysku
+			return ERROR_NO_SPACE_ON_DISK; //brak miejsca na dysku
 		}
 		else
 		{
@@ -39,7 +39,7 @@ int FileMenager::openFile(std::string name, unsigned int PID)
 	{
 		if (MainFileCatalog[i].name == name)
 		{
-			if(isFileOpen(name,PID)) return -1;
+			if(isFileOpen(name,PID)) return ERROR_FILE_OPENED_BY_OTHER_PROCESS;
 			else
 			{
 				//MainFileCatalog[i].s.wait();
@@ -50,7 +50,7 @@ int FileMenager::openFile(std::string name, unsigned int PID)
 			}
 		}
 	}
-	return -2;
+	return ERROR_NO_FILE_WITH_THAT_NAME;
 }
 
 int FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
@@ -63,7 +63,7 @@ int FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 		{
 				if (MainFileCatalog[i].size % BlockSize == 0 && MainFileCatalog[i].size !=0)
 				{
-					if(FindFreeBlock(&MainFileCatalog[i]) == -1) return -1;
+					if(FindFreeBlock(&MainFileCatalog[i]) == -1) return ERROR_NO_SPACE_ON_DISK;
 				}
 				
 				if (req == 0)
@@ -92,7 +92,7 @@ int FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 				
 		}
 	}
-	return -2;
+	return ERROR_FILE_IS_NOT_OPENED;
 }
 
 int FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
@@ -105,7 +105,7 @@ int FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
 		if (MainFileCatalog[i].PID == PID)
 		{
 			int req = pos / BlockSize; //numer logiczny bloku
-			if(pos >= MainFileCatalog[i].size) return -1;
+			if(pos >= MainFileCatalog[i].size) return ERROR_UOT_OF_FILE_RANGE;
 			if (req == 0)
 			{
 				phycial = (MainFileCatalog[i].i_node[0] * BlockSize) + pos;
@@ -127,7 +127,7 @@ int FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
 			}
 		}
 	}
-	return -2;
+	return ERROR_FILE_IS_NOT_OPENED;
 }
 
 int FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID)
@@ -139,7 +139,7 @@ int FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned in
 	{
 		if (MainFileCatalog[i].PID == PID)
 		{
-			if((pos + n) > MainFileCatalog[i].size - pos) return -1;
+			if((pos + n) > MainFileCatalog[i].size - pos) return ERROR_UOT_OF_FILE_RANGE;
 			ret = 1;
 			while (curr_pos < pos + n)
 			{
@@ -165,7 +165,7 @@ int FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned in
 		}
 	}
 	if(ret == 1) return 1;
-	else return -2;
+	else return ERROR_FILE_IS_NOT_OPENED;
 }
 
 int FileMenager::deleteFile(std::string name)
@@ -174,7 +174,7 @@ int FileMenager::deleteFile(std::string name)
 	{
 		if (MainFileCatalog[i].name == name)
 		{
-			if(MainFileCatalog[i].isOpen == true) return -2;
+			if(MainFileCatalog[i].isOpen == true) return ERROR_FILE_IS_OPENED_CANT_DELETE;
 			int req = MainFileCatalog[i].size / BlockSize;
 			int physical = MainFileCatalog[i].i_node[2] * BlockSize;
 			if (MainFileCatalog[i].i_node.size() < 3)
@@ -201,7 +201,7 @@ int FileMenager::deleteFile(std::string name)
 			MainFileCatalog.erase(MainFileCatalog.begin() + i);
 		}
 	}
-	return -1;
+	return 1;
 }
 
 int FileMenager::closeFile(std::string name, unsigned int PID)
@@ -218,7 +218,7 @@ int FileMenager::closeFile(std::string name, unsigned int PID)
 			return 1;
 		}
 	}
-	return -1;
+	return ERROR_FILE_IS_NOT_OPENED;
 }
 
 int FileMenager::rename(std::string nazwa, std::string new_name)
@@ -231,7 +231,7 @@ int FileMenager::rename(std::string nazwa, std::string new_name)
 			return 1;
 		}
 	}
-	return -1;
+	return ERROR_NO_FILE_WITH_THAT_NAME;
 }
 
 void FileMenager::closeProcessFiles(unsigned int PID)
