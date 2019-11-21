@@ -6,7 +6,7 @@ zwracane jako int8_t <0,255)
 -----------------------------------
 
 Zarządzanie procesorem (Maciej)
-ZAKRES: (0,32)
+ZAKRES: <16,32)
 
 Zarządzanie procesami (Mateusz)
 ZAKRES: <32,48)
