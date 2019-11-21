@@ -1,5 +1,5 @@
 KODY BŁĘDÓW
-zwracane jako int8_t <0,255)
+zwracane jako uint8_t <0,255)
 
 -----------------------------------
 ! 0 zarezerwowane jako brak błędu !
