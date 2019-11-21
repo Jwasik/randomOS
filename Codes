@@ -1,2 +1,39 @@
-FILE MENAGER
-ZAKRES: <-2,1>
+KODY BŁĘDÓW
+zwracane jako int8_t <0,255)
+
+-----------------------------------
+! 0 zarezerwowane jako brak błędu !
+-----------------------------------
+
+Zarządzanie procesorem (Maciej)
+ZAKRES: (0,32)
+
+Zarządzanie procesami (Mateusz)
+ZAKRES: <32,64)
+32 ERROR_PM_PROCESS_NAME_TAKEN 
+33 ERROR_PM_PROCESS_NAME_TOO_LONG 
+34 ERROR_PM_PROCESS_NAME_CANNOT_BE_EMPTY 
+35 ERROR_PM_PROCESS_NAME_CONTAINS_UNALLOWED_CHARACTERS 
+36 ERROR_PM_PARENT_COULD_NOT_BE_FOUND 
+37 ERROR_PM_INIT_CANNOT_BE_DELETED 
+38 ERROR_PM_PROCESS_COULD_NOT_BE_FOUND 
+
+Zarządzanie pamięcią (Piotr)
+ZAKRES: 
+
+Zarządzanie systemem plików (Kacper)
+ZAKRES: 
+
+Interpreter assemblera (Marcin)
+ZAKRES: 
+
+Pamięć wirtualna (Michał)
+ZAKRES: 
+
+Semaphore (Tomek)
+ZAKRES: 
+
+
+Shell (Jędrzej)
+
+
