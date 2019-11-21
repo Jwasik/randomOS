@@ -9,7 +9,7 @@ Zarządzanie procesorem (Maciej)
 ZAKRES: (0,32)
 
 Zarządzanie procesami (Mateusz)
-ZAKRES: <32,64)
+ZAKRES: <32,48)
 32 ERROR_PM_PROCESS_NAME_TAKEN 
 33 ERROR_PM_PROCESS_NAME_TOO_LONG 
 34 ERROR_PM_PROCESS_NAME_CANNOT_BE_EMPTY 
@@ -18,12 +18,12 @@ ZAKRES: <32,64)
 37 ERROR_PM_INIT_CANNOT_BE_DELETED 
 38 ERROR_PM_PROCESS_COULD_NOT_BE_FOUND 
 
-Zarządzanie pamięcią (Piotr)
-ZAKRES: 
-
 Zarządzanie systemem plików (Kacper)
 ZAKRES: <64,80)
 
+
+Zarządzanie pamięcią (Piotr)
+ZAKRES: 
 
 Interpreter assemblera (Marcin)
 ZAKRES: 
