@@ -6,6 +6,7 @@ class Memory
 	{
 		int PageNr;
 		bool taken=0;
+		int lastUse=0;
 	};
 
 public:
