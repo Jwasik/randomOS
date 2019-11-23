@@ -1,5 +1,5 @@
 #include "Interpreter.h"
-
+/*
 Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> fileSystem, std::shared_ptr<ProcessManager> processManager) {
 
 	this->scheduler = scheduler;
