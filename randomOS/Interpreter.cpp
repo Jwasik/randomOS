@@ -1,6 +1,6 @@
 #include "Interpreter.h"
 
-Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileSystem> fileSystem, std::shared_ptr<ProcessManager> processManager) {
+Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> fileSystem, std::shared_ptr<ProcessManager> processManager) {
 
 	this->scheduler = scheduler;
 	this->memory = memory;
@@ -306,12 +306,13 @@ void Interpreter::SFI() {
 
 void Interpreter::EFI() {
 	int8_t &a = loadArgAdrOrReg();
-	fileSystem->writeToFileByte(a, PID);
+	fileSystem->writeToEndFile(a, PID);
 }
 
 void Interpreter::WFI() {
 	int8_t& a = loadArgAdrOrReg();
-	fileSystem->writeToFileByte(a, PID);
+	int8_t b = loadArgNum();
+	fileSystem->writeToFile(a, b, PID);
 }
 
 void Interpreter::CPR() {

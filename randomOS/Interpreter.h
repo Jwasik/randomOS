@@ -1,7 +1,7 @@
 #pragma once
 #include "Includes.h"
-// #include "Scheduler"
-// #include "FileSystem"
+// #include "Scheduler.h"
+#include "FileSystem.h"
 #include "Memory.h"
 #include "ProcessManager.h"
 #include "PCB.h"
@@ -12,7 +12,7 @@ private:
 
 	std::shared_ptr<Scheduler> scheduler;
 	std::shared_ptr<Memory> memory;
-	std::shared_ptr<FileSystem> fileSystem;
+	std::shared_ptr<FileMenager> fileSystem;
 	std::shared_ptr<ProcessManager> processManager;
 
 	std::shared_ptr<PCB> PCB;
@@ -58,7 +58,7 @@ private:
 
 public:
 
-	Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileSystem> filesystem, std::shared_ptr<ProcessManager> processManager);
+	Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> filesystem, std::shared_ptr<ProcessManager> processManager);
 	int go();
 	std::vector<uint8_t> convertToMachine(std::string m);
 	
