@@ -6,6 +6,8 @@
 #include "ProcessManager.h"
 #include "PCB.h"
 
+//TODO: RFI(), ADI()
+
 class Interpreter
 { 
 private:
@@ -52,7 +54,10 @@ private:
 	void SFI(); //Zamknij plik                              (18  | 0x11)
 	void EFI(); //Wpisz do pliku (na koniec)                (19  | 0x12)
 	void WFI(); //Wpisz do pliku (liczba)                   (20  | 0x13)
-	void CPR(); //Stw�rz proces                             (21  | 0x14)
+	void PFI(); //Wpisz do pliku (adres lub rejestr)        (21  | 0x14)
+	void RFI(); //Odczytaj z pliku (liczba)                 (22  | 0x15)
+	void AFI(); //Odczytaj z pliku (adres lub rejestr)      (23  | 0x16)
+	void CPR(); //Stw�rz proces                             (24  | 0x17)
 
 	void NOP(); //Nic nie r�b                               (255 | 0xFF)
 
