@@ -163,6 +163,7 @@
     <ClCompile Include="PCB.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="randomOS.cpp" />
+    <ClCompile Include="semaphore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileMenager.h" />
