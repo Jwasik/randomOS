@@ -42,14 +42,24 @@ private:
 
 public:
 
-    void insertProgram(std::pair<int, std::vector<Page>> process);
+    // inserts program - pair of (pid, pageVector) - into swapFile
+    // called every time a program is read from a file
+    void insertProgram(std::pair<int, std::vector<Page>> program);
 
+    // updates queue; the argument is index of a frame, that holds referenced page
+    // called every time a page is referenced
     void updateQueue(int frameNumber);
 
+    // updates data of a page, that is taken down from memory
+    // called every time pages are being swapped
     void updateSwapFilePage(int pid, int pageNumber, Page page);
 
+    // returns number of a victim frame
+    // called every time pages are being swapped
     int getVictimFrameNumber();
 
+    // returns referenced Page
+    // called every time a page fault happens
     Page getPage(int pid, int PageNumber);
 
     void printSwapFile();
