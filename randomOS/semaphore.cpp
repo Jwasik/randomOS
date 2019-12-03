@@ -28,8 +28,8 @@ void Semaphore::signal()
 	value++;
 	if (value <= 0)
 	{
-		list.front()->setStateRunning;
-		list.pop;
+		list.front()->setStateRunning();
+		list.pop();
 	}
 	mtx.unlock();
 }

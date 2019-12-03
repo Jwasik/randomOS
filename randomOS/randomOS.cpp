@@ -4,10 +4,13 @@
 #include "Memory.h"
 #include "ProcessManager.h"
 #include "Interpreter.h"
+#include "Shell.h"
 
 
 int main()
 {
+	Shell shell;
+	shell.run();
 	////TEST MENADERA PLIKOW
 	/*
 	FileMenager f;
