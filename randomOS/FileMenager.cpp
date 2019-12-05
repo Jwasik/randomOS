@@ -59,7 +59,7 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 	return ERROR_NO_FILE_WITH_THAT_NAME;
 }
 
-int FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
+int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 {	int phycial = 0;
 	
 	for (auto i : Containers::open_file_table)
@@ -250,7 +250,7 @@ void FileMenager::closeProcessFiles(unsigned int PID)
 
 std::pair<int8_t, std::string> FileMenager::cat(std::string name)
 {
-	std::string result;
+	std::pair<int8_t, std::string> result;
 	for (auto i : Containers::MainFileCatalog)
 	{
 		if (i.name == name)
@@ -262,19 +262,19 @@ std::pair<int8_t, std::string> FileMenager::cat(std::string name)
 				if (req < 32)
 				{
 					physical = i.i_node[1] * BlockSize + (req % BlockSize);
-					result.push_back(Containers::DiskArray[physical]);
+					result.second.push_back(Containers::DiskArray[physical]);
 				}
 				else if (req < 64)
 				{
 					physical = i.i_node[1] * BlockSize + (req % BlockSize);
-					result.push_back(Containers::DiskArray[physical]);
+					result.second.push_back(Containers::DiskArray[physical]);
 				}
 				else
 				{
 					physical = i.i_node[2] * BlockSize + ((req/BlockSize) -2);
 					physical = Containers::DiskArray[physical];
 					physical = (physical * BlockSize) + (req % BlockSize);
-					result.push_back(Containers::DiskArray[physical]);
+					result.second.push_back(Containers::DiskArray[physical]);
 				}
 				req++;
 			}
