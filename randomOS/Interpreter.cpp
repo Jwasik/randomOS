@@ -39,7 +39,7 @@ void Interpreter::loadCode() {
 	instructionHex.push_back(code);
 }
 
-int Interpreter::interpret() {
+void Interpreter::interpret() {
 	switch (code) {
 	case 0x00:
 		instructionString += "RET";
@@ -143,10 +143,9 @@ int Interpreter::interpret() {
 		break;
 	default:
 		instructionString += "ERR";
-		return -1;
+		throw 200;
 		break;
 	}
-	return 0;
 }
 
 int8_t& Interpreter::loadArgAdrOrReg() {
@@ -237,24 +236,31 @@ void Interpreter::WRI() {
 void Interpreter::ADD() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
+	if ((a + b) > maxValue) throw 201;
+	if ((a + b) < minValue) throw 202;
 	a = a + b;
 }
 
 void Interpreter::SUB() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
+	if ((a - b) > maxValue) throw 201;
+	if ((a - b) < minValue) throw 202;
 	a = a - b;
 }
 
 void Interpreter::MUL() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
+	if ((a * b) > maxValue) throw 201;
+	if ((a * b) < minValue) throw 202;
 	a = a * b;
 }
 
 void Interpreter::DIV() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
+	if (b == 0) throw 203;
 	a = a / b;
 }
 
@@ -266,16 +272,20 @@ void Interpreter::MOD() {
 
 void Interpreter::INC() {
 	int8_t& a = loadArgAdrOrReg();
+	if ((a + 1) > maxValue) throw 201;
+	if ((a + 1) < maxValue) throw 202;
 	a = a + 1;
 }
 
 void Interpreter::DEC() {
 	int8_t& a = loadArgAdrOrReg();
+	if ((a - 1) > maxValue) throw 201;
+	if ((a - 1) < maxValue) throw 202;
 	a = a - 1;
 }
 
 void Interpreter::JUM() {
-	int8_t a = loadArgNum(); 
+	int8_t a = loadArgNum();
 	PC = a;
 }
 
@@ -298,53 +308,68 @@ void Interpreter::JIA() {
 
 void Interpreter::CFI() {
 	std::string a = loadArgText(2);
-	fileSystem->createFile(a);
+	uint8_t error = fileSystem->createFile(a);
+	if (error != 0) throw error;
 }
 
 void Interpreter::DFI() {
 	std::string a = loadArgText(2);
-	fileSystem->deleteFile(a);
+	uint8_t error = fileSystem->deleteFile(a);
+	if (error != 0) throw error;
 }
 
 void Interpreter::OFI() {
 	std::string a = loadArgText(2);
-	if (fileSystem->openFile(a, PID) != 0) PC--;
+	uint8_t error = fileSystem->openFile(a, PID);
+	if (error == 67) PC--;
+	else if (error != 0) throw error;
 }
 
 void Interpreter::SFI() {
 	std::string a = loadArgText(2);
-	fileSystem->closeFile(a, PID);
+	uint8_t error = fileSystem->closeFile(a, PID);
+	if (error != 0) throw error;
 }
 
 void Interpreter::EFI() {
-	int8_t &a = loadArgAdrOrReg();
-	fileSystem->writeToEndFile(a, PID);
+	int8_t& a = loadArgAdrOrReg();
+	uint8_t error = fileSystem->writeToEndFile(a, PID);
+	if (error != 0) throw error;
 }
 
 void Interpreter::WFI() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
-	fileSystem->writeToFile(a, b, PID);
+	uint8_t error = fileSystem->writeToFile(a, b, PID);
+	if (error != 0) throw error;
 }
 
 void Interpreter::PFI() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
-	fileSystem->writeToFile(a, b, PID);
+	uint8_t error = fileSystem->writeToFile(a, b, PID);
+	if (error != 0) throw error;
 }
 
 void Interpreter::RFI() {
-
+	int8_t& a = loadArgAdrOrReg();
+	int8_t b = loadArgNum();
+	uint8_t error = fileSystem->readFile(a, b, 1, PID);
+	if (error != 0) throw error;
 }
 
 void Interpreter::AFI() {
-
+	int8_t& a = loadArgAdrOrReg();
+	int8_t& b = loadArgAdrOrReg();
+	uint8_t error = fileSystem->readFile(a, b, 1, PID);
+	if (error != 0) throw error;
 }
 
 void Interpreter::CPR() {
 	std::string a = loadArgText(2);
 	std::string b = loadArgText(2);
-	processManager->fork(a, PID, b);
+	uint8_t error = processManager->fork(a, PID, b);
+	if (error != 0) throw error;
 }
 
 void Interpreter::NOP() {}
@@ -353,17 +378,19 @@ void Interpreter::NOP() {}
 // ******************* GO *******************
 // ******************************************
 
-int Interpreter::go() {
-	int error;
-
-	loadPCB();
-	loadCode();
-	error = interpret();
-	returnToPCB();
-
-	if (changeToTerminated) PCB->setStateTerminated();
-
-	return error;
+uint8_t  Interpreter::go() {
+	try {
+		loadPCB();
+		loadCode();
+		interpret();
+		returnToPCB();
+		if (changeToTerminated) PCB->setStateTerminated();
+	}
+	catch (uint8_t e) {
+		PCB->setStateTerminated();
+		return e;
+	}
+	return 0;
 }
 
 // *******************************************
@@ -373,7 +400,7 @@ int Interpreter::go() {
 std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
 	std::vector<uint8_t> machine;
 	std::vector<std::string> arg;
-	
+
 	std::string code = m.substr(0, 3);
 
 	if (m.length() > 3) {
@@ -405,7 +432,7 @@ std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
 				arg.back() += m[i + 2];
 				i += 3;
 			}
-			
+
 		}
 	}
 

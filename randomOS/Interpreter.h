@@ -6,10 +6,10 @@
 #include "ProcessManager.h"
 #include "PCB.h"
 
-//TODO: RFI(), ADI()
+
 
 class Interpreter
-{ 
+{
 private:
 
 	std::shared_ptr<Scheduler> scheduler;
@@ -21,14 +21,17 @@ private:
 	int8_t AX, BX, CX, DX;
 	uint8_t PC;
 	unsigned int PID;
-	uint8_t code;
+	int8_t code;
 	bool changeToTerminated;
-	std::vector<uint8_t> instructionHex;
+	std::vector<int8_t> instructionHex;
 	std::string instructionString;
+
+	const int8_t maxValue = 127;
+	const int8_t minValue = -128;
 
 	void loadPCB();
 	void loadCode();
-	int interpret();
+	void interpret();
 	int8_t& loadArgAdrOrReg();
 	int8_t loadArgNum();
 	std::string loadArgText(int n);
@@ -64,11 +67,11 @@ private:
 public:
 
 	Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> filesystem, std::shared_ptr<ProcessManager> processManager);
-	int go();
+	uint8_t go();
 	std::vector<uint8_t> convertToMachine(std::string m);
-	
-	
-	
+
+
+
 
 
 };
