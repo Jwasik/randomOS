@@ -28,14 +28,17 @@ struct File
 	//Semaphore s;
 };
 
+struct Containers
+{
+	static std::vector<File> MainFileCatalog; // Katlog g³owny
 
-static std::vector<File> MainFileCatalog; // Katlog g³owny
+	static std::array<int, DiskSize / BlockSize> bit_vector; // Mapa bitowa
 
-static std::array<int, DiskSize / BlockSize> bit_vector; // Mapa bitowa
+	static std::array<char, DiskSize> DiskArray; //Tablica reprezentujca dysk 
 
-static std::array<char, DiskSize> DiskArray; //Tablica reprezentujca dysk 
+	static std::vector<int> open_file_table; //Tablic otwartych plików
+};
 
-static std::vector<int> open_file_table; //Tablic otwartych plików
 
 
 class FileMenager
