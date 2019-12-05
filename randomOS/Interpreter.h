@@ -1,6 +1,6 @@
 #pragma once
 #include "Includes.h"
-// #include "Scheduler.h"
+#include "Scheduler.h"
 #include "FileSystem.h"
 #include "Memory.h"
 #include "ProcessManager.h"
