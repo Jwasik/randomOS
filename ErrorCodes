@@ -32,7 +32,11 @@ Zarządzanie pamięcią (Piotr)
 ZAKRES: 
 
 Interpreter assemblera (Marcin)
-ZAKRES: 
+ZAKRES: <200,216)
+200 ERROR_UNKNOWN_INSTRUCTION
+201 ERROR_NUMBER_TO_LARGE
+202 ERROR_NUMBER_TO_SMALL
+203 ERROR_DIVIDING_BY_ZERO
 
 Pamięć wirtualna (Michał)
 ZAKRES: 
