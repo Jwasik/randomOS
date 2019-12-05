@@ -162,10 +162,12 @@
     <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="randomOS.cpp" />
+    <ClCompile Include="Scheduler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PCB.h" />
     <ClInclude Include="ProcessManager.h" />
+    <ClInclude Include="Scheduler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Interpreter.h" />
