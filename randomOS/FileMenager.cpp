@@ -6,9 +6,9 @@ FileMenager::FileMenager()
 	DiskArray.fill(0);
 }
 
-int FileMenager::createFile(std::string nazwa_pliku)
+int8_t FileMenager::createFile(std::string nazwa_pliku)
 {
-	if (isNameColision(nazwa_pliku)) 
+	if (isNameColision(nazwa_pliku))
 	{
 		return ERROR_ALREADY_EXISTING_FILE; //istnieje plik o danej nazwie
 	}
@@ -27,110 +27,112 @@ int FileMenager::createFile(std::string nazwa_pliku)
 			file.PID = -1;
 			file.size = 0;
 			MainFileCatalog.push_back(file);
-			return 1;
+			return 0;
 		}
 
 	}
 }
 
-int FileMenager::openFile(std::string name, unsigned int PID)
+int8_t FileMenager::openFile(std::string name, unsigned int PID)
 {
 	for (int i = 0; i < (int)MainFileCatalog.size(); i++)
 	{
 		if (MainFileCatalog[i].name == name)
 		{
-			if(isFileOpen(name,PID)) return ERROR_FILE_OPENED_BY_OTHER_PROCESS;
+			//Sprawdzenie tego za pomoca semaforow
+			if (isFileOpen(name, PID)) return ERROR_FILE_OPENED_BY_OTHER_PROCESS;
 			else
 			{
 				//MainFileCatalog[i].s.wait();
 				MainFileCatalog[i].PID = PID;
 				MainFileCatalog[i].isOpen = true;
 				open_file_table.push_back(i);
-				return 1;
+				return 0;
 			}
 		}
 	}
 	return ERROR_NO_FILE_WITH_THAT_NAME;
 }
 
-int FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
-{	int phycial = 0;
-	
-	for (auto i : open_file_table)
-	{
-		int req = (MainFileCatalog[i].size/BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt
-		if (MainFileCatalog[i].PID == PID) //sprawdza czy plik jest owtarty przez podany proces
-		{
-				if (MainFileCatalog[i].size % BlockSize == 0 && MainFileCatalog[i].size !=0)
-				{
-					if(FindFreeBlock(&MainFileCatalog[i]) == -1) return ERROR_NO_SPACE_ON_DISK;
-				}
-				
-				if (req == 0)
-				{
-					phycial = (MainFileCatalog[i].i_node[req]*BlockSize) + (MainFileCatalog[i].size%BlockSize);
-					DiskArray[phycial] = byte;
-					MainFileCatalog[i].size++;
-					return 1;
-				}
-				else if (req == 1)
-				{
-					phycial = (MainFileCatalog[i].i_node[req] * BlockSize) + (MainFileCatalog[i].size % BlockSize);
-					DiskArray[phycial] = byte;
-					MainFileCatalog[i].size++;
-					return 1;
-				}
-				else if (req > 1)
-				{
-					phycial = MainFileCatalog[i].i_node[2] * BlockSize + (req - 2);
-					phycial = DiskArray[phycial];
-					phycial = (phycial * BlockSize) + (MainFileCatalog[i].size % BlockSize);
-					DiskArray[phycial] = byte;
-					MainFileCatalog[i].size++;
-					return 1;
-				}
-				
-		}
-	}
-	return ERROR_FILE_IS_NOT_OPENED;
-}
-
-int FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
+int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 {
 	int phycial = 0;
 
 	for (auto i : open_file_table)
 	{
-		
+		int req = (MainFileCatalog[i].size / BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt
+		if (MainFileCatalog[i].PID == PID) //sprawdza czy plik jest owtarty przez podany proces
+		{
+			if (MainFileCatalog[i].size % BlockSize == 0 && MainFileCatalog[i].size != 0)
+			{
+				if (FindFreeBlock(&MainFileCatalog[i]) == -1) return ERROR_NO_SPACE_ON_DISK;
+			}
+
+			if (req == 0)
+			{
+				phycial = (MainFileCatalog[i].i_node[req] * BlockSize) + (MainFileCatalog[i].size % BlockSize);
+				DiskArray[phycial] = byte;
+				MainFileCatalog[i].size++;
+				return 0;
+			}
+			else if (req == 1)
+			{
+				phycial = (MainFileCatalog[i].i_node[req] * BlockSize) + (MainFileCatalog[i].size % BlockSize);
+				DiskArray[phycial] = byte;
+				MainFileCatalog[i].size++;
+				return 0;
+			}
+			else if (req > 1)
+			{
+				phycial = MainFileCatalog[i].i_node[2] * BlockSize + (req - 2);
+				phycial = DiskArray[phycial];
+				phycial = (phycial * BlockSize) + (MainFileCatalog[i].size % BlockSize);
+				DiskArray[phycial] = byte;
+				MainFileCatalog[i].size++;
+				return 0;
+			}
+
+		}
+	}
+	return ERROR_FILE_IS_NOT_OPENED;
+}
+
+int8_t FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
+{
+	int phycial = 0;
+
+	for (auto i : open_file_table)
+	{
+
 		if (MainFileCatalog[i].PID == PID)
 		{
 			int req = pos / BlockSize; //numer logiczny bloku
-			if(pos >= MainFileCatalog[i].size) return ERROR_UOT_OF_FILE_RANGE;
+			if (pos >= MainFileCatalog[i].size) return ERROR_UOT_OF_FILE_RANGE;
 			if (req == 0)
 			{
 				phycial = (MainFileCatalog[i].i_node[0] * BlockSize) + pos;
 				DiskArray[phycial] = byte;
-				return 1;
+				return 0;
 			}
 			else if (req == 1)
 			{
 				phycial = (MainFileCatalog[i].i_node[1] * BlockSize) + (pos % BlockSize);
 				DiskArray[phycial] = byte;
-				return 1;
+				return 0;
 			}
 			else
 			{
-				phycial = (MainFileCatalog[i].i_node[2] * BlockSize)+(req-2);
-				phycial = (DiskArray[phycial] * BlockSize) + (pos%BlockSize);
+				phycial = (MainFileCatalog[i].i_node[2] * BlockSize) + (req - 2);
+				phycial = (DiskArray[phycial] * BlockSize) + (pos % BlockSize);
 				DiskArray[phycial] = byte;
-				return 1;
+				return 0;
 			}
 		}
 	}
 	return ERROR_FILE_IS_NOT_OPENED;
 }
 
-int FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID)
+int8_t FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID)
 {
 	int phycial = 0;
 	int curr_pos = pos;
@@ -139,13 +141,13 @@ int FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned in
 	{
 		if (MainFileCatalog[i].PID == PID)
 		{
-			if((pos + n) > MainFileCatalog[i].size - pos) return ERROR_UOT_OF_FILE_RANGE;
+			if ((pos + n) > MainFileCatalog[i].size - pos) return ERROR_UOT_OF_FILE_RANGE;
 			ret = 1;
 			while (curr_pos < pos + n)
 			{
 				if (curr_pos < 32)
 				{
-					phycial = (MainFileCatalog[i].i_node[0] * BlockSize) + (curr_pos%BlockSize);
+					phycial = (MainFileCatalog[i].i_node[0] * BlockSize) + (curr_pos % BlockSize);
 					std::cout << DiskArray[phycial]; // tu write do ramu
 				}
 				else if (curr_pos < 64)
@@ -155,7 +157,7 @@ int FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned in
 				}
 				else
 				{
-					phycial = (MainFileCatalog[i].i_node[2] * BlockSize) + (curr_pos/BlockSize) - 2;
+					phycial = (MainFileCatalog[i].i_node[2] * BlockSize) + (curr_pos / BlockSize) - 2;
 					phycial = DiskArray[phycial];
 					phycial = (phycial * BlockSize) + (curr_pos % BlockSize);
 					std::cout << DiskArray[phycial]; // tu write do ramu
@@ -164,17 +166,17 @@ int FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned in
 			}
 		}
 	}
-	if(ret == 1) return 1;
+	if (ret == 1) return 0;
 	else return ERROR_FILE_IS_NOT_OPENED;
 }
 
-int FileMenager::deleteFile(std::string name)
+int8_t FileMenager::deleteFile(std::string name)
 {
 	for (int i = 0; i < (int)MainFileCatalog.size(); i++)
 	{
 		if (MainFileCatalog[i].name == name)
 		{
-			if(MainFileCatalog[i].isOpen == true) return ERROR_FILE_IS_OPENED_CANT_DELETE;
+			if (MainFileCatalog[i].isOpen == true) return ERROR_FILE_IS_OPENED_CANT_DELETE;
 			int req = MainFileCatalog[i].size / BlockSize;
 			int physical = MainFileCatalog[i].i_node[2] * BlockSize;
 			if (MainFileCatalog[i].i_node.size() < 3)
@@ -186,7 +188,7 @@ int FileMenager::deleteFile(std::string name)
 			}
 			else
 			{
-				for (int k=0;k<2;k++)
+				for (int k = 0; k < 2; k++)
 				{
 					clearBlock(MainFileCatalog[i].i_node[k]);
 				}
@@ -201,10 +203,10 @@ int FileMenager::deleteFile(std::string name)
 			MainFileCatalog.erase(MainFileCatalog.begin() + i);
 		}
 	}
-	return 1;
+	return 0;
 }
 
-int FileMenager::closeFile(std::string name, unsigned int PID)
+int8_t FileMenager::closeFile(std::string name, unsigned int PID)
 {
 
 	for (int i = 0; i < (int)open_file_table.size(); i++)
@@ -213,22 +215,22 @@ int FileMenager::closeFile(std::string name, unsigned int PID)
 		if (MainFileCatalog[pom].name == name && MainFileCatalog[pom].PID == PID)
 		{
 			MainFileCatalog[pom].isOpen = false;
-			open_file_table.erase(open_file_table.begin()+i);
+			open_file_table.erase(open_file_table.begin() + i);
 			//open_file_table[i]->size.signal();
-			return 1;
+			return 0;
 		}
 	}
 	return ERROR_FILE_IS_NOT_OPENED;
 }
 
-int FileMenager::rename(std::string nazwa, std::string new_name)
+int8_t FileMenager::rename(std::string nazwa, std::string new_name)
 {
 	for (auto i : MainFileCatalog)
 	{
 		if (i.name == nazwa)
 		{
 			i.name = new_name;
-			return 1;
+			return 0;
 		}
 	}
 	return ERROR_NO_FILE_WITH_THAT_NAME;
@@ -238,13 +240,13 @@ void FileMenager::closeProcessFiles(unsigned int PID)
 {
 	for (auto i : open_file_table)
 	{
-		if(MainFileCatalog[i].PID == PID) closeFile(MainFileCatalog[i].name,MainFileCatalog[i].PID);
+		if (MainFileCatalog[i].PID == PID) closeFile(MainFileCatalog[i].name, MainFileCatalog[i].PID);
 	}
 }
 
-std::string FileMenager::cat(std::string name)
+std::pair<int8_t, std::string> FileMenager::cat(std::string name)
 {
-	std::string result;
+	std::pair<int8_t, std::string> result;
 	for (auto i : MainFileCatalog)
 	{
 		if (i.name == name)
@@ -256,33 +258,34 @@ std::string FileMenager::cat(std::string name)
 				if (req < 32)
 				{
 					physical = i.i_node[1] * BlockSize + (req % BlockSize);
-					result.push_back(DiskArray[physical]);
+					result.second.push_back(DiskArray[physical]);
 				}
 				else if (req < 64)
 				{
 					physical = i.i_node[1] * BlockSize + (req % BlockSize);
-					result.push_back(DiskArray[physical]);
+					result.second.push_back(DiskArray[physical]);
 				}
 				else
 				{
-					physical = i.i_node[2] * BlockSize + ((req/BlockSize) -2);
+					physical = i.i_node[2] * BlockSize + ((req / BlockSize) - 2);
 					physical = DiskArray[physical];
 					physical = (physical * BlockSize) + (req % BlockSize);
-					result.push_back(DiskArray[physical]);
+					result.second.push_back(DiskArray[physical]);
 				}
 				req++;
 			}
 
 		}
+		else result.first = ERROR_NO_FILE_WITH_THAT_NAME;
 	}
-
+	result.first = 0;
 	return result;
 }
 
 std::vector<std::string> FileMenager::ls()
 {
 	std::vector<std::string> result;
-	for(auto i:MainFileCatalog) result.push_back(i.name);
+	for (auto i : MainFileCatalog) result.push_back(i.name);
 	return result;
 }
 
@@ -298,23 +301,23 @@ void clearBlock(int log)
 	}
 }
 
-int FileMenager::FindFreeBlock(File *file)
+int FileMenager::FindFreeBlock(File* file)
 {
 	if (file->i_node.size() < 2)
 	{
-		for (int i=0;i<(int)bit_vector.size();i++)
+		for (int i = 0; i < (int)bit_vector.size(); i++)
 		{
 			if (bit_vector[i] == 1)
 			{
 				file->i_node.push_back(i);
 				bit_vector[i] = 0;
-				return 1;
+				return 0;
 			}
 		}
 	}
-	else if(file->i_node.size() == 2)
+	else if (file->i_node.size() == 2)
 	{
-		for (int i = 0; i <(int)bit_vector.size(); i++)
+		for (int i = 0; i < (int)bit_vector.size(); i++)
 		{
 			if (bit_vector[i] == 1)
 			{
@@ -327,7 +330,7 @@ int FileMenager::FindFreeBlock(File *file)
 	}
 	else if (file->i_node.size() > 2)
 	{
-		for (int i = 0; i <(int)bit_vector.size(); i++)
+		for (int i = 0; i < (int)bit_vector.size(); i++)
 		{
 			if (bit_vector[i] == 1)
 			{
@@ -335,7 +338,7 @@ int FileMenager::FindFreeBlock(File *file)
 				pom = (file->i_node[2] * BlockSize) + pom;
 				DiskArray[pom] = i;
 				bit_vector[i] = 0;
-				return 1;
+				return 0;
 			}
 		}
 	}
@@ -346,7 +349,7 @@ bool isNameColision(std::string name)
 {
 	for (auto i : MainFileCatalog)
 	{
-		if(i.name == name) return true;
+		if (i.name == name) return true;
 	}
 	return false;
 }
@@ -355,7 +358,7 @@ bool isFileOpen(std::string name, int PID)
 {
 	for (auto i : open_file_table)
 	{
-		if(MainFileCatalog[i].name == name && MainFileCatalog[i].PID != PID) return true;
+		if (MainFileCatalog[i].name == name && MainFileCatalog[i].PID != PID) return true;
 	}
 	return false;
 }
@@ -365,7 +368,7 @@ void ShowMemory()
 	int licz = 0;
 	for (auto i : DiskArray)
 	{
-		
+
 		std::cout << licz << " " << i << "\n";
 		licz++;
 	}
@@ -381,6 +384,6 @@ void showBitVector()
 	}
 	std::cout << "\n\n\n";
 
-	for(auto i:MainFileCatalog)
+	for (auto i : MainFileCatalog)
 		std::cout << i.name << "\n";
 }
