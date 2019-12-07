@@ -2,34 +2,20 @@
 #include "Includes.h"
 #include "PCB.h"
 
-
-class Prosessor
+static class Scheduler
 {
 public:
-	int registerA;
-	int registerB;
-	int registerC;
-	int registerD;
+	uint16_t caunter;
 
-	std::shared_ptr<PCB> RUNNING;
-
-	Prosessor();
-	~Prosessor();
+	Scheduler();
+	~Scheduler();
 	
-
-	int schedule();
-	int nexstProcess();
-
+	uint8_t schedule();
+	uint8_t nextProcess();
+	uint8_t addProcess(std::shared_ptr<PCB> process, std::vector<std::shared_ptr<PCB>> *queue);
 
 
 private:
 	std::vector<std::shared_ptr<PCB>> ready;
 	std::vector<std::shared_ptr<PCB>> waiting;
-
-
-
-
-
-
-
-}
+};
