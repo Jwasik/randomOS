@@ -85,12 +85,10 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ls$")))
 		{
 			std::string str;
-			for (auto & i : bit_vector)
+			for (auto & i : Containers::bit_vector)
 			{
 				print(i+48,12);
 			}
-			std::cout << std::endl;
-			showBitVector();
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^rm[ ]+[0-9a-zA-z]+$")))
 		{

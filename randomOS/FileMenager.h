@@ -28,14 +28,18 @@ struct File
 	//Semaphore s;
 };
 
+struct Containers
+{
+	static std::vector<File> MainFileCatalog; // Katlog g³owny
 
-static std::vector<File> MainFileCatalog; // Katlog g³owny
+	static std::array<int, DiskSize / BlockSize> bit_vector; // Mapa bitowa
 
-static std::array<int, DiskSize / BlockSize> bit_vector; // Mapa bitowa
+	static std::array<char, DiskSize> DiskArray; //Tablica reprezentujca dysk 
 
-static std::array<char, DiskSize> DiskArray; //Tablica reprezentujca dysk 
+	static std::vector<int> open_file_table; //Tablic otwartych plików
+};
 
-static std::vector<int> open_file_table; //Tablic otwartych plików
+
 
 
 class FileMenager
@@ -47,49 +51,49 @@ private:
 public:
 	FileMenager();
 
-	int createFile(std::string nazwa_pliku); //funkcja do tworzenia pliku o podanej nazwie w katalogu glownym
+	int8_t createFile(std::string nazwa_pliku); //funkcja do tworzenia pliku o podanej nazwie w katalogu glownym
 	// 64 istnieje plik o danej nazwie
 	// 65 brak miejsca na dysku
 
-	int deleteFile(std::string name); //funkcja usuwajaca plik o danej nazwie
+	int8_t deleteFile(std::string name); //funkcja usuwajaca plik o danej nazwie
 	// 66 brak pliku o podanej nazwie
 	// 70 plik jest otwarty nie mozna usunac
-	//   1 udalo sie usunac plik
+	//   0 udalo sie usunac plik
 
-	int openFile(std::string name, unsigned int PID); //funkcja do otwierania pliku
+	int8_t openFile(std::string name, unsigned int PID); //funkcja do otwierania pliku
 	// 67 plik jest juz otawrty przez inny proces
 	// 66 brak pliku o podanej nazwie
-	//  1 udalo sie otworzyc plik
+	//  0 udalo sie otworzyc plik
 
-	int closeFile(std::string name, unsigned int PID); //funkcja zamykajaca plik o danej nazwie
+	int8_t closeFile(std::string name, unsigned int PID); //funkcja zamykajaca plik o danej nazwie
 	// 68 plik nie jest otwarty
-	//   1 udalo sie zamknac plik
+	//   0 udalo sie zamknac plik
 
-	int writeToEndFile(uint16_t byte, unsigned int PID); //funkcja wpisuj¹ca 1 bajt do otwartego pliku
+	int8_t writeToEndFile(uint16_t byte, unsigned int PID); //funkcja wpisuj¹ca 1 bajt do otwartego pliku
 	// 65 brak miejsca na dysku
 	// 68 plik nie jest otwarty
-	//   1 udalo sie otworzyc plik
+	//   0 udalo sie otworzyc plik
 
-	int writeToFile(uint8_t byte, uint8_t pos, unsigned int PID); //funkcja wpisuj¹ca bajt do podanego pliku na podana pozycje
+	int8_t writeToFile(uint8_t byte, uint8_t pos, unsigned int PID); //funkcja wpisuj¹ca bajt do podanego pliku na podana pozycje
 	// 69 pos z poza zakresu pliku
 	// 68 plik nie jest otwarty
-	//   1 udalo sie otworzyc plik
+	//   0 udalo sie otworzyc plik
 
-	int rename(std::string nazwa, std::string new_name);  //funkcja zmianiajac nazwe podanego pliku na inna podana 
+	int8_t rename(std::string nazwa, std::string new_name);  //funkcja zmianiajac nazwe podanego pliku na inna podana 
 	// 66 brak pliku o podanej nazwie
-	//   1 udalo sie zmienic nazwe pliku
+	//   0 udalo sie zmienic nazwe pliku
 
-	int readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID); //odczytaj n bajtów z otwartego pliku(z danej pozycji) i wpisz do komórek pamiêci z podanym adresem pierwszej
+	int8_t readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID); //odczytaj n bajtów z otwartego pliku(z danej pozycji) i wpisz do komórek pamiêci z podanym adresem pierwszej
 	// 69 zakres z poza pliku
 	// 68 plik nie jst otwarty
-	//   1 udalo sie odczytac dane z pliku
+	//   0 udalo sie odczytac dane z pliku
 
 	std::vector<std::string> ls(); //zwraca wszystkie nazwy plikow jakie istnieja w folderze glownym
-	std::string cat(std::string name); //zwraca zawartosc calego pliku jako string
+	std::pair<int8_t, std::string> cat(std::string name); //zwraca zawartosc calego pliku jako string
 	void closeProcessFiles(unsigned int PID); //zamyka wszystkie pliki u¿ywane przez proces o podanym I
 
 	int FindFreeBlock(File* file); //szuka wolengo bloku jesli znajdzie zwraca jego adres logiczny, w przeciwnym wypadku zwraca -1
-	
+
 };
 
 bool isNameColision(std::string name); //sprawdza czy w katalogu nie ma juz pliku o podanej nazwie

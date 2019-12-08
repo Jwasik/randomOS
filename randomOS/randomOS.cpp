@@ -17,11 +17,7 @@ int main()
 	f.createFile("ja");
 	f.openFile("ja",1);
 	
-	for (int i = 0; i < 90; i++)
-	{
-		f.writeToEndFile(67,1);
-	}
-	f.writeToFile(70,70,1);
+
 
 	f.createFile("jak");
 	f.openFile("jak", 2);
@@ -29,14 +25,20 @@ int main()
 	{
 		f.writeToEndFile(70, 2);
 	}
+	for (int i = 0; i < 90; i++)
+	{
+		f.writeToEndFile(67, 1);
+	}
+	f.writeToFile(70, 70, 1);
 	for (int i = 0; i < 80; i++)
 	{
-		f.writeToEndFile(67, 2);
+		f.writeToEndFile(69, 2);
 	}
 	f.closeFile("ja",1);
 	//f.deleteFile("ja");
-	//std::string t = f.cat("ja");
-	//std::cout << t;
+	//std::pair< int8_t,std::string> t = f.cat("ja");
+	//std::cout << t.second;
+	ShowMemory();
 	//f.readFile(0,70,20,2);
 	*/
 
