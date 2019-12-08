@@ -245,7 +245,7 @@ std::string ProcessManager::getIndentation(const unsigned int& ammountOfIndentat
 {
 	if (ammountOfIndentation == 0) { return ""; }
 	std::string result{"\n"};
-	for (int i = 0; i < ammountOfIndentation; i++) {
+	for (unsigned int i = 0; i < ammountOfIndentation; i++) {
 		result += " |";
 	}
 	for (auto e : skipsIndentionBites) {
