@@ -2,7 +2,7 @@
 
 Scheduler::Scheduler()
 { 
-	caunter = 0;
+	counter = 0;
 }
 
 Scheduler::~Scheduler()
@@ -11,31 +11,40 @@ Scheduler::~Scheduler()
 
 uint8_t Scheduler::schedule()
 {
-	caunter++;
-	if()
-	return uint8_t();
+	counter++;
+	if (RUNNING.licznik == counter)
+	{
+		this->result = nextProcess();
+		if(this->result != 0)
+			return 
+		return 0;
+	}
+	return 0;
+	return 27;
 }
 
 uint8_t Scheduler::nextProcess()
 {
+	// missing 
 	if (RUNNING == NULL)
 		return  ; // where is dummy?
 
-	if (this->ready.size() == 0)
+	if (this->active.size() == 0)
 	{
-		if (this->waiting.size())
+		if (this->expired.size() == 0)
 		{
 			RUNNING = //dodaje dummy;
 				return 0;
 		}
 
-		this->ready = this->waiting;
-		this->waiting.clear();
+		this->active = this->expired;
+		this->expired.clear();
 	}
 
-	this->addProcess(RUNNING, &this->waiting);
-	RUNNING = this->ready[0];
-	this->ready.erase(this->ready.begin());
+	this->addProcess(RUNNING, &this->expired);
+	RUNNING = this->active[0];
+	this->normalProcessPriorityChange(RUNNING);
+	this->active.erase(this->active.begin());
 	return 0;
 
 	return 27; // b³¹d: WTF?
@@ -50,7 +59,7 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::vector<std::sha
 
 	for (int i = 0; i < queue->size(); i++)
 	{
-		if (waiting[i].priority > process.priority)
+		if (expired[i].priority > process.priority)
 		{
 			queue->insert(queue->begin() + i, process);
 			return 0;
@@ -62,4 +71,22 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::vector<std::sha
 		return 0;
 	}
 	return 27; // b³¹d: WTF?
+}
+
+uint8_t Scheduler::normalProcessPriorityChange(std::shared_ptr<PCB> process)
+{
+	int waitingTime = this->counter - process->getTimeSpentWaiting();
+	int bonus = 0.01 * waitingTime;
+	process->priority = process->basePriority + 5 - bonus;
+	if (process->priority > 139)
+	{
+		process->priority = 139;
+	}
+	
+	if (process->priority < 100)
+	{
+		process->priority = 100;
+	}
+	return 0;
+	return 27;
 }
