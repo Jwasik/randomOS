@@ -278,7 +278,7 @@ std::pair<int8_t, std::string> FileMenager::cat(std::string name)
 			{
 				if (req < 32)
 				{
-					physical = i.i_node[1] * BlockSize + (req % BlockSize);
+					physical = i.i_node[0] * BlockSize + (req % BlockSize);
 					result.second.push_back(Containers::DiskArray[physical]);
 				}
 				else if (req < 64)
