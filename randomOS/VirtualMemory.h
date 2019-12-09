@@ -10,7 +10,7 @@
 #include <map>
 #include <list>
 
-class VirtualMemory {
+class VirtualMemory  {
 
 private:
 
@@ -67,6 +67,8 @@ public:
     void printQueue();
 
     void test();
+
+	friend class Memory;
 };
 
 #endif //RANDOMOS_VIRTUALMEMORY_H

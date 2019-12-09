@@ -54,7 +54,8 @@ int VirtualMemory::getVictimFrameNumber() {
 }
 
 VirtualMemory::Page VirtualMemory::getPage(int pid, int pageNumber) {
-    return swapFile.find(pid)->second[pageNumber];
+    std::cout << swapFile[pid].size() << "\n";
+	return swapFile.find(pid)->second[pageNumber];
 }
 
 void VirtualMemory::printSwapFile() {

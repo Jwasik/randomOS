@@ -1,7 +1,7 @@
 ﻿
 #include "Includes.h"
 #include "FileMenager.h"
-#include "Memory.h"
+#include "MemoryManager.h"
 #include "ProcessManager.h"
 #include "Interpreter.h"
 #include "Shell.h"
@@ -10,6 +10,9 @@
 int main()
 {
 	Shell shell;
+	Memory m;
+	m.test();
+
 	shell.run();
 	////TEST MENADERA PLIKOW
 	/*
