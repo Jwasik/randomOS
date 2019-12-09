@@ -101,6 +101,17 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 	return ERROR_FILE_IS_NOT_OPENED;
 }
 
+int8_t FileMenager::append(std::string name, uint16_t byte)
+{
+	int8_t ret;
+	ret = openFile(name,0);
+	if(ret != 0) return ret;
+	ret = writeToEndFile(byte,0);
+	if (ret != 0) return ret;
+	ret = closeFile(name,0);
+	return ret;
+}
+
 int8_t FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
 {
 	int phycial = 0;
