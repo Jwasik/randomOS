@@ -1,6 +1,6 @@
 #include "Interpreter.h"
 /*
-Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileSystem> fileSystem, std::shared_ptr<ProcessManager> processManager) {
+Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> fileSystem, std::shared_ptr<ProcessManager> processManager) {
 
 	this->scheduler = scheduler;
 	this->memory = memory;
@@ -122,6 +122,18 @@ int Interpreter::interpret() {
 		WFI();
 		break;
 	case 0x14:
+		instructionString += "PFI";
+		PFI();
+		break;
+	case 0x15:
+		instructionString += "RFI";
+		RFI();
+		break;
+	case 0x16:
+		instructionString += "AFI";
+		AFI();
+		break;
+	case 0x17:
 		instructionString += "CPR";
 		CPR();
 		break;
@@ -306,12 +318,27 @@ void Interpreter::SFI() {
 
 void Interpreter::EFI() {
 	int8_t &a = loadArgAdrOrReg();
-	fileSystem->writeToFileByte(a, PID);
+	fileSystem->writeToEndFile(a, PID);
 }
 
 void Interpreter::WFI() {
 	int8_t& a = loadArgAdrOrReg();
-	fileSystem->writeToFileByte(a, PID);
+	int8_t b = loadArgNum();
+	fileSystem->writeToFile(a, b, PID);
+}
+
+void Interpreter::PFI() {
+	int8_t& a = loadArgAdrOrReg();
+	int8_t& b = loadArgAdrOrReg();
+	fileSystem->writeToFile(a, b, PID);
+}
+
+void Interpreter::RFI() {
+
+}
+
+void Interpreter::AFI() {
+
 }
 
 void Interpreter::CPR() {
@@ -402,7 +429,10 @@ std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
 	if (code == "SFI") machine.push_back(0x11);
 	if (code == "EFI") machine.push_back(0x12);
 	if (code == "WFI") machine.push_back(0x13);
-	if (code == "CPR") machine.push_back(0x14);
+	if (code == "PFI") machine.push_back(0x14);
+	if (code == "RFI") machine.push_back(0x15);
+	if (code == "AFI") machine.push_back(0x16);
+	if (code == "CPR") machine.push_back(0x17);
 	if (code == "NOP") machine.push_back(0xFF);
 
 	if (arg.size() > 0) {
