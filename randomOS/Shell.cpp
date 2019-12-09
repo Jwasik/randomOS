@@ -1,18 +1,34 @@
 ﻿#include "Shell.h"
 
-
+//nie pytać
+#define c	32.7
+#define cis	34.6
+#define d	36.7
+#define dis	38.9
+#define e	41.2
+#define f	43.7
+#define fis	46.2
+#define g	49
+#define gis	51.9
+#define a	55.0
+#define ais	58.3
+#define h	61.7
 
 Shell::Shell() :defaultColor(10)
 {
-	srand(time(NULL));
 	system("color 0A");
+	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	for (unsigned int i = 0; i < 5; i++)
+	//this->printLine("	           !#########       #\n	        !########!          ##!\n	     !########!               ###\n	  !##########                  ####\n	######### #####                ######\n	 !###!      !####!              ######\n	   !           #####            ######!\n	                 !####!         #######\n	                  #####       #######\n	                    !####!   #######!\n	                     ####!########\n         ##                   ##########\n       ,######!          !#############\n     ,#### ########################!####!\n   ,####'     ##################!'    #####\n ,####'            #######              !####!\n####'                                      #####\n~##                                          ##~\n", 206);
+	srand(time(NULL));
+
+
+	/*for (unsigned int i = 0; i < 5; i++)
 	{
 		this->osName += (rand() % 26) + 97;
 	}
 	this->osName += "OS";
-	this->printLine(this->osName, 11);
+	this->printLine(this->osName, 11);*/
 }
 
 
@@ -22,10 +38,28 @@ Shell::~Shell()
 
 void Shell::run()
 {
-	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	system("color 0C");
+	while (1)
+	{
+		std::string str;
+		std::cout << "TYPE START TO START SYSTEM" << std::endl;
+		std::cin >> str;
+		if (str == "START" || str == "start")break;
+		std::cin.ignore();
+	}
+	system("cls");
+
+	system("color CE");
+	std::thread v1(voice1);
+
+	this->printLine("\n\n\t	           !#########       #\n\t	        !########!          ##!\n\t	     !########!               ###\n\t	  !##########                  ####\n\t	######### #####                ######\n\t	 !###!      !####!              ######\n\t	   !           #####            ######!\n\t	                 !####!         #######\n\t	                  #####       #######\n\t	                    !####!   #######!\n\t	                     ####!########\n\t         ##                   ##########\n\t       ,######!          !#############\n\t     ,#### ########################!####!\n\t   ,####'     ##################!'    #####\n\t ,####'            #######              !####!\n\t####'                                      #####\n\t~##                                          ##~\n\t", 206);
+	Sleep(3000);
+
+	system("color 0A");
+	system("cls");
 
 	std::string command = "";
-	FileMenager f;
+	FileMenager fmanager;
 
 	while (1)
 	{
@@ -85,29 +119,29 @@ void Shell::run()
 			std::string str;
 			for (auto & i : Containers::bit_vector)
 			{
-				if (i == 0)this->print(char(178),14);
-				else if (i == 1)this->print(char(176),14);
+				if (i == 0)this->print(char(178), 14);
+				else if (i == 1)this->print(char(176), 14);
 			}
 			std::cout << std::endl;
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^rm[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 3);
-			uint8_t code = f.deleteFile(command);
+			uint8_t code = fmanager.deleteFile(command);
 			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^touch[ ]+[0-9a-zA-z]+$")))
 		{
-			command.erase(0,6);
-			uint8_t code = f.createFile(command);
+			command.erase(0, 6);
+			uint8_t code = fmanager.createFile(command);
 			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^cat[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 4);
-			std::pair<uint8_t, std::string> code = f.cat(command);
+			std::pair<uint8_t, std::string> code = fmanager.cat(command);
 			this->printCode(code.first);
-			if (code.first == 0)this->printLine(code.second,14);
+			if (code.first == 0)this->printLine(code.second, 14);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^wc[ ]+[0-9a-zA-z]+$")))
 		{
@@ -121,9 +155,21 @@ void Shell::run()
 		{
 
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^append[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-z]+$")))
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^append[ ][0-9a-zA-z]+[ ][0-9a-zA-z]+$")))
 		{
+			command.erase(0, 7);
+			std::string filename = "";
+			std::string argument = "";
+			unsigned int spacePosition = 0;
+			for (unsigned int i = 0; i < command.length(); i++)
+			{
+				if (command[i] == ' ')spacePosition = i;
+			}
+			filename = command.erase(0, spacePosition - 1);
+			command.erase(0, 1);
+			argument = command;
 
+			//fmanager.writeToEndFile();
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^clear[ ]+[0-9a-zA-z]+$")))
 		{
@@ -150,6 +196,7 @@ void Shell::run()
 			printLine("UNRECOGNISED COMMAND \"" + command + "\"\nTYPE \"MAN\" TO GET COMMAND LIST", 12);
 		}
 	}
+	v1.join();
 }
 
 void Shell::printLine(std::string text, unsigned int color = 10)
@@ -197,38 +244,205 @@ void Shell::toLower(std::string &str)
 void Shell::printCode(uint8_t code)
 {
 	SetConsoleTextAttribute(hConsole, 14);
-	
+
 	switch (code)
 	{
-		case 0:
-			std::cout << "CODE 0 : ERROR_NO_ERROR" << std::endl;
-			break;
-		case 64:
-			std::cout << "CODE 64 : ERROR_ALREADY_EXISTING_FILE" << std::endl;
-			break;
-		case 65:
-			std::cout << "CODE 65 : ERROR_NO_SPACE_ON_DISK" << std::endl;
-			break;
-		case 66:
-			std::cout << "CODE 66 : ERROR_NO_FILE_WITH_THAT_NAME" << std::endl;
-			break;
-		case 67:
-			std::cout << "CODE 67 : ERROR_FILE_OPENED_BY_OTHER_PROCESS" << std::endl;
-			break;
-		case 68:
-			std::cout << "CODE 68 : ERROR_FILE_IS_NOT_OPENED" << std::endl;
-			break;
-		case 69:
-			std::cout << "CODE 69 : ERROR_UOT_OF_FILE_RANGE" << std::endl;
-			break;
-		case 70:
-			std::cout << "CODE 70 : ERROR_FILE_IS_OPENED_CANNOT_DELETE" << std::endl;
-			break;
-		default:
-			std::cout << "CODE "<<int(code)<<": ERROR_UNRECOGNIZED_ERROR" << std::endl;
+	case 0:
+		std::cout << "CODE 0 : ERROR_NO_ERROR" << std::endl;
+		break;
+	case 64:
+		std::cout << "CODE 64 : ERROR_ALREADY_EXISTING_FILE" << std::endl;
+		break;
+	case 65:
+		std::cout << "CODE 65 : ERROR_NO_SPACE_ON_DISK" << std::endl;
+		break;
+	case 66:
+		std::cout << "CODE 66 : ERROR_NO_FILE_WITH_THAT_NAME" << std::endl;
+		break;
+	case 67:
+		std::cout << "CODE 67 : ERROR_FILE_OPENED_BY_OTHER_PROCESS" << std::endl;
+		break;
+	case 68:
+		std::cout << "CODE 68 : ERROR_FILE_IS_NOT_OPENED" << std::endl;
+		break;
+	case 69:
+		std::cout << "CODE 69 : ERROR_UOT_OF_FILE_RANGE" << std::endl;
+		break;
+	case 70:
+		std::cout << "CODE 70 : ERROR_FILE_IS_OPENED_CANNOT_DELETE" << std::endl;
+		break;
+	default:
+		std::cout << "CODE " << int(code) << ": ERROR_UNRECOGNIZED_ERROR" << std::endl;
 		break;
 	}
 
 
 	SetConsoleTextAttribute(hConsole, this->defaultColor);
+}
+
+
+void voice1()
+{
+	int tempo = 80;
+	float quarter = 60000.0 / tempo;
+
+	int zwrotka = 1;
+
+	//1
+	Beep(g * 8, quarter * 3);
+	Beep(0, quarter / 2);
+	Beep(g * 8, quarter / 2);
+	while (1)
+	{
+		//2
+		Beep(c * 16, quarter);
+		Beep(g * 8, quarter*0.75);
+		Beep(a * 8, quarter / 4);
+		Beep(h * 8, quarter);
+		Beep(e * 8, quarter / 2);
+		Beep(e * 8, quarter / 2);
+		//3
+		Beep(a * 8, quarter);
+		Beep(g * 8, quarter*0.75);
+		Beep(f * 8, quarter / 4);
+		Beep(g * 8, quarter);
+		Beep(c * 8, quarter / 2);
+		Beep(c * 8, quarter / 2);
+		//4
+		Beep(d * 8, quarter);
+		Beep(d * 8, quarter*0.75);
+		Beep(e * 8, quarter / 4);
+		Beep(f * 8, quarter);
+		Beep(f * 8, quarter*0.75);
+		Beep(g * 8, quarter / 4);
+		//5
+		Beep(a * 8, quarter);
+		Beep(h * 8, quarter / 2);
+		Beep(c * 16, quarter / 2);
+		Beep(d * 16, quarter*1.5);
+		Beep(g * 8, quarter / 2);
+		//6
+		Beep(e * 16, quarter);
+		Beep(d * 16, quarter*0.75);
+		Beep(c * 16, quarter / 4);
+		Beep(d * 16, quarter);
+		Beep(h * 8, quarter / 2);
+		Beep(g * 8, quarter / 2);
+		//7
+		Beep(c * 16, quarter);
+		Beep(h * 8, quarter*0.75);
+		Beep(a * 8, quarter / 4);
+		Beep(h * 8, quarter);
+		Beep(e * 8, quarter / 2);
+		Beep(e * 8, quarter / 2);
+		//8
+		Beep(a * 8, quarter);
+		Beep(g * 8, quarter*0.75);
+		Beep(f * 8, quarter / 4);
+		Beep(g * 8, quarter);
+		Beep(c * 8, quarter*0.75);
+		Beep(c * 8, quarter / 4);
+		//9
+		Beep(c * 16, quarter);
+		Beep(h * 8, quarter*0.75);
+		Beep(a * 8, quarter / 4);
+		Beep(g * 8, quarter / 2);
+		Beep(h * 8, quarter / 2);
+		Beep(c * 16, quarter / 2);
+		Beep(d * 16, quarter / 2);
+		//10
+		Beep(e * 16, quarter * 2);
+		Beep(d * 16, quarter / 2);
+		Beep(c * 16, quarter / 2);
+		Beep(h * 8, quarter / 2);
+		Beep(c * 16, quarter / 2);
+		//11
+		Beep(d * 16, quarter*1.5);
+		Beep(g * 8, quarter / 2);
+		Beep(g * 8, quarter / 2);
+		Beep(h * 8, quarter / 2);
+		Beep(c * 16, quarter / 2);
+		Beep(d * 16, quarter / 2);
+		//12
+		Beep(c * 16, quarter * 2);
+		Beep(h * 8, quarter / 2);
+		Beep(a * 8, quarter / 2);
+		Beep(g * 8, quarter / 2);
+		Beep(a * 8, quarter / 2);
+		//13
+		Beep(h * 8, quarter *1.5);
+		Beep(e * 8, quarter / 2);
+		Beep(e * 8, quarter / 2);
+		Beep(g * 8, quarter / 2);
+		Beep(a * 8, quarter / 2);
+		Beep(h * 8, quarter / 2);
+		//14
+		Beep(c * 16, quarter);
+		Beep(a * 8, quarter*0.75);
+		Beep(h * 8, quarter / 4);
+		Beep(c * 16, quarter);
+		Beep(a * 8, quarter*0.75);
+		Beep(h * 8, quarter / 4);
+		//15
+		Beep(c * 16, quarter);
+		Beep(a * 8, quarter / 2);
+		Beep(c * 16, quarter / 2);
+		Beep(f * 16, quarter*1.5);
+		Beep(0, quarter*1.5 / 2);
+		//16
+		Beep(f * 16, quarter * 2);
+		Beep(e * 16, quarter / 2);
+		Beep(d * 16, quarter / 2);
+		Beep(c * 16, quarter / 2);
+		Beep(d * 16, quarter / 2);
+		//17
+		Beep(e * 16, quarter *1.5);
+		Beep(c * 16, quarter / 2);
+		Beep(c * 16, quarter * 2);
+		//18
+		Beep(d * 16, quarter * 2);
+		Beep(c * 16, quarter / 2);
+		Beep(h * 8, quarter / 2);
+		Beep(a * 8, quarter / 2);
+		Beep(h * 8, quarter / 2);
+		//19
+		Beep(c * 16, quarter *1.5);
+		Beep(a * 8, quarter / 2);
+		Beep(a * 8, quarter * 2);
+		if (zwrotka < 2)
+		{
+			//20 1st volta
+			Beep(c * 16, quarter);
+			Beep(h * 8, quarter*0.75);
+			Beep(a * 8, quarter / 4);
+			Beep(g * 8, quarter);
+			Beep(c * 8, quarter*1.5);
+			Beep(c * 8, quarter / 4);
+			//21
+			Beep(c * 16, quarter);
+			Beep(h * 8, quarter*0.75);
+			Beep(a * 8, quarter / 4);
+			Beep(g * 8, quarter);
+			Beep(g * 8, quarter / 2);
+			Beep(g * 8, quarter / 2);
+			zwrotka++;
+		}
+		else
+		{
+			//20 2nd volta
+			Beep(c * 16, quarter);
+			Beep(h * 8, quarter*0.75);
+			Beep(a * 8, quarter / 4);
+			Beep(g * 8, quarter);
+			Beep(c * 8, quarter*1.5);
+			Beep(c * 8, quarter / 4);
+			//21
+			Beep(g * 8, quarter * 2);
+			Beep(a * 8, quarter);
+			Beep(h * 8, quarter);
+			Beep(c * 16, quarter*2.5);
+			break;
+		}
+
+	}
 }
