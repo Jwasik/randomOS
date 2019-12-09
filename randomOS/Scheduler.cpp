@@ -9,16 +9,24 @@ Scheduler::~Scheduler()
 {
 }
 
-uint8_t Scheduler::schedule()
+uint8_t Scheduler::schedule() //
 {
 	counter++;
-	if (RUNNING.licznik == counter)
+	if (counter > 1000000)
+	{
+		counter = 0;
+	}
+
+	if (RUNNING.counter == counter || RUNNING = nullptr)
 	{
 		this->result = nextProcess();
-		if(this->result != 0)
-			return 
+		if (this->result != 0)
+			return result;
+		
+
 		return 0;
 	}
+
 	return 0;
 	return 27;
 }
@@ -26,8 +34,11 @@ uint8_t Scheduler::schedule()
 uint8_t Scheduler::nextProcess()
 {
 	// missing 
-	if (RUNNING == NULL)
-		return  ; // where is dummy?
+
+	if (RUNNING != nullptr)
+	{
+		this->addProcess(RUNNING, &this->expired);
+	}
 
 	if (this->active.size() == 0)
 	{
@@ -41,12 +52,14 @@ uint8_t Scheduler::nextProcess()
 		this->expired.clear();
 	}
 
-	this->addProcess(RUNNING, &this->expired);
 	RUNNING = this->active[0];
-	this->normalProcessPriorityChange(RUNNING);
 	this->active.erase(this->active.begin());
-	return 0;
 
+	this->result = normalProcessPriorityAndTimerChange(RUNNING);
+	if (this->result != 0)
+		return result;
+
+	return 0;
 	return 27; // b³¹d: WTF?
 }
 
@@ -73,20 +86,35 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::vector<std::sha
 	return 27; // b³¹d: WTF?
 }
 
-uint8_t Scheduler::normalProcessPriorityChange(std::shared_ptr<PCB> process)
+uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process)
 {
 	int waitingTime = this->counter - process->getTimeSpentWaiting();
+	if (waitingTime < 0)
+	{
+		waitingTime = waitingTime + 1000000;
+	}
 	int bonus = 0.01 * waitingTime;
+	int previousPriority = process.priority;
+
 	process->priority = process->basePriority + 5 - bonus;
+
 	if (process->priority > 139)
 	{
 		process->priority = 139;
 	}
-	
 	if (process->priority < 100)
 	{
 		process->priority = 100;
 	}
+
+	//liczenie przyda³u czasu jeszcze zrobiæ 
+	if (previousPriority > 120)
+	{
+		
+	}
+
 	return 0;
 	return 27;
 }
+
+
