@@ -37,7 +37,7 @@ public:
 	*      PRINTING TO CONSOLE      *
 	********************************/
 	std::string displayTree();
-
+	std::string displayWithState(PCB::ProcessState state);
 
 	/********************************
 	*            GETTERS            *

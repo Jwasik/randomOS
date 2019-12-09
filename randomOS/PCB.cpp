@@ -44,6 +44,12 @@ bool PCB::getIsTerminated()
 	return false;
 }
 
+bool PCB::getHasState(ProcessState state)
+{
+	if (this->state == state) { return true; }
+	return false;
+}
+
 unsigned int PCB::getPID() { return this->PID; }
 
 bool PCB::getHasPID(const unsigned int & PIDtoCompare)
@@ -122,6 +128,7 @@ unsigned int PCB::getLastChildPID()
 	{
 		return children[children.size()-1]->PID;
 	}
+	//Panie, tutaj dodaj jakiegoœ returna domyœlnego
 }
 
 bool PCB::getIsLastChild()
@@ -185,11 +192,6 @@ bool PCB::setStateRunning() { this->state = ProcessState::RUNNING; return true;}
 bool PCB::setStateWaiting() { this->state = ProcessState::WAITING; return true;}
 bool PCB::setStateTerminated() { this->state = ProcessState::TERMINATED; return true;}
 
-bool PCB::setPID(const unsigned int& PIDtoSet)
-{
-	this->PID = PIDtoSet;
-	return true;
-}
 
 bool PCB::setName(const std::string& nameToSet)
 {
@@ -238,7 +240,7 @@ bool PCB::addChildren(const std::vector<std::shared_ptr<PCB>>& chlidren)
 
 bool PCB::removeChild(const std::shared_ptr<PCB>& child)
 {
-	for (int i=0;i<children.size();i++)
+	for (unsigned int i=0;i<children.size();i++)
 	{
 		if (child->getPID() == children[i]->getPID())
 		{
@@ -280,7 +282,7 @@ bool PCB::setRegisters(const std::vector<unsigned int>& registers)
 {
 	if (registers.size() > registers.size()) { return false; }
 
-	for (int i = 0; i < registers.size();i++) {
+	for (unsigned int i = 0; i < registers.size();i++) {
 		this->registers[i] = registers[i];
 	}
 	return true;
@@ -290,7 +292,7 @@ bool PCB::setRegisters(const std::array<int, 4>& registers)
 {
 	if (registers.size() > registers.size()) { return false; }
 
-	for (int i = 0; i < registers.size(); i++) {
+	for (unsigned int i = 0; i < registers.size(); i++) {
 		this->registers[i] = registers[i];
 	}
 	return true;
@@ -331,7 +333,7 @@ bool PCB::setRegisterD(const unsigned int& D)
 
 bool PCB::resetRegisters()
 {
-	for (int i = 0; i < registers.size();i++) {
+	for (unsigned int i = 0; i < registers.size();i++) {
 		registers[i] = 0;
 	}
 	return true;
