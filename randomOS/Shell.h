@@ -18,6 +18,7 @@ private:
 	void changeConsoleColor(unsigned int);
 	void restoreDefaultColor();
 	void toLower(std::string&);
+	void printCode(uint8_t);
 
 	std::string osName;
 

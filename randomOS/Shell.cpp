@@ -26,8 +26,6 @@ void Shell::run()
 
 	std::string command = "";
 	FileMenager f;
-	f.createFile("c");
-	f.openFile("c", 5);
 
 	while (1)
 	{
@@ -87,20 +85,29 @@ void Shell::run()
 			std::string str;
 			for (auto & i : Containers::bit_vector)
 			{
-				print(i+48,12);
+				if (i == 0)this->print(char(178),14);
+				else if (i == 1)this->print(char(176),14);
 			}
+			std::cout << std::endl;
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^rm[ ]+[0-9a-zA-z]+$")))
 		{
-
+			command.erase(0, 3);
+			uint8_t code = f.deleteFile(command);
+			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^touch[ ]+[0-9a-zA-z]+$")))
 		{
-			f.createFile("d");
+			command.erase(0,6);
+			uint8_t code = f.createFile(command);
+			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^cat[ ]+[0-9a-zA-z]+$")))
 		{
-
+			command.erase(0, 4);
+			std::pair<uint8_t, std::string> code = f.cat(command);
+			this->printCode(code.first);
+			if (code.first == 0)this->printLine(code.second,14);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^wc[ ]+[0-9a-zA-z]+$")))
 		{
@@ -185,4 +192,43 @@ void Shell::toLower(std::string &str)
 			letter += 32;
 		}
 	}
+}
+
+void Shell::printCode(uint8_t code)
+{
+	SetConsoleTextAttribute(hConsole, 14);
+	
+	switch (code)
+	{
+		case 0:
+			std::cout << "CODE 0 : ERROR_NO_ERROR" << std::endl;
+			break;
+		case 64:
+			std::cout << "CODE 64 : ERROR_ALREADY_EXISTING_FILE" << std::endl;
+			break;
+		case 65:
+			std::cout << "CODE 65 : ERROR_NO_SPACE_ON_DISK" << std::endl;
+			break;
+		case 66:
+			std::cout << "CODE 66 : ERROR_NO_FILE_WITH_THAT_NAME" << std::endl;
+			break;
+		case 67:
+			std::cout << "CODE 67 : ERROR_FILE_OPENED_BY_OTHER_PROCESS" << std::endl;
+			break;
+		case 68:
+			std::cout << "CODE 68 : ERROR_FILE_IS_NOT_OPENED" << std::endl;
+			break;
+		case 69:
+			std::cout << "CODE 69 : ERROR_UOT_OF_FILE_RANGE" << std::endl;
+			break;
+		case 70:
+			std::cout << "CODE 70 : ERROR_FILE_IS_OPENED_CANNOT_DELETE" << std::endl;
+			break;
+		default:
+			std::cout << "CODE "<<int(code)<<": ERROR_UNRECOGNIZED_ERROR" << std::endl;
+		break;
+	}
+
+
+	SetConsoleTextAttribute(hConsole, this->defaultColor);
 }

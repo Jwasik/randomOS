@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "MemoryManager.h"
 
-
+/*
 VirtualMemory *vm = new VirtualMemory();
 
 VirtualMemory  Memory::getVM()
@@ -25,7 +24,7 @@ VirtualMemory  Memory::getVM()
 
 		}
 	}
-}*/
+}
 
 Memory::Memory()
 {
@@ -131,3 +130,4 @@ void Memory::test()
 }
 
 
+*/

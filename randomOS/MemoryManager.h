@@ -1,7 +1,8 @@
 ﻿
 #pragma once
 #include "Includes.h"
-#include "VirtualMemory.h"
+//#include "VirtualMemory.h
+/*
 class Memory
 {
 	struct Frame
@@ -28,4 +29,4 @@ public:
 	static VirtualMemory getVM();
 	void test();
 	
-};
+};*/

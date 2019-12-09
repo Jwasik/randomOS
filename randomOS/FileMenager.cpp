@@ -189,6 +189,7 @@ int8_t FileMenager::deleteFile(std::string name)
 				{
 					clearBlock(k);
 				}
+				return 0;
 			}
 			else
 			{
