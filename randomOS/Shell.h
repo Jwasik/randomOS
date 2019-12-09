@@ -2,7 +2,10 @@
 #include "Includes.h"
 #include <conio.h>
 #include <stdio.h>
+#include <thread>
 #include "FileMenager.h"
+
+void voice1();
 
 class Shell
 {
@@ -19,6 +22,8 @@ private:
 	void restoreDefaultColor();
 	void toLower(std::string&);
 	void printCode(uint8_t);
+
+
 
 	std::string osName;
 
