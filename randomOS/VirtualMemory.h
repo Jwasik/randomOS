@@ -16,11 +16,11 @@ private:
 
     // structure of a single process page
     struct Page {
-        uint8_t data[16]{0}; // page data, initialized with zeroes
+        int8_t data[16]{0}; // page data, initialized with zeroes
 
         Page();
 
-        explicit Page(uint8_t data[]);
+        explicit Page(const int8_t data[]);
 
         void print() const;
     };
@@ -65,6 +65,8 @@ public:
     void printSwapFile();
 
     void printQueue();
+
+    void test();
 };
 
 #endif //RANDOMOS_VIRTUALMEMORY_H
