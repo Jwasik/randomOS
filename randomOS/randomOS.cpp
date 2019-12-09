@@ -8,6 +8,9 @@
 
 int main()
 {
+	FileMenager f;
+	f.createFile("plik");
+	f.deleteFile("plik");
 	////TEST MENADERA PLIKOW
 	/*
 	FileMenager f;

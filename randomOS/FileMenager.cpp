@@ -181,16 +181,18 @@ int FileMenager::deleteFile(std::string name)
 		{
 			if(Containers::MainFileCatalog[i].isOpen == true) return ERROR_FILE_IS_OPENED_CANT_DELETE;
 			int req = Containers::MainFileCatalog[i].size / BlockSize;
-			int physical = Containers::MainFileCatalog[i].i_node[2] * BlockSize;
+			
 			if (Containers::MainFileCatalog[i].i_node.size() < 3)
 			{
 				for (auto k : Containers::MainFileCatalog[i].i_node)
 				{
 					clearBlock(k);
 				}
+				return 0;
 			}
 			else
 			{
+				int physical = Containers::MainFileCatalog[i].i_node[2] * BlockSize;
 				for (int k=0;k<2;k++)
 				{
 					clearBlock(Containers::MainFileCatalog[i].i_node[k]);
@@ -205,6 +207,7 @@ int FileMenager::deleteFile(std::string name)
 
 			Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
 		}
+		return ERROR_NO_FILE_WITH_THAT_NAME;
 	}
 	return 1;
 }
