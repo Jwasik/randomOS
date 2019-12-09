@@ -93,6 +93,8 @@ public:
 	// 68 plik nie jst otwarty
 	//   0 udalo sie odczytac dane z pliku
 
+	int8_t clearFile(std::string name);
+
 	std::vector<std::string> ls(); //zwraca wszystkie nazwy plikow jakie istnieja w folderze glownym
 	std::pair<int8_t, std::string> cat(std::string name); //zwraca zawartosc calego pliku jako string
 	void closeProcessFiles(unsigned int PID); //zamyka wszystkie pliki u¿ywane przez proces o podanym I

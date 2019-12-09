@@ -200,6 +200,7 @@ int8_t FileMenager::deleteFile(std::string name)
 				{
 					clearBlock(k);
 				}
+				Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
 				return 0;
 			}
 			else
@@ -215,6 +216,8 @@ int8_t FileMenager::deleteFile(std::string name)
 					physical++;
 				}
 				clearBlock(Containers::MainFileCatalog[i].i_node[2]);
+				Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin()+i);
+				return 0;
 			}
 
 			Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
@@ -305,6 +308,45 @@ std::vector<std::string> FileMenager::ls()
 	std::vector<std::string> result;
 	for(auto i:Containers::MainFileCatalog) result.push_back(i.name);
 	return result;
+}
+
+int8_t FileMenager::clearFile(std::string name)
+{
+	for (int i = 0; i < (int)Containers::MainFileCatalog.size(); i++)
+	{
+		if (Containers::MainFileCatalog[i].name == name)
+		{
+			if (Containers::MainFileCatalog[i].isOpen == true) return ERROR_FILE_IS_OPENED_CANT_DELETE;
+			int req = Containers::MainFileCatalog[i].size / BlockSize;
+
+			if (Containers::MainFileCatalog[i].i_node.size() < 3)
+			{
+				for (auto k : Containers::MainFileCatalog[i].i_node)
+				{
+					clearBlock(k);
+				}
+				return 0;
+			}
+			else
+			{
+				int physical = Containers::MainFileCatalog[i].i_node[2] * BlockSize;
+				for (int k = 0; k < 2; k++)
+				{
+					clearBlock(Containers::MainFileCatalog[i].i_node[k]);
+				}
+				for (int k = 0; k < req - 1; k++)
+				{
+					clearBlock(Containers::DiskArray[physical]);
+					physical++;
+				}
+				clearBlock(Containers::MainFileCatalog[i].i_node[2]);
+				return 0;
+			}
+
+		}
+		return ERROR_NO_FILE_WITH_THAT_NAME;
+	}
+	return 0;
 }
 
 void clearBlock(int log)
