@@ -312,41 +312,11 @@ std::vector<std::string> FileMenager::ls()
 
 int8_t FileMenager::clearFile(std::string name)
 {
-	for (int i = 0; i < (int)Containers::MainFileCatalog.size(); i++)
-	{
-		if (Containers::MainFileCatalog[i].name == name)
-		{
-			if (Containers::MainFileCatalog[i].isOpen == true) return ERROR_FILE_IS_OPENED_CANT_DELETE;
-			int req = Containers::MainFileCatalog[i].size / BlockSize;
-
-			if (Containers::MainFileCatalog[i].i_node.size() < 3)
-			{
-				for (auto k : Containers::MainFileCatalog[i].i_node)
-				{
-					clearBlock(k);
-				}
-				return 0;
-			}
-			else
-			{
-				int physical = Containers::MainFileCatalog[i].i_node[2] * BlockSize;
-				for (int k = 0; k < 2; k++)
-				{
-					clearBlock(Containers::MainFileCatalog[i].i_node[k]);
-				}
-				for (int k = 0; k < req - 1; k++)
-				{
-					clearBlock(Containers::DiskArray[physical]);
-					physical++;
-				}
-				clearBlock(Containers::MainFileCatalog[i].i_node[2]);
-				return 0;
-			}
-
-		}
-		return ERROR_NO_FILE_WITH_THAT_NAME;
-	}
-	return 0;
+	int8_t ret;
+	ret = deleteFile(name);
+	if(ret !=0) return ret;
+	ret = createFile(name);
+	return ret;
 }
 
 void clearBlock(int log)
