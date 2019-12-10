@@ -23,12 +23,12 @@ Shell::Shell() :defaultColor(10)
 	srand(time(NULL));
 
 
-	/*for (unsigned int i = 0; i < 5; i++)
+	for (unsigned int i = 0; i < 5; i++)
 	{
 		this->osName += (rand() % 26) + 97;
 	}
 	this->osName += "OS";
-	this->printLine(this->osName, 11);*/
+	this->printLine(this->osName, 11);
 }
 
 
@@ -38,6 +38,7 @@ Shell::~Shell()
 
 void Shell::run()
 {
+
 	system("color 0C");
 	while (1)
 	{
@@ -48,6 +49,8 @@ void Shell::run()
 		std::cin.ignore();
 	}
 	system("cls");
+
+	
 
 	system("color CE");
 	std::thread v1(voice1);
@@ -116,13 +119,27 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ls$")))
 		{
-			std::string str;
+			/*std::string str;
 			for (auto & i : Containers::bit_vector)
 			{
 				if (i == 0)this->print(char(178), 14);
 				else if (i == 1)this->print(char(176), 14);
 			}
-			std::cout << std::endl;
+			std::cout << std::endl;*/
+			auto files = fmanager.ls();
+
+			this->printLine(" DIRECTORY: \\HOME>\n",14);
+
+			this->printLine(" TYPE: FILENAME:             SIZE:",14);
+			for (const auto & filename : files)
+			{
+				this->print(" <TXT> ", 14);
+				this->print(char(175), 14);
+				this->print(" " + filename,14);
+
+				for (unsigned int i = filename.length(); i < 20; i++)std::cout << " ";
+				this->printLine(fmanager.wc(filename).second,14);
+			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^rm[ ]+[0-9a-zA-z]+$")))
 		{
@@ -145,15 +162,51 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^wc[ ]+[0-9a-zA-z]+$")))
 		{
+			command.erase(0, 3);
+			std::string filename = "";
 
+			while (1)
+			{
+				if (command[0] == ' ')command.erase(0, 1);
+				else break;
+			}
+
+			filename = command;
+
+			std::pair<uint8_t, unsigned int> code = fmanager.wc(filename);
+			if(code.first == 0)this->printLine(code.second, 14);
+			else this->printCode(code.first);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^mv[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-Z]+$")))
 		{
+			command.erase(0, 3);
+			std::string filename = "";
+			std::string argument = "";
 
-		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^delete[ ]+[0-9a-zA-z]+$")))
-		{
+			while (1)
+			{
+				if (command[0] == ' ')command.erase(0, 1);
+				else break;
+			}
+			filename = command;
+			for (auto it = filename.begin(); it != filename.end(); it++)
+			{
+				if (*it == ' ')
+				{
+					filename.erase(it, filename.end());
+					break;
+				}
+			}
+			command.erase(0, filename.length());
+			while (1)
+			{
+				if (command[0] == ' ')command.erase(0, 1);
+				else break;
+			}
+			argument = command;
 
+			uint8_t code = fmanager.rename(filename,argument);
+			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^append[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-z]+$")))
 		{
@@ -183,8 +236,6 @@ void Shell::run()
 			}
 			argument = command;
 
-			std::cout << "appending -" << argument << "- to -" << filename <<"-"<< std::endl;
-
 			for (auto & letter : argument)
 			{
 				uint8_t code = fmanager.append(filename, letter);
@@ -194,6 +245,7 @@ void Shell::run()
 					break;
 				}
 			}
+			this->printCode(0);
 			
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^clear[ ]+[0-9a-zA-z]+$")))
@@ -208,7 +260,8 @@ void Shell::run()
 			}
 			filename = command;
 
-			fmanager.clearFile(filename);
+			uint8_t code = fmanager.clearFile(filename);
+			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ][a-z0-9]+[ ][a-z0-9]+$")))
 		{
@@ -235,6 +288,13 @@ void Shell::run()
 }
 
 void Shell::printLine(std::string text, unsigned int color = 10)
+{
+	SetConsoleTextAttribute(hConsole, color);
+	std::cout << text << std::endl;
+	SetConsoleTextAttribute(hConsole, this->defaultColor);
+}
+
+void Shell::printLine(int text, unsigned int color)
 {
 	SetConsoleTextAttribute(hConsole, color);
 	std::cout << text << std::endl;
@@ -283,7 +343,7 @@ void Shell::printCode(uint8_t code)
 	switch (code)
 	{
 	case 0:
-		std::cout << "CODE 0 : ERROR_NO_ERROR" << std::endl;
+		std::cout << "DONE" << std::endl;
 		break;
 	case 64:
 		std::cout << "CODE 64 : ERROR_ALREADY_EXISTING_FILE" << std::endl;

@@ -249,7 +249,7 @@ int8_t FileMenager::closeFile(std::string name, unsigned int PID)
 
 int8_t FileMenager::rename(std::string nazwa, std::string new_name)
 {
-	for (auto i : Containers::MainFileCatalog)
+	for (auto & i : Containers::MainFileCatalog)
 	{
 		if (i.name == nazwa)
 		{
