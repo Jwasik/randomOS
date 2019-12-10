@@ -63,37 +63,39 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 
 int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 {	int phycial = 0;
+	
 	for (int i=0;i< Containers::open_file_table.size();i++)
 	{
+		File* t = &Containers::MainFileCatalog[Containers::open_file_table[i]];
 		int req = (Containers::MainFileCatalog[i].size/BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt
 		if (Containers::MainFileCatalog[i].PID == PID) //sprawdza czy plik jest owtarty przez podany proces
 		{
-				if (Containers::MainFileCatalog[i].size % BlockSize == 0 && Containers::MainFileCatalog[i].size !=0)
+				if (t->size % BlockSize == 0 && t->size !=0)
 				{
 					if(FindFreeBlock(&Containers::MainFileCatalog[i]) == -1) return ERROR_NO_SPACE_ON_DISK;
 				}
 				
 				if (req == 0)
 				{
-					phycial = (Containers::MainFileCatalog[i].i_node[req]*BlockSize) + (Containers::MainFileCatalog[i].size%BlockSize);
+					phycial = (t->i_node[req]*BlockSize) + (t->size%BlockSize);
 					Containers::DiskArray[phycial] = byte;
-					Containers::MainFileCatalog[i].size++;
+					t->size++;
 					return 0;
 				}
 				else if (req == 1)
 				{
-					phycial = (Containers::MainFileCatalog[i].i_node[req] * BlockSize) + (Containers::MainFileCatalog[i].size % BlockSize);
+					phycial = (t->i_node[req] * BlockSize) + (t->size % BlockSize);
 					Containers::DiskArray[phycial] = byte;
-					Containers::MainFileCatalog[i].size++;
+					t->size++;
 					return 0;
 				}
 				else if (req > 1)
 				{
-					phycial = Containers::MainFileCatalog[i].i_node[2] * BlockSize + (req - 2);
+					phycial = t->i_node[2] * BlockSize + (req - 2);
 					phycial = Containers::DiskArray[phycial];
-					phycial = (phycial * BlockSize) + (Containers::MainFileCatalog[i].size % BlockSize);
+					phycial = (phycial * BlockSize) + (t->size % BlockSize);
 					Containers::DiskArray[phycial] = byte;
-					Containers::MainFileCatalog[i].size++;
+					t->size++;
 					return 0;
 				}
 				
