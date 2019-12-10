@@ -20,7 +20,7 @@ Shell::Shell() :defaultColor(10)
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	//this->printLine("	           !#########       #\n	        !########!          ##!\n	     !########!               ###\n	  !##########                  ####\n	######### #####                ######\n	 !###!      !####!              ######\n	   !           #####            ######!\n	                 !####!         #######\n	                  #####       #######\n	                    !####!   #######!\n	                     ####!########\n         ##                   ##########\n       ,######!          !#############\n     ,#### ########################!####!\n   ,####'     ##################!'    #####\n ,####'            #######              !####!\n####'                                      #####\n~##                                          ##~\n", 206);
-	srand(time(NULL));
+	srand(time(time_t(NULL)));
 
 
 	for (unsigned int i = 0; i < 5; i++)
@@ -379,7 +379,7 @@ void Shell::printCode(uint8_t code)
 void voice1()
 {
 	int tempo = 80;
-	float quarter = 60000.0 / tempo;
+	double quarter = 60000.0 / tempo;
 
 	int zwrotka = 1;
 

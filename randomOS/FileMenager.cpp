@@ -67,12 +67,12 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 	for (int i=0;i< Containers::open_file_table.size();i++)
 	{
 		File* t = &Containers::MainFileCatalog[Containers::open_file_table[i]];
-		int req = (Containers::MainFileCatalog[i].size/BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt
-		if (Containers::MainFileCatalog[i].PID == PID) //sprawdza czy plik jest owtarty przez podany proces
+		int req = (t->size/BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt
+		if (t->PID == PID) //sprawdza czy plik jest owtarty przez podany proces
 		{
 				if (t->size % BlockSize == 0 && t->size !=0)
 				{
-					if(FindFreeBlock(&Containers::MainFileCatalog[i]) == -1) return ERROR_NO_SPACE_ON_DISK;
+					if(FindFreeBlock(t) == -1) return ERROR_NO_SPACE_ON_DISK;
 				}
 				
 				if (req == 0)
