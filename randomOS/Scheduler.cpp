@@ -104,7 +104,7 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 	}
 	if (process->priority < 100)
 	{
-		process->priority = 100;
+		process->priority = 100; //lol skjsvbjksvbjkskbjsv
 	}
 	if (previousPriority < 120)
 	{
