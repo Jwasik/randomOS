@@ -4,6 +4,7 @@ std::vector<File> Containers::Containers::MainFileCatalog;
 std::array<int, DiskSize / BlockSize> Containers::Containers::bit_vector;
 std::array<char, DiskSize> Containers::Containers::DiskArray;
 std::vector<int> Containers::Containers::open_file_table;
+std::array<std::string, DiskSize / BlockSize> Containers::BitVectorWithFiles;
 
 FileMenager::FileMenager()
 {
@@ -21,6 +22,7 @@ int8_t FileMenager::createFile(std::string nazwa_pliku)
 	{
 
 		File file;
+		file.name = nazwa_pliku;
 		if (FindFreeBlock(&file) == -1)
 		{
 			return ERROR_NO_SPACE_ON_DISK; //brak miejsca na dysku
@@ -61,8 +63,7 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 
 int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 {	int phycial = 0;
-	
-	for (auto i : Containers::open_file_table)
+	for (int i=0;i< Containers::open_file_table.size();i++)
 	{
 		int req = (Containers::MainFileCatalog[i].size/BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt
 		if (Containers::MainFileCatalog[i].PID == PID) //sprawdza czy plik jest owtarty przez podany proces
@@ -200,7 +201,8 @@ int8_t FileMenager::deleteFile(std::string name)
 				{
 					clearBlock(k);
 				}
-				Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
+				if (i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i - 1);
+				else Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin());
 				return 0;
 			}
 			else
@@ -216,11 +218,12 @@ int8_t FileMenager::deleteFile(std::string name)
 					physical++;
 				}
 				clearBlock(Containers::MainFileCatalog[i].i_node[2]);
-				Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin()+i);
+				if(i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i - 1);
+				else Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin());
+				
 				return 0;
 			}
 
-			Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
 		}
 		return ERROR_NO_FILE_WITH_THAT_NAME;
 	}
@@ -319,9 +322,27 @@ int8_t FileMenager::clearFile(std::string name)
 	return ret;
 }
 
+std::pair <int8_t, int> FileMenager::wc(std::string name)
+{
+	std::pair <int8_t, int> res;
+	for (int i = 0; i < (int)Containers::MainFileCatalog.size(); i++)
+	{
+		if (Containers::MainFileCatalog[i].name == name)
+		{
+			res.second = Containers::MainFileCatalog[i].size;
+			res.first = 0;
+			return res;
+		}
+	}
+	res.first = ERROR_NO_FILE_WITH_THAT_NAME;
+	return res;
+}
+
+
 void clearBlock(int log)
 {
 	Containers::bit_vector[log] = 1;
+	Containers::BitVectorWithFiles[log] = "";
 	int physical = log * BlockSize;
 	int pom;
 	for (int i = 0; i < 32; i++)
@@ -341,6 +362,7 @@ int FileMenager::FindFreeBlock(File* file)
 			{
 				file->i_node.push_back(i);
 				Containers::bit_vector[i] = 0;
+				Containers::BitVectorWithFiles[i] = file->name;
 				return 0;
 			}
 		}
@@ -353,6 +375,7 @@ int FileMenager::FindFreeBlock(File* file)
 			{
 				file->i_node.push_back(i);
 				Containers::bit_vector[i] = 0;
+				Containers::BitVectorWithFiles[i] = file->name;
 				FindFreeBlock(file);
 				return 2;
 			}
@@ -368,6 +391,7 @@ int FileMenager::FindFreeBlock(File* file)
 				pom = (file->i_node[2] * BlockSize) + pom;
 				Containers::DiskArray[pom] = i;
 				Containers::bit_vector[i] = 0;
+				Containers::BitVectorWithFiles[i] = file->name;
 				return 0;
 			}
 		}
@@ -413,7 +437,4 @@ void showBitVector()
 		licz++;
 	}
 	std::cout << "\n\n\n";
-
-	for(auto i:Containers::MainFileCatalog)
-		std::cout << i.name << "\n";
 }

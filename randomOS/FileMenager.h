@@ -37,6 +37,8 @@ struct Containers
 	static std::array<char, DiskSize> DiskArray; //Tablica reprezentujca dysk 
 
 	static std::vector<int> open_file_table; //Tablic otwartych plików
+
+	static std::array<std::string, DiskSize / BlockSize> BitVectorWithFiles;
 };
 
 
@@ -93,12 +95,18 @@ public:
 	// 68 plik nie jst otwarty
 	//   0 udalo sie odczytac dane z pliku
 
-	int8_t clearFile(std::string name);
+	int8_t clearFile(std::string name);//czyœci zawartoœæ pliku ale go nie usuwa
+	// 66 brak pliku o podanej nazwie
+	// 70 plik jest otwarty nie mozna usunac
+	//   0 udalo sie usunac plik
+
+	std::pair<int8_t,int> wc(std::string name);//zwraca liczbê znaków podanego pliku
+	// 66 brak pliku o podanej nazwie
+	//  0 uda³o siê uzyskac liczbe
 
 	std::vector<std::string> ls(); //zwraca wszystkie nazwy plikow jakie istnieja w folderze glownym
 	std::pair<int8_t, std::string> cat(std::string name); //zwraca zawartosc calego pliku jako string
 	void closeProcessFiles(unsigned int PID); //zamyka wszystkie pliki u¿ywane przez proces o podanym I
-
 	int FindFreeBlock(File* file); //szuka wolengo bloku jesli znajdzie zwraca jego adres logiczny, w przeciwnym wypadku zwraca -1
 
 };
