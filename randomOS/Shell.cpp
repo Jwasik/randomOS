@@ -155,21 +155,46 @@ void Shell::run()
 		{
 
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^append[ ][0-9a-zA-z]+[ ][0-9a-zA-z]+$")))
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^append[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 7);
 			std::string filename = "";
 			std::string argument = "";
-			unsigned int spacePosition = 0;
-			for (unsigned int i = 0; i < command.length(); i++)
+			
+			while (1)
 			{
-				if (command[i] == ' ')spacePosition = i;
+				if (command[0] == ' ')command.erase(0, 1);
+				else break;
 			}
-			filename = command.erase(0, spacePosition - 1);
-			command.erase(0, 1);
+			filename = command;
+			for (auto it = filename.begin(); it != filename.end(); it++)
+			{
+				if (*it == ' ')
+				{
+					filename.erase(it,filename.end());
+					break;
+				}
+			}
+			command.erase(0,filename.length());
+			while (1)
+			{
+				if (command[0] == ' ')command.erase(0, 1);
+				else break;
+			}
 			argument = command;
 
-			//fmanager.writeToEndFile();
+			std::cout << "appending -" << argument << "- to -" << filename <<"-"<< std::endl;
+
+			for (auto & letter : argument)
+			{
+				uint8_t code = fmanager.append(filename, letter);
+				if (code != 0)
+				{
+					this->printCode(code);
+					break;
+				}
+			}
+			
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^clear[ ]+[0-9a-zA-z]+$")))
 		{
