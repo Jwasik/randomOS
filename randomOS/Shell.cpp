@@ -198,7 +198,17 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^clear[ ]+[0-9a-zA-z]+$")))
 		{
-			std::cout << "clear" << std::endl;
+			command.erase(0, 6);
+			std::string filename = "";
+			
+			while (1)
+			{
+				if (command[0] == ' ')command.erase(0, 1);
+				else break;
+			}
+			filename = command;
+
+			fmanager.clearFile(filename);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ][a-z0-9]+[ ][a-z0-9]+$")))
 		{
