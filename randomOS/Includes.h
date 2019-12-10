@@ -9,3 +9,4 @@
 #include <stack>
 #include <algorithm>
 
+std::shared_ptr<PCB> RUNNING;

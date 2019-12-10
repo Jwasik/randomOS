@@ -88,12 +88,12 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::vector<std::sha
 
 uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process)
 {
-	int waitingTime = this->counter - process->getTimeSpentWaiting();
+	int waitingTime = this->counter - process->counter;
 	if (waitingTime < 0)
-	{
-		waitingTime = waitingTime + 1000000;
-	}
-	int bonus = 0.01 * waitingTime;
+		waitingTime += 1000000;
+
+	
+	int bonus = 0.1 * waitingTime;
 	int previousPriority = process.priority;
 
 	process->priority = process->basePriority + 5 - bonus;
@@ -106,11 +106,14 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 	{
 		process->priority = 100;
 	}
-
-	//liczenie przyda³u czasu jeszcze zrobiæ 
-	if (previousPriority > 120)
+	if (previousPriority < 120)
 	{
-		
+		process->counter = this->counter + ((140 - previousPriority) * 2);
+	}
+	else
+	{
+		process->counter = this->counter + ((140 - previousPriority) * 0.5);
+
 	}
 
 	return 0;
