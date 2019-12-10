@@ -119,26 +119,26 @@ int8_t FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
 
 	for (auto i : Containers::open_file_table)
 	{
-		
-		if (Containers::MainFileCatalog[i].PID == PID)
+		File *t = &Containers::MainFileCatalog[Containers::open_file_table[i]];
+		if (t->PID == PID)
 		{
 			int req = pos / BlockSize; //numer logiczny bloku
-			if(pos >= Containers::MainFileCatalog[i].size) return ERROR_UOT_OF_FILE_RANGE;
+			if(pos >= t->size) return ERROR_UOT_OF_FILE_RANGE;
 			if (req == 0)
 			{
-				phycial = (Containers::MainFileCatalog[i].i_node[0] * BlockSize) + pos;
+				phycial = (t->i_node[0] * BlockSize) + pos;
 				Containers::DiskArray[phycial] = byte;
 				return 0;
 			}
 			else if (req == 1)
 			{
-				phycial = (Containers::MainFileCatalog[i].i_node[1] * BlockSize) + (pos % BlockSize);
+				phycial = (t->i_node[1] * BlockSize) + (pos % BlockSize);
 				Containers::DiskArray[phycial] = byte;
 				return 0;
 			}
 			else
 			{
-				phycial = (Containers::MainFileCatalog[i].i_node[2] * BlockSize)+(req-2);
+				phycial = (t->i_node[2] * BlockSize)+(req-2);
 				phycial = (Containers::DiskArray[phycial] * BlockSize) + (pos%BlockSize);
 				Containers::DiskArray[phycial] = byte;
 				return 0;
