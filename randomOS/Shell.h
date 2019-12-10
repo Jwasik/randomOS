@@ -18,6 +18,7 @@ private:
 	void print(std::string, unsigned int);
 	void print(char, unsigned int);
 	void printLine(std::string, unsigned int);
+	void printLine(int, unsigned int);
 	void changeConsoleColor(unsigned int);
 	void restoreDefaultColor();
 	void toLower(std::string&);
