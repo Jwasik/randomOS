@@ -203,7 +203,7 @@ int8_t FileMenager::deleteFile(std::string name)
 				{
 					clearBlock(k);
 				}
-				if (i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i - 1);
+				if (i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
 				else Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin());
 				return 0;
 			}
@@ -220,16 +220,16 @@ int8_t FileMenager::deleteFile(std::string name)
 					physical++;
 				}
 				clearBlock(Containers::MainFileCatalog[i].i_node[2]);
-				if(i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i - 1);
+				if(i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
 				else Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin());
 				
 				return 0;
 			}
 
 		}
-		return ERROR_NO_FILE_WITH_THAT_NAME;
+		
 	}
-	return 0;
+	return ERROR_NO_FILE_WITH_THAT_NAME;
 }
 
 int8_t FileMenager::closeFile(std::string name, unsigned int PID)

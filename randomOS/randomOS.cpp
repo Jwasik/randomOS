@@ -9,10 +9,10 @@
 
 int main()
 {
-	Shell shell;
-	shell.run();
+	//Shell shell;
+	//shell.run();
 	////TEST MENADERA PLIKOW
-	/*
+	
 	FileMenager f;
 	f.createFile("ja");
 	f.openFile("ja",1);
@@ -23,65 +23,20 @@ int main()
 	f.openFile("jak", 2);
 
 
-	for (int i = 0; i < 80; i++)
+	for (int i = 0; i < 1000; i++)
 	{
 		f.writeToEndFile(70, 2);
 	}
-	for (int i = 0; i < 90; i++)
-	{
-		f.writeToEndFile(67, 1);
-	}
-	f.writeToFile(70, 70, 1);
-	for (int i = 0; i < 80; i++)
-	{
-		f.writeToEndFile(69, 2);
-	}
+	f.append()
+	ShowMemory();
 
 
-	showBitVector();
-	int licz = 0;
-	for (auto i : Containers::BitVectorWithFiles)
-	{
-
-		std::cout << licz <<" "<<i << "   ";
-		licz++;
-	}
-	std::cout << "\n";
-
-
-	f.closeFile("ja",1);
-	f.deleteFile("ja");
-
-	showBitVector();
-	licz = 0;
-	for (auto i : Containers::BitVectorWithFiles)
-	{
-
-		std::cout << licz << " " << i << "   ";
-		licz++;
-	}
-
-
-	for (int i = 0; i < 80; i++)
-	{
-		f.writeToEndFile(70, 2);
-	}
-	std::cout << "\n\n\n";
-
-	showBitVector();
-	licz = 0;
-	for (auto i : Containers::BitVectorWithFiles)
-	{
-
-		std::cout << licz << " " << i << "   ";
-		licz++;
-	}
 	//f.deleteFile("ja");
 	//std::pair< int8_t,std::string> t = f.cat("ja");
 	//std::cout << t.second;
 	//ShowMemory();
 	//f.readFile(0,70,20,2);
-	*/
+	
 
 	////TEST PAMIĘCI RAM
 	///*Memory mem;
