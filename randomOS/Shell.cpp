@@ -119,13 +119,6 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ls$")))
 		{
-			/*std::string str;
-			for (auto & i : Containers::bit_vector)
-			{
-				if (i == 0)this->print(char(178), 14);
-				else if (i == 1)this->print(char(176), 14);
-			}
-			std::cout << std::endl;*/
 			auto files = fmanager.ls();
 
 			this->printLine(" DIRECTORY: \\HOME>\n",14);
@@ -144,6 +137,7 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^rm[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 3);
+			fmanager.closeFile(command,0);
 			uint8_t code = fmanager.deleteFile(command);
 			this->printCode(code);
 		}
@@ -278,6 +272,16 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
 			std::cout << "ps" << std::endl;
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^print filesystem$")))
+		{
+			std::string str;
+			for (auto & i : Containers::bit_vector)
+			{
+			if (i == 0)this->print(char(178), 14);
+			else if (i == 1)this->print(char(176), 14);
+			}
+			std::cout << std::endl;
 		}
 		else
 		{
