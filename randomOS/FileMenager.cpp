@@ -199,7 +199,7 @@ int8_t FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned
 
 int8_t FileMenager::deleteFile(std::string name)
 {
-	for (unsigned int i = 0; i < Containers::MainFileCatalog.size(); i++)
+	/*for (unsigned int i = 0; i < Containers::MainFileCatalog.size(); i++)
 	{
 		if (Containers::MainFileCatalog[i].name == name)
 		{
@@ -223,12 +223,15 @@ int8_t FileMenager::deleteFile(std::string name)
 				{
 					clearBlock(Containers::MainFileCatalog[i].i_node[k]);
 				}
-				for (int k = 0; k < req - 2; k++)
+				for (int k = 0; k < req - 1; k++)
 				{
+					for(auto i: Cont)
 					clearBlock(Containers::DiskArray[physical]);
 					physical++;
+					
 				}
 				clearBlock(Containers::MainFileCatalog[i].i_node[2]);
+
 				if(i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
 				else Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin());
 
@@ -237,7 +240,7 @@ int8_t FileMenager::deleteFile(std::string name)
 
 		}
 		
-	}
+	}*/
 	return ERROR_NO_FILE_WITH_THAT_NAME;
 }
 

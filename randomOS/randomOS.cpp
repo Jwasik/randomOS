@@ -15,29 +15,26 @@ int main()
 	
 	FileMenager f;
 	f.createFile("ja");
-	//f.openFile("ja",1);
+	f.openFile("ja",1);
 	
-	//jak usuniesz plik b ktory zajmuje prawei cala pamiec to czysci tez zawartosc a, ale nie usuwa A
 
 
 	f.createFile("jak");
-	//f.openFile("jak", 2);
+	f.openFile("jak", 2);
 
-
+	for (int i = 0; i < 10; i++)
+	{
+		f.append("jak", 69);
+	}
 	for (int i = 0; i < 1000; i++)
 	{
 		f.append("ja",69);
 	}
+	
 	f.deleteFile("ja");
-
 	ShowMemory();
-
-	for (int i = 0; i < 10; i++)
-	{
-		f.append("jak", 70);
-	}
 	//f.append();
-	ShowMemory();
+
 
 
 	//f.deleteFile("ja");

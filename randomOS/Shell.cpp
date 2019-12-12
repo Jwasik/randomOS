@@ -50,20 +50,19 @@ void Shell::run()
 	}
 	system("cls");
 
-	
+
 
 	system("color CE");
 	std::thread v1(voice1);
 
-	this->printLine("\n\n\t	           !#########       #\n\t	        !########!          ##!\n\t	     !########!               ###\n\t	  !##########                  ####\n\t	######### #####                ######\n\t	 !###!      !####!              ######\n\t	   !           #####            ######!\n\t	                 !####!         #######\n\t	                  #####       #######\n\t	                    !####!   #######!\n\t	                     ####!########\n\t         ##                   ##########\n\t       ,######!          !#############\n\t     ,#### ########################!####!\n\t   ,####'     ##################!'    #####\n\t ,####'            #######              !####!\n\t####'                                      #####\n\t~##                                          ##~\n\t", 206);
-	Sleep(3000);
+	//this->printLine("\n\n\t	           !#########       #\n\t	        !########!          ##!\n\t	     !########!               ###\n\t	  !##########                  ####\n\t	######### #####                ######\n\t	 !###!      !####!              ######\n\t	   !           #####            ######!\n\t	                 !####!         #######\n\t	                  #####       #######\n\t	                    !####!   #######!\n\t	                     ####!########\n\t         ##                   ##########\n\t       ,######!          !#############\n\t     ,#### ########################!####!\n\t   ,####'     ##################!'    #####\n\t ,####'            #######              !####!\n\t####'                                      #####\n\t~##                                          ##~\n\t", 206);
+	//Sleep(3000);
 
 	system("color 0A");
 	system("cls");
 
 	std::string command = "";
 	FileMenager fmanager;
-
 	while (1)
 	{
 		std::cout << this->osName + "\\home>";
@@ -121,23 +120,23 @@ void Shell::run()
 		{
 			auto files = fmanager.ls();
 
-			this->printLine(" DIRECTORY: \\HOME>\n",14);
+			this->printLine(" DIRECTORY: \\HOME>\n", 14);
 
-			this->printLine(" TYPE: FILENAME:             SIZE:",14);
+			this->printLine(" TYPE: FILENAME:             SIZE:", 14);
 			for (const auto & filename : files)
 			{
 				this->print(" <TXT> ", 14);
 				this->print(char(175), 14);
-				this->print(" " + filename,14);
+				this->print(" " + filename, 14);
 
 				for (unsigned int i = filename.length(); i < 20; i++)std::cout << " ";
-				this->printLine(fmanager.wc(filename).second,14);
+				this->printLine(fmanager.wc(filename).second, 14);
 			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^rm[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 3);
-			fmanager.closeFile(command,0);
+			fmanager.closeFile(command, 0);
 			uint8_t code = fmanager.deleteFile(command);
 			this->printCode(code);
 		}
@@ -168,7 +167,7 @@ void Shell::run()
 			filename = command;
 
 			std::pair<uint8_t, unsigned int> code = fmanager.wc(filename);
-			if(code.first == 0)this->printLine(code.second, 14);
+			if (code.first == 0)this->printLine(code.second, 14);
 			else this->printCode(code.first);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^mv[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-Z]+$")))
@@ -199,7 +198,7 @@ void Shell::run()
 			}
 			argument = command;
 
-			uint8_t code = fmanager.rename(filename,argument);
+			uint8_t code = fmanager.rename(filename, argument);
 			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^append[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-z]+$")))
@@ -207,7 +206,7 @@ void Shell::run()
 			command.erase(0, 7);
 			std::string filename = "";
 			std::string argument = "";
-			
+
 			while (1)
 			{
 				if (command[0] == ' ')command.erase(0, 1);
@@ -218,11 +217,11 @@ void Shell::run()
 			{
 				if (*it == ' ')
 				{
-					filename.erase(it,filename.end());
+					filename.erase(it, filename.end());
 					break;
 				}
 			}
-			command.erase(0,filename.length());
+			command.erase(0, filename.length());
 			while (1)
 			{
 				if (command[0] == ' ')command.erase(0, 1);
@@ -240,13 +239,13 @@ void Shell::run()
 				}
 			}
 			this->printCode(0);
-			
+
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^clear[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 6);
 			std::string filename = "";
-			
+
 			while (1)
 			{
 				if (command[0] == ' ')command.erase(0, 1);
@@ -272,16 +271,45 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
 			std::cout << "ps" << std::endl;
-		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^print filesystem$")))
-		{
-			std::string str;
-			for (auto & i : Containers::bit_vector)
+			for(unsigned int i = 0; i < 255; i++)
 			{
-			if (i == 0)this->print(char(178), 14);
-			else if (i == 1)this->print(char(176), 14);
+				std::cout << i;
+				this->printLine("------------", i);
+			}
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
+		{
+
+
+			auto names = fmanager.ls();
+
+			std::string str;
+			for (unsigned int i = 0; i < Containers::bit_vector.size();i++)
+			{
+				//this->print(i + '0', 14);
+				if (Containers::bit_vector[i] == 0) 
+				{ 
+					
+
+					std::string owner = Containers::BitVectorWithFiles[i];
+					unsigned int color = 1;
+					for (unsigned int j = 0; j < names.size(); j++)
+					{
+						if (names[j] == owner)
+						{
+							color = j+10;
+							break;
+						}
+					}					
+					this->print(char(178), color);
+				}
+				else if (Containers::bit_vector[i] == 1)
+				{
+					this->print(char(176), 14);
+				}
 			}
 			std::cout << std::endl;
+
 		}
 		else
 		{
@@ -542,6 +570,5 @@ void voice1()
 			Beep(c * 16, quarter*2.5);
 			break;
 		}
-
 	}
 }
