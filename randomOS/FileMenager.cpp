@@ -223,7 +223,7 @@ int8_t FileMenager::deleteFile(std::string name)
 				{
 					clearBlock(Containers::MainFileCatalog[i].i_node[k]);
 				}
-				for (int k = 0; k < req - 1; k++)
+				for (int k = 0; k < req - 2; k++)
 				{
 					clearBlock(Containers::DiskArray[physical]);
 					physical++;
