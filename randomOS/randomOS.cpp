@@ -14,23 +14,24 @@ int main()
 	////TEST MENADERA PLIKOW
 	
 	FileMenager f;
-	f.createFile("ja");
-	f.openFile("ja",1);
+	f.createFile("jak");
+	//f.openFile("ja",1);
 	
 
 
-	f.createFile("jak");
-	f.openFile("jak", 2);
+	f.createFile("ja");
+	//f.openFile("jak", 2);
 
 	for (int i = 0; i < 10; i++)
 	{
-		f.append("jak", 69);
+		f.append("jak", 70);
 	}
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 959; i++)
 	{
 		f.append("ja",69);
 	}
-	
+	f.append("ja",69);
+	ShowMemory();
 	f.deleteFile("ja");
 	ShowMemory();
 	//f.append();

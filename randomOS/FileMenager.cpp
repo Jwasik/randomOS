@@ -71,27 +71,29 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 		int req = (t->size / BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt
 		if (t->PID == PID) //sprawdza czy plik jest owtarty przez podany proces
 		{
+			t->size++;
 			if (t->size % BlockSize == 0 && t->size != 0)
 			{
 				if (FindFreeBlock(t) == -1)
 				{
+					t->size--;
 					return ERROR_NO_SPACE_ON_DISK;
 				}
 
 			}
-
+			
 			if (req == 0)
 			{
-				phycial = (t->i_node[req] * BlockSize) + (t->size%BlockSize);
+				phycial = (t->i_node[req] * BlockSize) + ((t->size-1)%BlockSize);
 				Containers::DiskArray[phycial] = byte;
-				t->size++;
+				//t->size++;
 				return 0;
 			}
 			else if (req == 1)
 			{
 				phycial = (t->i_node[req] * BlockSize) + (t->size % BlockSize);
 				Containers::DiskArray[phycial] = byte;
-				t->size++;
+				//t->size++;
 				return 0;
 			}
 			else if (req > 1)
@@ -100,7 +102,7 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 				phycial = Containers::DiskArray[phycial];
 				phycial = (phycial * BlockSize) + (t->size % BlockSize);
 				Containers::DiskArray[phycial] = byte;
-				t->size++;
+				//t->size++;
 				return 0;
 			}
 
@@ -199,7 +201,7 @@ int8_t FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned
 
 int8_t FileMenager::deleteFile(std::string name)
 {
-	/*for (unsigned int i = 0; i < Containers::MainFileCatalog.size(); i++)
+	for (unsigned int i = 0; i < Containers::MainFileCatalog.size(); i++)
 	{
 		if (Containers::MainFileCatalog[i].name == name)
 		{
@@ -225,7 +227,6 @@ int8_t FileMenager::deleteFile(std::string name)
 				}
 				for (int k = 0; k < req - 1; k++)
 				{
-					for(auto i: Cont)
 					clearBlock(Containers::DiskArray[physical]);
 					physical++;
 					
@@ -240,7 +241,7 @@ int8_t FileMenager::deleteFile(std::string name)
 
 		}
 		
-	}*/
+	}
 	return ERROR_NO_FILE_WITH_THAT_NAME;
 }
 
@@ -355,6 +356,7 @@ std::pair <int8_t, int> FileMenager::wc(std::string name)
 
 void clearBlock(int log)
 {
+
 	Containers::bit_vector[log] = 1;
 	Containers::BitVectorWithFiles[log] = "";
 	int physical = log * BlockSize;
@@ -401,8 +403,10 @@ int FileMenager::FindFreeBlock(File* file)
 		{
 			if (Containers::bit_vector[i] == 1)
 			{
+				
 				int pom = (file->size / BlockSize) - 2;
 				pom = (file->i_node[2] * BlockSize) + pom;
+				
 				Containers::DiskArray[pom] = i;
 				Containers::bit_vector[i] = 0;
 				Containers::BitVectorWithFiles[i] = file->name;

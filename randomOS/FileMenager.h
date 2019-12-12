@@ -22,7 +22,7 @@
 struct File
 {
 	std::string name;
-	int size, PID = -1;
+	int size = 0, PID = -1;
 	std::vector<int> i_node;
 	bool isOpen = false;
 	//Semaphore s;
