@@ -22,19 +22,19 @@ int main()
 	f.createFile("ja");
 	//f.openFile("jak", 2);
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 32; i++)
 	{
 		f.append("jak", 70);
 	}
-	for (int i = 0; i < 959; i++)
+	f.append("jak",70);
+	for (int i = 0; i < 1000; i++)
 	{
-		f.append("ja",69);
+		f.append("ja", 69);
 	}
-	f.append("ja",69);
-	ShowMemory();
 	f.deleteFile("ja");
+	showBitVector();
 	ShowMemory();
-	//f.append();
+
 
 
 

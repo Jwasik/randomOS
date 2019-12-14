@@ -68,11 +68,13 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 	for (int i = 0; i < Containers::open_file_table.size(); i++)
 	{
 		File* t = &Containers::MainFileCatalog[Containers::open_file_table[i]];
-		int req = (t->size / BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt
+		
+		int req = ((t->size) / BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt 
+		int pom = ((t->size-1) / BlockSize);//numer logiczny poprzedniego zapisanego bajtu
 		if (t->PID == PID) //sprawdza czy plik jest owtarty przez podany proces
 		{
-			t->size++;
-			if (t->size % BlockSize == 0 && t->size != 0)
+			//t->size++;
+			if (req!=pom)
 			{
 				if (FindFreeBlock(t) == -1)
 				{
@@ -81,19 +83,19 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 				}
 
 			}
-			
+			//t->size--;
 			if (req == 0)
 			{
-				phycial = (t->i_node[req] * BlockSize) + ((t->size-1)%BlockSize);
+				phycial = (t->i_node[req] * BlockSize) + ((t->size)%BlockSize);
 				Containers::DiskArray[phycial] = byte;
-				//t->size++;
+				t->size++;
 				return 0;
 			}
 			else if (req == 1)
 			{
 				phycial = (t->i_node[req] * BlockSize) + (t->size % BlockSize);
 				Containers::DiskArray[phycial] = byte;
-				//t->size++;
+				t->size++;
 				return 0;
 			}
 			else if (req > 1)
@@ -102,7 +104,7 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 				phycial = Containers::DiskArray[phycial];
 				phycial = (phycial * BlockSize) + (t->size % BlockSize);
 				Containers::DiskArray[phycial] = byte;
-				//t->size++;
+				t->size++;
 				return 0;
 			}
 
