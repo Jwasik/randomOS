@@ -1,15 +1,22 @@
 ﻿
 #include "Includes.h"
+
 #include "FileMenager.h"
 #include "Memory.h"
 #include "ProcessManager.h"
+#include "MemoryManager.h"
+#include "VirtualMemory.h"
 #include "Interpreter.h"
 #include "Shell.h"
-
+#include "PCB.h"
 
 int main()
 {
-	Shell shell;
+	std::shared_ptr<FileMenager> fileManager = std::make_shared<FileMenager>();
+	std::shared_ptr<Memory> memoryManager = std::make_shared<Memory>();
+	std::shared_ptr<VirtualMemory> virtualMemory = std::make_shared<VirtualMemory>();
+
+	Shell shell(fileManager, memoryManager, virtualMemory);
 	shell.run();
 	////TEST MENADERA PLIKOW
 	

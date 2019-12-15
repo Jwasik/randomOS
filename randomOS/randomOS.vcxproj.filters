@@ -46,11 +46,11 @@
     <ClCompile Include="MemoryManager.cpp">
       <Filter>MAIN</Filter>
     </ClCompile>
+    <ClCompile Include="VirtualMemory.cpp">
+      <Filter>MAIN</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Memory.cpp">
-      <Filter>Memory</Filter>
-    </ClCompile>
     <ClCompile Include="Interpreter.cpp">
       <Filter>Interpreter</Filter>
     </ClCompile>
@@ -64,9 +64,6 @@
     </ClInclude>
     <ClInclude Include="PCB.h">
       <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory.h">
-      <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="Interpreter.h">
       <Filter>Interpreter</Filter>
@@ -86,6 +83,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="MemoryManager.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualMemory.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

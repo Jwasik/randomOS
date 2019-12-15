@@ -2,8 +2,6 @@
 #include "Includes.h"
 #include "PCB.h"
 
-
-
 //POSSIBLE ERRORS (in range[32 - 64])
 #define ERROR_PM_PROCESS_NAME_TAKEN  32 //a process with such name already exists (when trying to fork a new process)
 #define ERROR_PM_PROCESS_NAME_TOO_LONG 33
