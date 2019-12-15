@@ -27,21 +27,20 @@ int main()
 
 
 	f.createFile("ja");
+
 	//f.openFile("jak", 2);
 
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < 15; i++)
 	{
 		f.append("jak", 70);
 	}
-	f.append("jak",70);
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 15; i++)
 	{
-		f.append("ja", 69);
+		f.append("jak", 71);
 	}
-	f.deleteFile("ja");
-	showBitVector();
-	ShowMemory();
-
+	f.append("jak",70);
+	f.openFile("jak", 1);
+	f.readFile(0,0,32,1);
 
 
 

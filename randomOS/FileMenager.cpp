@@ -14,20 +14,20 @@ FileMenager::FileMenager()
 
 int8_t FileMenager::createFile(std::string nazwa_pliku)
 {
-	if (isNameColision(nazwa_pliku))
+	if (isNameColision(nazwa_pliku))//sprawdzam czy nie istnieje ju¿ plik o podanej nazwie
 	{
 		return ERROR_ALREADY_EXISTING_FILE; //istnieje plik o danej nazwie
 	}
-	else
+	else//je¿eli nie istnieje plik o podanej nazwie przechodzê do tworzenia
 	{
 
 		File file;
 		file.name = nazwa_pliku;
-		if (FindFreeBlock(&file) == -1)
+		if (FindFreeBlock(&file) == -1)//wywo³ujê funkcjê która dla danego pliku przydziela wolny blok a w przypadku braku wolnych bloków zwraca -1
 		{
 			return ERROR_NO_SPACE_ON_DISK; //brak miejsca na dysku
 		}
-		else
+		else//je¿eli blok zosta³ przydzielony ustawiam domyœlne wartoœci FCB i dodaje utworzony plik do katalogu plików
 		{
 			//file.s.wait();
 			file.name = nazwa_pliku;
@@ -42,13 +42,13 @@ int8_t FileMenager::createFile(std::string nazwa_pliku)
 
 int8_t FileMenager::openFile(std::string name, unsigned int PID)
 {
-	for (int i = 0; i < (int)Containers::MainFileCatalog.size(); i++)
+	for (int i = 0; i < (int)Containers::MainFileCatalog.size(); i++)//iterujemy po g³owynm katalogu
 	{
-		if (Containers::MainFileCatalog[i].name == name)
+		if (Containers::MainFileCatalog[i].name == name)//szukamy pliku o podanej nazwie
 		{
 			//Sprawdzenie tego za pomoca semaforow
-			if (isFileOpen(name, PID)) return ERROR_FILE_OPENED_BY_OTHER_PROCESS;
-			else
+			if (isFileOpen(name, PID)) return ERROR_FILE_OPENED_BY_OTHER_PROCESS;//sprawdza czy plik nie jest otwarty przez inny proes
+			else//je¿eli nie to ustawiam PID na te jakie odsta³em i dodaje plik do tabilcy otwartych plików
 			{
 				//Containers::MainFileCatalog[i].s.wait();
 				Containers::MainFileCatalog[i].PID = PID;
@@ -63,20 +63,20 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 
 int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 {
-	int phycial = 0;
+	int phycial = 0; //zmienna przechowuj¹ca adres pod ktory zapisze bajt
 
-	for (int i = 0; i < Containers::open_file_table.size(); i++)
+	for (int i = 0; i < Containers::open_file_table.size(); i++)//iteracja po tablicy otwartych plików
 	{
-		File* t = &Containers::MainFileCatalog[Containers::open_file_table[i]];
+		File* t = &Containers::MainFileCatalog[Containers::open_file_table[i]];//pomocniczne
 		
 		int req = ((t->size) / BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt 
 		int pom = ((t->size-1) / BlockSize);//numer logiczny poprzedniego zapisanego bajtu
 		if (t->PID == PID) //sprawdza czy plik jest owtarty przez podany proces
 		{
 			//t->size++;
-			if (req!=pom)
+			if (req!=pom)//sprawdzam czy bêdê potrzebowa³ nowego bloku
 			{
-				if (FindFreeBlock(t) == -1)
+				if (FindFreeBlock(t) == -1)//szukam wolnego bloku przekazuj¹c *plik dla ktorego ma byæ znaleziony blok w przypadku braku bloków wyrzucam b³¹d
 				{
 					t->size--;
 					return ERROR_NO_SPACE_ON_DISK;
@@ -84,31 +84,32 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 
 			}
 			//t->size--;
-			if (req == 0)
+			if (req == 0)//je¿eli baj bêdzie siê znajdowa³ w 0 bloku (blok bezpoœredni)
 			{
 				phycial = (t->i_node[req] * BlockSize) + ((t->size)%BlockSize);
 				Containers::DiskArray[phycial] = byte;
 				t->size++;
 				return 0;
 			}
-			else if (req == 1)
+			else if (req == 1)//je¿eli bajt bêdzie siê znajdwa³ w 1 bloku (blok bezpoœredni)
 			{
 				phycial = (t->i_node[req] * BlockSize) + (t->size % BlockSize);
 				Containers::DiskArray[phycial] = byte;
 				t->size++;
 				return 0;
 			}
-			else if (req > 1)
+			else if (req > 1)//je¿eli bajt bêdzie siê znajdowa³ w 2 lub wiêkszym bloku
 			{
-				phycial = t->i_node[2] * BlockSize + (req - 2);
-				phycial = Containers::DiskArray[phycial];
-				phycial = (phycial * BlockSize) + (t->size % BlockSize);
-				Containers::DiskArray[phycial] = byte;
+				phycial = t->i_node[2] * BlockSize + (req - 2); //pobieram z i_node[2] numer bloku indeksowego, przeliczam numer na adres fizyczny i obliczam nr_indexu w bloku indexowym
+				phycial = Containers::DiskArray[phycial];//pobieram numer bloku do którego bêdê zapisywa³ dane
+				phycial = (phycial * BlockSize) + (t->size % BlockSize);//zamieniam go na adres i dodaje pzresuniêcie (który bajt danego bloku)
+				Containers::DiskArray[phycial] = byte;//zapisujê na dysku bajt
 				t->size++;
 				return 0;
 			}
 
 		}
+		//je¿eli nie to wywalam b³¹d
 	}
 	return ERROR_FILE_IS_NOT_OPENED;
 }
@@ -132,13 +133,13 @@ int8_t FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
 {
 	int phycial = 0;
 
-	for (auto i : Containers::open_file_table)
+	for (auto i : Containers::open_file_table)//iteruje po tablicy otawrtych plików
 	{
 		File *t = &Containers::MainFileCatalog[Containers::open_file_table[i]];
 		if (t->PID == PID)
 		{
-			int req = pos / BlockSize; //numer logiczny bloku
-			if (pos >= t->size) return ERROR_UOT_OF_FILE_RANGE;
+			int req = pos / BlockSize; //numer  bloku
+			if (pos >= t->size) return ERROR_UOT_OF_FILE_RANGE;//sprawdzam czy nie wyszlismy poza zakres pliku
 			if (req == 0)
 			{
 				phycial = (t->i_node[0] * BlockSize) + pos;
@@ -168,32 +169,33 @@ int8_t FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned
 	int phycial = 0;
 	int curr_pos = pos;
 	int ret = 0;
-	for (auto i : Containers::open_file_table)
+	for (auto i : Containers::open_file_table)//itereacja po tablicy otawrtych plików
 	{
-		if (Containers::MainFileCatalog[i].PID == PID)
+		File* t = &Containers::MainFileCatalog[Containers::open_file_table[i]];//pomoc
+		if (t->PID == PID)//sprawdzenie czy plik jest otwarty przez podany proces
 		{
-			if ((pos + n) > Containers::MainFileCatalog[i].size - pos) return ERROR_UOT_OF_FILE_RANGE;
-			ret = 1;
+			if ((pos + n) > t->size - pos) return ERROR_UOT_OF_FILE_RANGE;//sprawdzenie czy nie wychodzimy poza zakres pliku
+			ret = 1;//zmienia pomocnicza do stwierdzenia czy plik jest otawrty czy nie
 			while (curr_pos < pos + n)
 			{
 				if (curr_pos < 32)
 				{
-					phycial = (Containers::MainFileCatalog[i].i_node[0] * BlockSize) + (curr_pos%BlockSize);
+					phycial = (t->i_node[0] * BlockSize) + (curr_pos%BlockSize);
 					std::cout << Containers::DiskArray[phycial]; // tu write do ramu
 				}
 				else if (curr_pos < 64)
 				{
-					phycial = (Containers::MainFileCatalog[i].i_node[1] * BlockSize) + (curr_pos % BlockSize);
+					phycial = (t->i_node[1] * BlockSize) + (curr_pos % BlockSize);
 					std::cout << Containers::DiskArray[phycial]; // tu write do ramu
 				}
 				else
 				{
-					phycial = (Containers::MainFileCatalog[i].i_node[2] * BlockSize) + (curr_pos / BlockSize) - 2;
+					phycial = (t->i_node[2] * BlockSize) + (curr_pos / BlockSize) - 2;
 					phycial = Containers::DiskArray[phycial];
 					phycial = (phycial * BlockSize) + (curr_pos % BlockSize);
 					std::cout << Containers::DiskArray[phycial]; // tu write do ramu
 				}
-				curr_pos++;
+				curr_pos++;//obecna pozycja
 			}
 		}
 	}
@@ -205,22 +207,22 @@ int8_t FileMenager::deleteFile(std::string name)
 {
 	for (unsigned int i = 0; i < Containers::MainFileCatalog.size(); i++)
 	{
-		if (Containers::MainFileCatalog[i].name == name)
+		if (Containers::MainFileCatalog[i].name == name)//szukamy pliku w katalogu
 		{
-			if (Containers::MainFileCatalog[i].isOpen == true) return ERROR_FILE_IS_OPENED_CANT_DELETE;
-			int req = Containers::MainFileCatalog[i].size / BlockSize;
+			if (Containers::MainFileCatalog[i].isOpen == true) return ERROR_FILE_IS_OPENED_CANT_DELETE;//sprawdzamy czy plik nie jest otwarty
+			int req = Containers::MainFileCatalog[i].size / BlockSize;//liczba bloków do usuniêcia
 
-			if (Containers::MainFileCatalog[i].i_node.size() < 3)
+			if (Containers::MainFileCatalog[i].i_node.size() < 3)//je¿eli nie ma bloku indeksowego
 			{
 				for (auto k : Containers::MainFileCatalog[i].i_node)
 				{
-					clearBlock(k);
+					clearBlock(k);//funkcja czyszczaca pojedyñczy blok
 				}
-				if (i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
+				if (i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);//usuwanie pliku z katalogu 
 				else Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin());
 				return 0;
 			}
-			else
+			else//rozmiar wiêkszy ni¿ 2
 			{
 				int physical = Containers::MainFileCatalog[i].i_node[2] * BlockSize;
 				for (int k = 0; k < 2; k++)
@@ -233,7 +235,7 @@ int8_t FileMenager::deleteFile(std::string name)
 					physical++;
 					
 				}
-				clearBlock(Containers::MainFileCatalog[i].i_node[2]);
+				clearBlock(Containers::MainFileCatalog[i].i_node[2]);//usuniecie bloku indeksowego
 
 				if(i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
 				else Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin());
