@@ -157,10 +157,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileMenager.cpp" />
     <ClCompile Include="Interpreter.cpp" />
+    <ClCompile Include="MemoryManager.cpp" />
+    <ClCompile Include="PCB.cpp" />
+    <ClCompile Include="ProcessManager.cpp" />
+    <ClCompile Include="randomOS.cpp" />
+    <ClCompile Include="semaphore.cpp" />
+    <ClCompile Include="Shell.cpp" />
+    <ClCompile Include="VirtualMemory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileMenager.h" />
+    <ClInclude Include="Includes.h" />
     <ClInclude Include="Interpreter.h" />
+    <ClInclude Include="MemoryManager.h" />
+    <ClInclude Include="PCB.h" />
+    <ClInclude Include="ProcessManager.h" />
+    <ClInclude Include="semaphore.h" />
+    <ClInclude Include="Shell.h" />
+    <ClInclude Include="VirtualMemory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

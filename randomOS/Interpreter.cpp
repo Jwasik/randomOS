@@ -21,7 +21,7 @@ Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<M
 }
 
 void Interpreter::loadPCB() {
-	PCB = scheduler->getRunningProcess();
+	PCB = scheduler->RUNNING();
 	AX = PCB->getRegisterA();
 	BX = PCB->getRegisterB();
 	CX = PCB->getRegisterC();
@@ -34,7 +34,7 @@ void Interpreter::loadPCB() {
 }
 
 void Interpreter::loadCode() {
-	code = memory->getLogicalMemory(PC, PID);
+	code = memory->getMemoryContent(PC, PID);
 	PC++;
 	instructionHex.push_back(code);
 }
@@ -149,7 +149,7 @@ void Interpreter::interpret() {
 }
 
 int8_t& Interpreter::loadArgAdrOrReg() {
-	int8_t& adr = memory->getLogicalMemory(PC, PID);
+	int8_t& adr = memory->getMemoryContent(PC, PID);
 	PC++;
 
 	instructionHex.push_back(adr);
@@ -179,7 +179,7 @@ int8_t& Interpreter::loadArgAdrOrReg() {
 }
 
 int8_t Interpreter::loadArgNum() {
-	int8_t num = memory->getLogicalMemory(PC, PID);
+	int8_t num = memory->getMemoryContent(PC, PID);
 	PC++;
 
 	instructionHex.push_back(num);
@@ -195,7 +195,7 @@ std::string Interpreter::loadArgText(int n) {
 	instructionString += " ";
 
 	for (int i = 0; i < n; i++) {
-		t = memory->getLogicalMemory(PC, PID);
+		t = memory->getMemoryContent(PC, PID);
 		PC++;
 		text += t;
 
@@ -368,7 +368,7 @@ void Interpreter::AFI() {
 void Interpreter::CPR() {
 	std::string a = loadArgText(2);
 	std::string b = loadArgText(2);
-	uint8_t error = processManager->fork(a, PID, b);
+	uint8_t error = processManager->fork(a, PID, b).first;
 	if (error != 0) throw error;
 }
 
@@ -378,7 +378,7 @@ void Interpreter::NOP() {}
 // ******************* GO *******************
 // ******************************************
 
-uint8_t  Interpreter::go() {
+uint8_t Interpreter::go() {
 	try {
 		loadPCB();
 		loadCode();

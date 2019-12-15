@@ -1,12 +1,10 @@
 #pragma once
 #include "Includes.h"
 #include "Scheduler.h"
-#include "FileSystem.h"
-#include "Memory.h"
+#include "FileMenager.h"
+#include "MemoryManager.h"
 #include "ProcessManager.h"
 #include "PCB.h"
-
-
 
 class Interpreter
 {
