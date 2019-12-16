@@ -66,12 +66,11 @@ bool PCB::getHasName(const std::string& nameToCompare)
 	return false;	
 }
 
-std::string PCB::toStringNameAndPID()
+std::string PCB::getNameAndPIDString()
 {
 	return this->name +" [PID: "+std::to_string(this->PID)+"]";
 }
 
-unsigned int PCB::getTimeSpentWaiting(){ return this->timeSpentWaiting;}
 
 std::shared_ptr<PCB> PCB::getParentPCB(){
 	return this->parent;
@@ -128,6 +127,7 @@ unsigned int PCB::getLastChildPID()
 	{
 		return children[children.size()-1]->PID;
 	}
+	//Panie, tutaj dodaj jakiegoœ returna domyœlnego
 }
 
 bool PCB::getIsLastChild()
@@ -163,7 +163,7 @@ int PCB::getRegisterD()
 }
 
 
-std::string PCB::toStringAll()
+std::string PCB::getInformation()
 {
 	return
 		"\nName: " + this->name +
@@ -202,20 +202,6 @@ bool PCB::setName(const std::string& nameToSet)
 	return false;
 }
 
-bool PCB::setTimeSpentWaiting(const unsigned int& timeToSet)
-{
-	this->timeSpentWaiting = timeToSet;
-	return true;
-}
-
-bool PCB::incrementTimeSpentWaiting(const unsigned int& timeToBeIncrementedBy)
-{
-	if (checkWontOverflowUnsignedInt(timeSpentWaiting, timeToBeIncrementedBy)) {
-		return false;
-	}
-	this->timeSpentWaiting += timeToBeIncrementedBy;
-	return true;
-}
 
 bool PCB::setParent(const std::shared_ptr<PCB>& parent)
 {
@@ -239,7 +225,7 @@ bool PCB::addChildren(const std::vector<std::shared_ptr<PCB>>& chlidren)
 
 bool PCB::removeChild(const std::shared_ptr<PCB>& child)
 {
-	for (int i=0;i<children.size();i++)
+	for (unsigned int i=0;i<children.size();i++)
 	{
 		if (child->getPID() == children[i]->getPID())
 		{
@@ -281,7 +267,7 @@ bool PCB::setRegisters(const std::vector<unsigned int>& registers)
 {
 	if (registers.size() > registers.size()) { return false; }
 
-	for (int i = 0; i < registers.size();i++) {
+	for (unsigned int i = 0; i < registers.size();i++) {
 		this->registers[i] = registers[i];
 	}
 	return true;
@@ -291,7 +277,7 @@ bool PCB::setRegisters(const std::array<int, 4>& registers)
 {
 	if (registers.size() > registers.size()) { return false; }
 
-	for (int i = 0; i < registers.size(); i++) {
+	for (unsigned int i = 0; i < registers.size(); i++) {
 		this->registers[i] = registers[i];
 	}
 	return true;
@@ -332,7 +318,7 @@ bool PCB::setRegisterD(const unsigned int& D)
 
 bool PCB::resetRegisters()
 {
-	for (int i = 0; i < registers.size();i++) {
+	for (unsigned int i = 0; i < registers.size();i++) {
 		registers[i] = 0;
 	}
 	return true;
@@ -367,7 +353,7 @@ std::string PCB::getChildrenAsString()
 	if (children.size() < 1) { return "----"; }
 	std::string result{};
 	for (auto child : children) {
-		result += "\n  "+child->toStringNameAndPID();
+		result += "\n  "+child->getName() + "  (" + std::to_string(child->PID) + ")";
 	}
 
 	return result;
@@ -379,7 +365,7 @@ std::string PCB::getParentAsString()
 
 	if (this->parent != nullptr)
 	{
-		result = this->parent->toStringNameAndPID();
+		result = this->parent->getName() + "  (" + std::to_string(this->parent->getPID())+")";
 	}
 	return result;
 }
