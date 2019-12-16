@@ -30,6 +30,8 @@ struct File
 
 struct Containers
 {
+
+
 	static std::vector<File> MainFileCatalog; // Katlog g³owny
 
 	static std::array<int, DiskSize / BlockSize> bit_vector; // Mapa bitowa
@@ -39,6 +41,8 @@ struct Containers
 	static std::vector<int> open_file_table; //Tablic otwartych plików
 
 	static std::array<std::string, DiskSize / BlockSize> BitVectorWithFiles;
+
+	static std::vector<std::pair<std::string, unsigned int>> Colors;
 };
 
 
@@ -47,7 +51,7 @@ struct Containers
 class FileMenager
 {
 private:
-
+	unsigned int color = 0;
 	int number_of_opened_files = 0, number_of_existing_files = 0;
 
 public:

@@ -70,7 +70,7 @@ void Shell::run()
 	std::thread v1(voice1);
 
 	this->printLine("\n\n\t	           !#########       #\n\t	        !########!          ##!\n\t	     !########!               ###\n\t	  !##########                  ####\n\t	######### #####                ######\n\t	 !###!      !####!              ######\n\t	   !           #####            ######!\n\t	                 !####!         #######\n\t	                  #####       #######\n\t	                    !####!   #######!\n\t	                     ####!########\n\t         ##                   ##########\n\t       ,######!          !#############\n\t     ,#### ########################!####!\n\t   ,####'     ##################!'    #####\n\t ,####'            #######              !####!\n\t####'                                      #####\n\t~##                                          ##~\n\t", 206);
-	//Sleep(3000);
+	Sleep(3000);
 
 	system("color 0A");
 	system("cls");
@@ -300,8 +300,6 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
 		{
-
-
 			auto names = fmanager.ls();
 
 			std::string str;
@@ -318,7 +316,15 @@ void Shell::run()
 					{
 						if (names[j] == owner)
 						{
-							color = j+10;
+							for (auto & x : Containers::Colors)
+							{
+								if (x.first == owner)
+								{
+									color = x.second + 1;
+									break;
+								}
+							}
+							
 							break;
 						}
 					}					

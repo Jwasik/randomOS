@@ -5,6 +5,7 @@ std::array<int, DiskSize / BlockSize> Containers::Containers::bit_vector;
 std::array<char, DiskSize> Containers::Containers::DiskArray;
 std::vector<int> Containers::Containers::open_file_table;
 std::array<std::string, DiskSize / BlockSize> Containers::BitVectorWithFiles;
+std::vector<std::pair<std::string, unsigned int>> Containers::Colors;
 
 FileMenager::FileMenager()
 {
@@ -30,6 +31,8 @@ int8_t FileMenager::createFile(std::string nazwa_pliku)
 		else//je¿eli blok zosta³ przydzielony ustawiam domyœlne wartoœci FCB i dodaje utworzony plik do katalogu plików
 		{
 			//file.s.wait();
+			Containers::Colors.push_back({ nazwa_pliku,color });
+			this->color++;
 			file.name = nazwa_pliku;
 			file.PID = -1;
 			file.size = 0;
@@ -217,6 +220,14 @@ int8_t FileMenager::deleteFile(std::string name)
 				for (auto k : Containers::MainFileCatalog[i].i_node)
 				{
 					clearBlock(k);//funkcja czyszczaca pojedyñczy blok
+				}
+				for (unsigned int k = 0; k < Containers::Colors.size(); k++)
+				{
+					if (Containers::Colors[k].first == name)
+					{
+						Containers::Colors.erase(Containers::Colors.begin() + k);
+						break;
+					}
 				}
 				if (i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);//usuwanie pliku z katalogu 
 				else Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin());
