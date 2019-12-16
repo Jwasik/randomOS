@@ -21,6 +21,10 @@ class Memory
 		
 			
 	};
+	
+
+public:
+	Memory();
 	std::vector<std::pair<int, bool>> ProcessPages
 	{
 		{-1, 0},
@@ -32,9 +36,6 @@ class Memory
 		{-1, 0},
 		{-1, 0}
 	};
-
-public:
-	Memory();
 	std::map<int, std::vector<std::pair<int, bool>>> PageTable;
 	void printPageTable(int);
 	
