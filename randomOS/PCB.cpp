@@ -71,7 +71,6 @@ std::string PCB::getNameAndPIDString()
 	return this->name +" [PID: "+std::to_string(this->PID)+"]";
 }
 
-unsigned int PCB::getTimeSpentWaiting(){ return this->timeSpentWaiting;}
 
 std::shared_ptr<PCB> PCB::getParentPCB(){
 	return this->parent;
@@ -203,20 +202,6 @@ bool PCB::setName(const std::string& nameToSet)
 	return false;
 }
 
-bool PCB::setTimeSpentWaiting(const unsigned int& timeToSet)
-{
-	this->timeSpentWaiting = timeToSet;
-	return true;
-}
-
-bool PCB::incrementTimeSpentWaiting(const unsigned int& timeToBeIncrementedBy)
-{
-	if (checkWontOverflowUnsignedInt(timeSpentWaiting, timeToBeIncrementedBy)) {
-		return false;
-	}
-	this->timeSpentWaiting += timeToBeIncrementedBy;
-	return true;
-}
 
 bool PCB::setParent(const std::shared_ptr<PCB>& parent)
 {
