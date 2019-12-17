@@ -18,7 +18,7 @@ void ProcessManager::createInit()
 	//adds the program code to init's memory
 	init->setMemoryPages(loadProgramIntoMemory("init_Path"));
 	//ads innit to scheduler
-	addProcessToScheduler(init);
+	addProcessToScheduler(this->init);
 }
 
 std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processName,const unsigned int& parentPID,const std::string& filePath)
@@ -205,6 +205,29 @@ std::string ProcessManager::displayTree()
 			toBeDisplayed.push(temp);
 		}
 	
+	}
+	return result;
+}
+
+std::string ProcessManager::displayProcesses()
+{
+	std::string result{ "\n" };
+
+	std::stack<std::shared_ptr<PCB>> allProcesses;
+	allProcesses.push(init);
+
+	std::shared_ptr<PCB> currentProcess;
+	while (!allProcesses.empty())
+	{
+		currentProcess = allProcesses.top();
+		allProcesses.pop();
+		result += "\n-" + currentProcess->getNameAndPIDString();
+
+		//add all of its children to the queue
+		std::vector<std::shared_ptr<PCB>> childrenOfCurrent = currentProcess->getChildren();
+		for (auto child : childrenOfCurrent) {
+			allProcesses.push(child);
+		}
 	}
 	return result;
 }

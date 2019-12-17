@@ -34,7 +34,7 @@ public:
 	//jesli nie ma jej w RAMie to
 	//probuje sprowadzic ja z pliku wymiany
 	//jesli jest to ja laduje, ale jesli jej nie ma rzucam wyjatek o zlym adresie logicznym
-	std::pair<uint8_t,int8_t&> getMemoryContent(int pid, int logical);
+	int8_t& getMemoryContent(int pid, int logical);
 
 	void test();
 
