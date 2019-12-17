@@ -22,9 +22,12 @@ class Memory
 			
 	};
 	
-
+	std::shared_ptr<VirtualMemory> vm;
 public:
 	Memory();
+	Memory(std::shared_ptr<VirtualMemory>);
+	
+	
 	std::vector<std::pair<int, bool>> ProcessPages
 	{
 		{-1, 0},
