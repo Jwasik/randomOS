@@ -190,7 +190,6 @@ private:
 	ProcessState state {ProcessState::NEW};
 	std::shared_ptr<PCB> parent=nullptr;
 	std::vector<std::shared_ptr<PCB>> children;
-	unsigned int basePriority=0; 
 	unsigned int instructionCounter=0;
 	/**
 	 * Processor registers.
