@@ -1,4 +1,6 @@
 #pragma once
+
+
 #include "Includes.h"
 #include "VirtualMemory.h"
 
@@ -17,6 +19,10 @@ class Memory
 	// informacja czy ramka jest zajeta i jaka strona jest w niej wpisana
 	Frame FrameTable[8]{
 
+		
+			
+	};
+	
 
 
 	};
@@ -53,5 +59,4 @@ public:
 	std::pair<uint8_t, int8_t&> getMemoryContent(int pid, int logical);
 	void test();
 
-	friend class Shell;
 };
