@@ -70,7 +70,7 @@ void Shell::run()
 	std::thread v1(voice1);
 
 	this->printLine("\n\n\t	           !#########       #\n\t	        !########!          ##!\n\t	     !########!               ###\n\t	  !##########                  ####\n\t	######### #####                ######\n\t	 !###!      !####!              ######\n\t	   !           #####            ######!\n\t	                 !####!         #######\n\t	                  #####       #######\n\t	                    !####!   #######!\n\t	                     ####!########\n\t         ##                   ##########\n\t       ,######!          !#############\n\t     ,#### ########################!####!\n\t   ,####'     ##################!'    #####\n\t ,####'            #######              !####!\n\t####'                                      #####\n\t~##                                          ##~\n\t", 206);
-	Sleep(3000);
+	//Sleep(3000);
 
 	system("color 0A");
 	system("cls");
@@ -356,20 +356,6 @@ void Shell::run()
 			this->print("PID   ", 13);
 			this->printLine("PAGE CONTENT", 13);
 
-			//insert test program
-			VirtualMemory::Page testPage;
-			int8_t data[16]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
-			std::vector<VirtualMemory::Page> testVector;
-			testVector.push_back(VirtualMemory::Page(data));
-			data[11] = 127;
-			testVector.push_back(VirtualMemory::Page(data));
-			std::pair<int, std::vector<VirtualMemory::Page>> testPair;
-			testPair.first = 0;
-			testPair.second = testVector;
-			virtualMemory->insertProgram(testPair);
-			testPair.first = 1;
-			virtualMemory->insertProgram(testPair);
-
 			for (auto & pair : virtualMemory->swapFile)
 			{
 				for (auto & page : pair.second)
@@ -409,7 +395,24 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^test ram$")))
 		{
-			int8_t *t = &memoryManager->getMemoryContent(0,0);
+			std::pair<uint8_t,int8_t&> t = memoryManager->getMemoryContent(0,0);
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^test vm$")))
+		{
+			//insert test program
+			VirtualMemory::Page testPage;
+			int8_t data[16]{ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };
+			std::vector<VirtualMemory::Page> testVector;
+			testVector.push_back(VirtualMemory::Page(data));
+			data[11] = 127;
+			testVector.push_back(VirtualMemory::Page(data));
+			std::pair<int, std::vector<VirtualMemory::Page>> testPair;
+			testPair.first = 0;
+			testPair.second = testVector;
+			virtualMemory->insertProgram(testPair);
+			testPair.first = 1;
+			virtualMemory->insertProgram(testPair);
+			//end test program
 		}
 	}
 	v1.join();
