@@ -7,7 +7,7 @@ class Memory
 {
 	struct Frame
 	{
-		int pid;
+		int pid,page;
 		bool dirtyflag = 0;
 	};
 	

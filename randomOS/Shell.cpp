@@ -25,7 +25,7 @@ void Shell::run()
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	std::string command = "";
-	FileMenager f;
+	FileMenager f(nullptr);
 	f.createFile("c");
 	f.openFile("c", 5);
 

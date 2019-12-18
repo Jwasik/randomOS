@@ -9,11 +9,29 @@
 
 int main()
 {
-	Shell shell;
-	Memory m;
-	m.test();
+	//Shell shell;
+	//m.test();
 
-	shell.run();
+	//shell.run();
+
+
+	//TEST RAMU 
+	std::shared_ptr<VirtualMemory> vm = std::make_shared<VirtualMemory>();
+	Memory mem(vm);
+	Memory* memory = &mem;
+	FileMenager f(memory);
+	f.createFile("ja");
+	f.openFile("ja", 1);
+	for (int i = 0; i < 80; i++)
+	{
+		f.writeToEndFile(70, 1);
+	}
+	f.readFile(1,0,60,1);
+	
+
+
+	//vm->test();
+	//mem.test();
 	////TEST MENADERA PLIKOW
 	/*
 	FileMenager f;
