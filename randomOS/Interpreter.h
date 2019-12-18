@@ -3,7 +3,7 @@
 #include "ProcessManager.h"
 #include "FileMenager.h"
 #include "MemoryManager.h"
-#include "ProcessManager.h"
+#include "Scheduler.h"
 #include "PCB.h"
 
 class Interpreter
@@ -67,10 +67,5 @@ public:
 	Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> filesystem, std::shared_ptr<ProcessManager> processManager);
 	uint8_t go();
 	std::vector<uint8_t> convertToMachine(std::string m);
-
-
-
-
-
 };
 

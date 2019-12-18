@@ -1,6 +1,7 @@
 #pragma once
 #include "Includes.h"
 #include "PCB.h"
+#include "RUNNING.h"
 
 static class Scheduler
 {

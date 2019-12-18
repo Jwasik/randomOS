@@ -21,7 +21,7 @@ Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<M
 }
 
 void Interpreter::loadPCB() {
-	PCB = scheduler->RUNNING();
+	PCB = RUNNING;
 	AX = PCB->getRegisterA();
 	BX = PCB->getRegisterB();
 	CX = PCB->getRegisterC();

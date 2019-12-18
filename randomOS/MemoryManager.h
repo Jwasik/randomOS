@@ -23,10 +23,6 @@ class Memory
 			
 	};
 	
-
-
-	};
-
 	std::shared_ptr<VirtualMemory> vm;
 
 public:
@@ -59,4 +55,5 @@ public:
 	std::pair<uint8_t, int8_t&> getMemoryContent(int pid, int logical);
 	void test();
 
+	friend class Shell;
 };
