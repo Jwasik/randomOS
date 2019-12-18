@@ -145,7 +145,10 @@ bool PCB::getIsLastChild()
 unsigned int PCB::getInstructionCounter(){ return this->instructionCounter;}
 std::array<int, 4> PCB::getRegisters(){ return this->registers;}
 
-int PCB::getRegisterA(){ return this->registers[0];}
+int PCB::getRegisterA()
+{ 
+	return this->registers[0];
+}
 
 int PCB::getRegisterB()
 {
