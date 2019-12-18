@@ -1,23 +1,57 @@
 #pragma once
+
+
 #include "Includes.h"
-class Memory 
+#include "VirtualMemory.h"
+class Memory
 {
 	struct Frame
 	{
-		int PageNr;
-		bool taken=0;
-		int lastUse=0;
+		int pid;
+		bool dirtyflag = 0;
 	};
-
-public:
-	char ram[128];//pamiec wlasciwa
-	Memory(int);
-	void writeInMem(int,std::string);//wpisuje max 16 bajtów do ramki, czeka na zmiany jak bede dostawal page do wpisania
-	void deleteFromMem(int);//czyscze ramke
-	void printMemory();
-	int LogicaltoPhysical(int logical);//zamieniam nr na poczatkowy adres frame'a
-	char& getMemoryContent(int logical, int PC);//dopóki nie wiem jakie adresy dostane traktuje PID jako adres logiczny
-	Frame FrameTable[8];// informacja czy ramka jest zajêta i jaka strona jest w niej wpisana
 	
+	//pamiec wlasciwa
+	int8_t ram[128];
+	//czyscze ramke
+	void deleteFromMem(int);
+	// informacja czy ramka jest zajeta i jaka strona jest w niej wpisana
+	Frame FrameTable[8]{
+
+		
+			
+	};
+	
+	std::shared_ptr<VirtualMemory> vm;
+public:
+	Memory();
+	Memory(std::shared_ptr<VirtualMemory>);
+	
+	
+	std::vector<std::pair<int, bool>> ProcessPages
+	{
+		{-1, 0},
+		{-1, 0},
+		{-1, 0},
+		{-1, 0},
+		{-1, 0},
+		{-1, 0},
+		{-1, 0},
+		{-1, 0}
+	};
+	std::map<int, std::vector<std::pair<int, bool>>> PageTable;
+	void printPageTable(int);
+	
+	
+	
+	//wpisuje bajt do ramki, czeka na zmiany jak bede dostawal page do wpisania
+	uint8_t writeInMem(int pid, int logical,int8_t data);
+	void printMemory();
+	//przeglada wszystkie ramki, jesli znajdzie to zwraca jej adres.
+	//jesli nie ma jej w RAMie to
+	//    probuje sprowadzic ja z pliku wymiany
+	//     jesli jest to ja laduje, ale jesli jej nie ma rzucam wyjatek o zlym adresie logicznym
+	std::pair<uint8_t, int8_t&> getMemoryContent(int pid, int logical);
+	void test();
 
 };
