@@ -8,12 +8,6 @@
     <Filter Include="Pliki nagłówkowe">
       <UniqueIdentifier>{3a383c0b-a36b-464c-9fed-616bd8e6bd50}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Semaphore">
-      <UniqueIdentifier>{33e12bb0-defa-4147-a91f-b54324ce88dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Interpreter">
-      <UniqueIdentifier>{a01965e8-180c-4d8d-a13b-84d6bf59523d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="randomOS.cpp">
@@ -65,7 +59,6 @@
     <ClInclude Include="FileMenager.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="Memory.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Shell.h">
       <Filter>Pliki nagłówkowe</Filter>
