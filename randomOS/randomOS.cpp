@@ -13,9 +13,14 @@
 int main()
 {
 	//Modules
+	//Group 1
 	std::shared_ptr<FileMenager> fileManager = std::make_shared<FileMenager>();
 	std::shared_ptr<VirtualMemory> virtualMemory = std::make_shared<VirtualMemory>();
 	std::shared_ptr<Memory> memoryManager = std::make_shared<Memory>(virtualMemory);
+
+	//Group 2
+	std::shared_ptr<ProcessManager> processManager = std::make_shared<ProcessManager>();
+
 
 	Shell shell(fileManager, memoryManager, virtualMemory);
 	shell.run();
