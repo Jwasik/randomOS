@@ -7,7 +7,8 @@ class Memory
 {
 	struct Frame
 	{
-		int pid,page;
+		int pid;
+		int page;
 		bool dirtyflag = 0;
 	};
 	
@@ -26,6 +27,8 @@ class Memory
 public:
 	Memory();
 	Memory(std::shared_ptr<VirtualMemory>);
+	void creatProcess(int pid);
+	
 	
 	
 	std::vector<std::pair<int, bool>> ProcessPages

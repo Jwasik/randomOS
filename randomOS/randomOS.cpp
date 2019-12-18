@@ -1,11 +1,12 @@
 ﻿
+#include "pch.h"
 #include "Includes.h"
 #include "FileMenager.h"
 #include "MemoryManager.h"
+/*
 #include "ProcessManager.h"
 #include "Interpreter.h"
-#include "Shell.h"
-
+#include "Shell.h"*/
 
 int main()
 {
@@ -22,11 +23,15 @@ int main()
 	FileMenager f(memory);
 	f.createFile("ja");
 	f.openFile("ja", 1);
+	mem.creatProcess(1);
 	for (int i = 0; i < 80; i++)
 	{
 		f.writeToEndFile(70, 1);
 	}
 	f.readFile(1,0,60,1);
+
+	mem.printPageTable(1);
+	mem.printMemory();
 	
 
 
