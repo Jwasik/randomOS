@@ -1,10 +1,7 @@
 #ifndef RANDOMOS_VIRTUALMEMORY_H
 #define RANDOMOS_VIRTUALMEMORY_H
 
-
-#include <string>
-#include <map>
-#include <list>
+#include "Includes.h"
 
 class VirtualMemory {
 
@@ -12,12 +9,9 @@ private:
 
 	// structure of a single process page
 	struct Page {
-		int8_t data[16]; // page data, initialized with zeroes
-
+		int8_t data[16]{ 0 }; // page data, initialized with zeroes
 		Page();
-
 		explicit Page(const int8_t data[]);
-
 		void print() const;
 	};
 
@@ -25,16 +19,8 @@ private:
 	std::map<int, std::vector<Page>> swapFile;
 
 	// queue of pairs (frameIndex, referenceBit) of last used frames
-	std::vector<std::pair<int, bool>> queue{
-			{0, true},
-			{1, true},
-			{2, true},
-			{3, true},
-			{4, true},
-			{5, true},
-			{6, true},
-			{7, true}
-	};
+	std::vector<std::pair<int, bool>> queue
+	{ {0, true},{1, true},{2, true},{3, true},{4, true},{5, true},{6, true},{7, true} };
 
 public:
 
@@ -63,7 +49,9 @@ public:
 	void printQueue();
 
 	void test();
+
 	friend class Memory;
+	friend class Shell;
 };
 
 #endif //RANDOMOS_VIRTUALMEMORY_H

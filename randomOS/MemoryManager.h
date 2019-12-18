@@ -3,6 +3,7 @@
 
 #include "Includes.h"
 #include "VirtualMemory.h"
+
 class Memory
 {
 	struct Frame
@@ -10,7 +11,7 @@ class Memory
 		int pid;
 		bool dirtyflag = 0;
 	};
-	
+
 	//pamiec wlasciwa
 	int8_t ram[128];
 	//czyscze ramke
@@ -22,30 +23,34 @@ class Memory
 			
 	};
 	
+
+
+	};
+
 	std::shared_ptr<VirtualMemory> vm;
+
 public:
 	Memory();
 	Memory(std::shared_ptr<VirtualMemory>);
-	
-	
+
 	std::vector<std::pair<int, bool>> ProcessPages
 	{
-		{-1, 0},
-		{-1, 0},
-		{-1, 0},
-		{-1, 0},
-		{-1, 0},
-		{-1, 0},
-		{-1, 0},
-		{-1, 0}
+		{ -1, 0 },
+	{ -1, 0 },
+	{ -1, 0 },
+	{ -1, 0 },
+	{ -1, 0 },
+	{ -1, 0 },
+	{ -1, 0 },
+	{ -1, 0 }
 	};
 	std::map<int, std::vector<std::pair<int, bool>>> PageTable;
 	void printPageTable(int);
-	
-	
-	
+
+
+
 	//wpisuje bajt do ramki, czeka na zmiany jak bede dostawal page do wpisania
-	uint8_t writeInMem(int pid, int logical,int8_t data);
+	uint8_t writeInMem(int pid, int logical, int8_t data);
 	void printMemory();
 	//przeglada wszystkie ramki, jesli znajdzie to zwraca jej adres.
 	//jesli nie ma jej w RAMie to

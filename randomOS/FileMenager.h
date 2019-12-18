@@ -2,8 +2,8 @@
 #include "Includes.h"
 //#include "semaphore.h"
 
-#define BlockSize 32 //Wielkoœæ bloku wyrazona w bajtach
-#define DiskSize  1024 //Wielkoœæ dysku wyra¿ona w bajtach
+#define BlockSize 32 //Wielkoï¿½ï¿½ bloku wyrazona w bajtach
+#define DiskSize  1024 //Wielkoï¿½ï¿½ dysku wyraï¿½ona w bajtach
 #define MaxFileSize  512 //Max wielkosc pliku w bajtach
 #define MaxFileNumber  32
 
@@ -22,7 +22,7 @@
 struct File
 {
 	std::string name;
-	int size, PID;
+	int size = 0, PID = -1;
 	std::vector<int> i_node;
 	bool isOpen = false;
 	//Semaphore s;
@@ -30,13 +30,19 @@ struct File
 
 struct Containers
 {
-	static std::vector<File> MainFileCatalog; // Katlog g³owny
+
+
+	static std::vector<File> MainFileCatalog; // Katlog gï¿½owny
 
 	static std::array<int, DiskSize / BlockSize> bit_vector; // Mapa bitowa
 
 	static std::array<char, DiskSize> DiskArray; //Tablica reprezentujca dysk 
 
-	static std::vector<int> open_file_table; //Tablic otwartych plików
+	static std::vector<int> open_file_table; //Tablic otwartych plikï¿½w
+
+	static std::array<std::string, DiskSize / BlockSize> BitVectorWithFiles;
+
+	static std::vector<std::pair<std::string, unsigned int>> Colors;
 };
 
 
@@ -45,7 +51,7 @@ struct Containers
 class FileMenager
 {
 private:
-
+	unsigned int color = 0;
 	int number_of_opened_files = 0, number_of_existing_files = 0;
 
 public:
@@ -69,12 +75,17 @@ public:
 	// 68 plik nie jest otwarty
 	//   0 udalo sie zamknac plik
 
-	int8_t writeToEndFile(uint16_t byte, unsigned int PID); //funkcja wpisuj¹ca 1 bajt do otwartego pliku
+	int8_t writeToEndFile(uint16_t byte, unsigned int PID); //funkcja wpisujï¿½ca 1 bajt do otwartego pliku
 	// 65 brak miejsca na dysku
 	// 68 plik nie jest otwarty
 	//   0 udalo sie otworzyc plik
 
-	int8_t writeToFile(uint8_t byte, uint8_t pos, unsigned int PID); //funkcja wpisuj¹ca bajt do podanego pliku na podana pozycje
+	int8_t append(std::string name, uint16_t byte);
+	// 65 brak miejsca na dysku
+	// 68 plik nie jest otwarty
+	//   0 udalo sie otworzyc plik
+
+	int8_t writeToFile(uint8_t byte, uint8_t pos, unsigned int PID); //funkcja wpisujï¿½ca bajt do podanego pliku na podana pozycje
 	// 69 pos z poza zakresu pliku
 	// 68 plik nie jest otwarty
 	//   0 udalo sie otworzyc plik
@@ -83,15 +94,23 @@ public:
 	// 66 brak pliku o podanej nazwie
 	//   0 udalo sie zmienic nazwe pliku
 
-	int8_t readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID); //odczytaj n bajtów z otwartego pliku(z danej pozycji) i wpisz do komórek pamiêci z podanym adresem pierwszej
+	int8_t readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID); //odczytaj n bajtï¿½w z otwartego pliku(z danej pozycji) i wpisz do komï¿½rek pamiï¿½ci z podanym adresem pierwszej
 	// 69 zakres z poza pliku
 	// 68 plik nie jst otwarty
 	//   0 udalo sie odczytac dane z pliku
 
+	int8_t clearFile(std::string name);//czyï¿½ci zawartoï¿½ï¿½ pliku ale go nie usuwa
+	// 66 brak pliku o podanej nazwie
+	// 70 plik jest otwarty nie mozna usunac
+	//   0 udalo sie usunac plik
+
+	std::pair<int8_t,int> wc(std::string name);//zwraca liczbï¿½ znakï¿½w podanego pliku
+	// 66 brak pliku o podanej nazwie
+	//  0 udaï¿½o siï¿½ uzyskac liczbe
+
 	std::vector<std::string> ls(); //zwraca wszystkie nazwy plikow jakie istnieja w folderze glownym
 	std::pair<int8_t, std::string> cat(std::string name); //zwraca zawartosc calego pliku jako string
-	void closeProcessFiles(unsigned int PID); //zamyka wszystkie pliki u¿ywane przez proces o podanym I
-
+	void closeProcessFiles(unsigned int PID); //zamyka wszystkie pliki uï¿½ywane przez proces o podanym I
 	int FindFreeBlock(File* file); //szuka wolengo bloku jesli znajdzie zwraca jego adres logiczny, w przeciwnym wypadku zwraca -1
 
 };

@@ -1,6 +1,3 @@
-#include "pch.h"
-#include <iostream>
-#include <vector>
 #include "VirtualMemory.h"
 
 VirtualMemory::Page::Page() = default;
