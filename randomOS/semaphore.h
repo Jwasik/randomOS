@@ -1,27 +1,21 @@
 #pragma once
-#include <atomic>
+#include "PCB.h"
 #include <mutex>
 #include <memory>
 #include <queue>
 
-/*DELETE once ProcessManagement.h is ready*/
-class PCB {
-
-};
-PCB pcb; //TODO: 
-/*DELETE once ProcessManagement.h is ready*/
-
-class Semaphore 
+class Semaphore //TODO: output for step-by-step execution
 {
 private:
-	std::mutex mtx;
-	std::atomic<int> value;
-	std::queue<PCB*> list; //TODO: possible changes due to PCB implementation; change to std::shared_ptr
+	std::mutex mtx; //mutex locks provide protection for the constructor, wait() and signal() methods without negative impacts for multithreaded systems
+	int value;
+	std::queue<std::shared_ptr<PCB>> list;
 
-	void sleep(); //TODO: update to reflect the PCB implementation, might be REDUNDANT
-	void wakeup(std::shared_ptr<PCB> w_pcb); //update to reflect the PCB implementation, might be REDUNDANT
 public:
 	Semaphore(int new_value);
-	void wait(); //TODO: uninterrupted execution
+	bool wait(); //returns 1 if a semaphore is down, 0 if it's not
 	void signal();
+
+	const int& getValue();
+	const std::queue<std::shared_ptr<PCB>>& getList();
 };
