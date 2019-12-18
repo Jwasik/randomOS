@@ -1,45 +1,38 @@
 #include "semaphore.h"
-std::shared_ptr<PCB> pcb;//TODO: Delete once there's a global PCB available
+
+void Semaphore::sleep()
+{
+}
+
+void Semaphore::wakeup(std::shared_ptr<PCB> w_pcb)
+{
+}
 
 Semaphore::Semaphore(int new_value)
 {
-	mtx.lock();
-	value = new_value;
-	mtx.unlock();
+	value = new_value; //equivalent to std::atomic.store()
 }
 
-bool Semaphore::wait()
+void Semaphore::wait()
 {
-	mtx.lock();
+	mtx.lock; //mutex locks provide protection for critical sections of the semaphores
 	value--;
 	if (value < 0)
 	{
-		list.push(pcb);
-		pcb->setStateWaiting();
-		return 1;
+		list.push(&pcb);
+		sleep();
 	}
-	mtx.unlock();
-	return 0;
+	mtx.unlock;
 }
 
 void Semaphore::signal() 
 {
-	mtx.lock();
+	mtx.lock;
 	value++;
 	if (value <= 0)
 	{
-		list.front()->setStateRunning();
-		list.pop();
+		wakeup(list.front);
+		list.pop;
 	}
-	mtx.unlock();
-}
-
-const int & Semaphore::getValue()
-{
-	return value;
-}
-
-const std::queue<std::shared_ptr<PCB>>& Semaphore::getList()
-{
-	return list;
+	mtx.unlock;
 }

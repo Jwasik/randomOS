@@ -46,14 +46,6 @@ public:
 
 
 	/********************************
-	*       PUBLIC VARIABLES        *
-	********************************/
-	//used in scheduling
-	uint8_t priority;
-	uint8_t basePriority;
-	int counter;
-
-	/********************************
 	*            GETTERS            *
 	********************************/
 	//----------|| STATE ||----------||
@@ -77,6 +69,10 @@ public:
 	bool getHasName(const std::string& nameToCompare);
 	std::string getNameAndPIDString();
 
+
+	//----|| TIMESPENTWAITING ||-------||
+	unsigned int getTimeSpentWaiting();
+	
 
 	//---------|| PARENT ||------------||
 	std::shared_ptr<PCB> getParentPCB();
@@ -135,6 +131,11 @@ public:
 	bool setName(const std::string& nameToSet);
 	
 
+	//-----|| TIMESPENTWAITING ||------||
+	bool setTimeSpentWaiting(const unsigned int& timeToSet);
+	bool incrementTimeSpentWaiting(const  unsigned int& timeToBeIncrementedBy);
+	
+
 	//----------|| PARENT ||-----------||
 	bool setParent(const std::shared_ptr<PCB>& parent);
 
@@ -190,6 +191,8 @@ private:
 	ProcessState state {ProcessState::NEW};
 	std::shared_ptr<PCB> parent=nullptr;
 	std::vector<std::shared_ptr<PCB>> children;
+	unsigned int basePriority=0; 
+	unsigned int timeSpentWaiting=0;
 	unsigned int instructionCounter=0;
 	/**
 	 * Processor registers.
