@@ -43,6 +43,9 @@
     <ClCompile Include="VirtualMemory.cpp">
       <Filter>MAIN</Filter>
     </ClCompile>
+    <ClCompile Include="Scheduler.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Interpreter.cpp">
@@ -80,6 +83,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="VirtualMemory.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Scheduler.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
