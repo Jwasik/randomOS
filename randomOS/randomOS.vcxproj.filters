@@ -38,7 +38,7 @@
       <Filter>MAIN</Filter>
     </ClCompile>
     <ClCompile Include="Scheduler.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>MAIN</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,7 +62,6 @@
     <ClInclude Include="FileMenager.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="Memory.h" />
     <ClInclude Include="Shell.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>

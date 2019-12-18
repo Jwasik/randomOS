@@ -1,6 +1,6 @@
 #pragma once
 #include "Includes.h"
-#include "ProcessManager.h"
+#include "Scheduler.h"
 #include "FileMenager.h"
 #include "MemoryManager.h"
 #include "ProcessManager.h"
@@ -10,7 +10,7 @@ class Interpreter
 {
 private:
 
-	std::shared_ptr<ProcessManager> scheduler;
+	std::shared_ptr<Scheduler> scheduler;
 	std::shared_ptr<Memory> memory;
 	std::shared_ptr<FileMenager> fileSystem;
 	std::shared_ptr<ProcessManager> processManager;
