@@ -22,7 +22,7 @@ int main()
 	//Group 2
 	std::shared_ptr<ProcessManager> processManager = std::make_shared<ProcessManager>();
 	std::shared_ptr<Scheduler> scheduler = std::make_shared<Scheduler>();
-	std::shared_ptr<Interpreter> interpreter = std::make_shared<Interpreter>(scheduler,memoryManager,fileManager,processManager);
+	std::shared_ptr<Interpreter> interpreter = std::make_shared<Interpreter>(memoryManager,fileManager,processManager);
 
 
 
