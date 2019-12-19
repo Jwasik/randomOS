@@ -165,6 +165,7 @@
     <ClCompile Include="randomOS.cpp" />
     <ClCompile Include="semaphore.cpp" />
     <ClCompile Include="Shell.cpp" />
+    <ClCompile Include="VirtualMemory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileMenager.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="ProcessManager.h" />
     <ClInclude Include="semaphore.h" />
     <ClInclude Include="Shell.h" />
+    <ClInclude Include="VirtualMemory.h" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

@@ -1,16 +1,42 @@
 ﻿
 #include "Includes.h"
 #include "FileMenager.h"
-#include "Memory.h"
+#include "MemoryManager.h"
+
 #include "ProcessManager.h"
 #include "Interpreter.h"
 #include "Shell.h"
 
-
 int main()
 {
-	Shell shell;
-	shell.run();
+	//Shell shell;
+	//m.test();
+
+	//shell.run();
+
+
+	//TEST RAMU 
+	std::shared_ptr<VirtualMemory> vm = std::make_shared<VirtualMemory>();
+	Memory mem(vm);
+	Memory* memory = &mem;
+	FileMenager f(memory);
+	f.createFile("ja");
+	f.openFile("ja", 1);
+	mem.creatProcess(1);
+	for (int i = 0; i < 120; i++)
+	{
+		f.writeToEndFile(70, 1);
+	}
+	f.writeToEndFile(75,1);
+	f.readFile(0,0,121,1);
+
+	//mem.printPageTable(1);
+	mem.printMemory();
+	
+
+
+	//vm->test();
+	//mem.test();
 	////TEST MENADERA PLIKOW
 	
 	FileMenager f;

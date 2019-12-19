@@ -1,6 +1,7 @@
 #pragma once
 #include "Includes.h"
 //#include "semaphore.h"
+#include "MemoryManager.h"
 
 #define BlockSize 32 //Wielkoœæ bloku wyrazona w bajtach
 #define DiskSize  1024 //Wielkoœæ dysku wyra¿ona w bajtach
@@ -49,9 +50,10 @@ class FileMenager
 private:
 
 	int number_of_opened_files = 0, number_of_existing_files = 0;
+	Memory* memory;
 
 public:
-	FileMenager();
+	FileMenager(Memory *memory);
 
 	int8_t createFile(std::string nazwa_pliku); //funkcja do tworzenia pliku o podanej nazwie w katalogu glownym
 	// 64 istnieje plik o danej nazwie
@@ -121,8 +123,11 @@ bool isFileOpen(std::string name, int PID); //sprawdza czy plik jest otwarty
 
 void clearBlock(int log); //czysci blok pamieci pod podanym adresem logicznym
 
+
+
 void showBitVector();
 void ShowMemory();
+
 
 
 

@@ -39,16 +39,10 @@ Shell::~Shell()
 void Shell::run()
 {
 
-	system("color 0C");
-	while (1)
-	{
-		std::string str;
-		std::cout << "TYPE START TO START SYSTEM" << std::endl;
-		std::cin >> str;
-		if (str == "START" || str == "start")break;
-		std::cin.ignore();
-	}
-	system("cls");
+	std::string command = "";
+	FileMenager f(nullptr);
+	f.createFile("c");
+	f.openFile("c", 5);
 
 
 
