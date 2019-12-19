@@ -54,6 +54,11 @@ uint8_t Scheduler::nextProcess()
 
 	RUNNING = this->active[0];
 	this->active.erase(this->active.begin());
+	if (RUNNING.state == "waiting")
+	{
+		result = this->nextProcess();
+		return 0;
+	}
 
 	this->result = normalProcessPriorityAndTimerChange(RUNNING);
 	if (this->result != 0)
@@ -104,7 +109,7 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 	}
 	if (process->priority < 100)
 	{
-		process->priority = 100;
+		process->priority = 100; //lol skjsvbjksvbjkskbjsv
 	}
 	if (previousPriority < 120)
 	{

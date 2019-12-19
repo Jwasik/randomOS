@@ -163,7 +163,6 @@
     <ClCompile Include="PCB.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
     <ClCompile Include="randomOS.cpp" />
-    <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="semaphore.cpp" />
     <ClCompile Include="Shell.cpp" />
     <ClCompile Include="VirtualMemory.cpp" />
@@ -175,7 +174,7 @@
     <ClInclude Include="MemoryManager.h" />
     <ClInclude Include="PCB.h" />
     <ClInclude Include="ProcessManager.h" />
-    <ClInclude Include="Scheduler.h" />
+    <ClInclude Include="RUNNING.h" />
     <ClInclude Include="semaphore.h" />
     <ClInclude Include="Shell.h" />
     <ClInclude Include="VirtualMemory.h" />
