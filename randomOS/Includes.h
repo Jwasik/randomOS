@@ -14,5 +14,4 @@
 #include <ctime>
 #include <regex>
 
-
-//ghyjtyntyntyntyntyntyntynytn
+//mastkom
