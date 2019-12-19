@@ -1,6 +1,4 @@
 #pragma once
-/*#ifndef RANDOMOS_VIRTUALMEMORY_H
-#define RANDOMOS_VIRTUALMEMORY_H*/
 
 #include "Includes.h"
 
@@ -54,5 +52,3 @@ public:
 	friend class Memory;
 	friend class Shell;
 };
-
-//#endif //RANDOMOS_VIRTUALMEMORY_H
