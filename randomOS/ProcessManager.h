@@ -35,6 +35,10 @@ public:
 	*      PRINTING TO CONSOLE      *
 	********************************/
 	std::string displayTree();
+	/**
+	* Returns all processes as a plain list (no tree formatting)
+	*/
+	std::string displayProcesses();
 	std::string displayWithState(PCB::ProcessState state);
 
 	/********************************

@@ -7,50 +7,31 @@
 #include "MemoryManager.h"
 #include "VirtualMemory.h"
 #include "Interpreter.h"
+#include "Scheduler.h"
 #include "Shell.h"
 #include "PCB.h"
 
 int main()
 {
+	//Modules
+	//Group 1
 	std::shared_ptr<FileMenager> fileManager = std::make_shared<FileMenager>();
-	std::shared_ptr<Memory> memoryManager = std::make_shared<Memory>();
 	std::shared_ptr<VirtualMemory> virtualMemory = std::make_shared<VirtualMemory>();
+	std::shared_ptr<Memory> memoryManager = std::make_shared<Memory>(virtualMemory);
+
+	//Group 2
+	std::shared_ptr<ProcessManager> processManager = std::make_shared<ProcessManager>();
+	std::shared_ptr<Scheduler> scheduler = std::make_shared<Scheduler>();
+	std::shared_ptr<Interpreter> interpreter = std::make_shared<Interpreter>(scheduler,memoryManager,fileManager,processManager);
+
+
 
 	Shell shell(fileManager, memoryManager, virtualMemory);
 	shell.run();
+
 	////TEST MENADERA PLIKOW
 	
-	FileMenager f;
-	f.createFile("jak");
-	//f.openFile("ja",1);
 	
-
-
-	f.createFile("ja");
-
-	//f.openFile("jak", 2);
-
-	for (int i = 0; i < 15; i++)
-	{
-		f.append("jak", 70);
-	}
-	for (int i = 0; i < 15; i++)
-	{
-		f.append("jak", 71);
-	}
-	f.append("jak",70);
-	f.openFile("jak", 1);
-	f.readFile(0,0,32,1);
-
-
-
-	//f.deleteFile("ja");
-	//std::pair< int8_t,std::string> t = f.cat("ja");
-	//std::cout << t.second;
-	//ShowMemory();
-	//f.readFile(0,70,20,2);
-	
-
 	////TEST PAMIĘCI RAM
 	///*Memory mem;
 	//mem.printMemory();*/
@@ -112,5 +93,19 @@ int main()
 	//
 	//}
 
+	//VM TEST
+
+	/*int8_t data[16] = { 0 };
+	std::vector<VirtualMemory::Page> pages;
+	for (int8_t i = 0; i < 8; i++) {
+		for (int8_t &j : data) {
+			j = i;
+		}
+		pages.emplace_back(VirtualMemory::Page(data));
+	}
+	for (int i = 0; i<8; i++) virtualMemory->insertProgram(std::make_pair(i, pages));
+	virtualMemory->printSwapFile();
+	uint8_t byte = virtualMemory->getPage(7, 3).data[10];
+	std::cout << std::to_string(byte) << std::endl;*/
 }
 
