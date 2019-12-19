@@ -44,7 +44,7 @@
       <Filter>MAIN</Filter>
     </ClCompile>
     <ClCompile Include="Scheduler.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>MAIN</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +69,6 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="Memory.h" />
-    <ClInclude Include="Memory.h" />
     <ClInclude Include="Shell.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
@@ -83,6 +82,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="VirtualMemory.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="RUNNING.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="Scheduler.h">

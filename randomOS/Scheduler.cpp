@@ -17,12 +17,11 @@ uint8_t Scheduler::schedule() //
 		counter = 0;
 	}
 
-	if (RUNNING.counter == counter || RUNNING = nullptr)
+	if (RUNNING->counter == this->counter || RUNNING = nullptr)
 	{
 		this->result = nextProcess();
 		if (this->result != 0)
 			return result;
-		
 
 		return 0;
 	}
@@ -44,7 +43,7 @@ uint8_t Scheduler::nextProcess()
 	{
 		if (this->expired.size() == 0)
 		{
-			RUNNING = //dodaje dummy;
+			//RUNNING = //dodaje dummy;
 				return 0;
 		}
 
@@ -54,7 +53,8 @@ uint8_t Scheduler::nextProcess()
 
 	RUNNING = this->active[0];
 	this->active.erase(this->active.begin());
-	if (RUNNING.state == "waiting")
+
+	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
 	{
 		result = this->nextProcess();
 		return 0;
@@ -70,14 +70,15 @@ uint8_t Scheduler::nextProcess()
 
 uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::vector<std::shared_ptr<PCB>> *queue)
 {
-	if (process.priority > 139 || process.priority < 100)
-		return ; //priority out of range <100, 139>
+	//KODY B£ÊDÓW DODAÆ
+	if (process->priority > 139 || process->priority < 100)
+		return 0; //priority out of range <100, 139>
 	if (process == NULL)
-		return ; //process does not exist
+		return 0; //process does not exist
 
 	for (int i = 0; i < queue->size(); i++)
 	{
-		if (expired[i].priority > process.priority)
+		if (expired[i]->priority > process->priority)
 		{
 			queue->insert(queue->begin() + i, process);
 			return 0;
@@ -99,7 +100,7 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 
 	
 	int bonus = 0.1 * waitingTime;
-	int previousPriority = process.priority;
+	int previousPriority = process->priority;
 
 	process->priority = process->basePriority + 5 - bonus;
 
@@ -109,7 +110,7 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 	}
 	if (process->priority < 100)
 	{
-		process->priority = 100; //lol skjsvbjksvbjkskbjsv
+		process->priority = 100;
 	}
 	if (previousPriority < 120)
 	{
