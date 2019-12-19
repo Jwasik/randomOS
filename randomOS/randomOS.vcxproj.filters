@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ProcessManagement">
-      <UniqueIdentifier>{2b9eae54-1afc-4781-b35b-73e8236b1a7c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Memory">
-      <UniqueIdentifier>{d15f92ee-1333-4831-b5da-c155246be06d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="MAIN">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -46,11 +40,14 @@
     <ClCompile Include="MemoryManager.cpp">
       <Filter>MAIN</Filter>
     </ClCompile>
+    <ClCompile Include="VirtualMemory.cpp">
+      <Filter>MAIN</Filter>
+    </ClCompile>
+    <ClCompile Include="Scheduler.cpp">
+      <Filter>MAIN</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Memory.cpp">
-      <Filter>Memory</Filter>
-    </ClCompile>
     <ClCompile Include="Interpreter.cpp">
       <Filter>Interpreter</Filter>
     </ClCompile>
@@ -65,16 +62,12 @@
     <ClInclude Include="PCB.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="Memory.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
     <ClInclude Include="Interpreter.h">
       <Filter>Interpreter</Filter>
     </ClInclude>
     <ClInclude Include="FileMenager.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="Memory.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Shell.h">
       <Filter>Pliki nagłówkowe</Filter>
@@ -86,6 +79,15 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="MemoryManager.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="VirtualMemory.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="RUNNING.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Scheduler.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

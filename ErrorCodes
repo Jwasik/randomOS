@@ -29,7 +29,9 @@ ZAKRES: <64,80)
 70 ERROR_FILE_IS_OPENED_CANT_DELETE
 
 Zarządzanie pamięcią (Piotr)
-ZAKRES: 
+ZAKRES: <81,97)
+81 ERROR_PAGE_DOESNT_EXIST
+
 
 Interpreter assemblera (Marcin)
 ZAKRES: <200,216)
