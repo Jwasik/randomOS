@@ -14,4 +14,4 @@
 #include <ctime>
 #include <regex>
 
-//mastkom
+std::shared_ptr<PCB> RUNNING;
