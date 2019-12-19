@@ -5,6 +5,7 @@
 #include "MemoryManager.h"
 #include "ProcessManager.h"
 #include "PCB.h"
+#include "RUNNING.h"
 
 class Interpreter
 {
