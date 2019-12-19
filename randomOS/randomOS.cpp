@@ -1,28 +1,15 @@
-﻿
+﻿// randomOS.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
+//
+
 #include "Includes.h"
 
-#include "FileMenager.h"
 #include "Memory.h"
 #include "ProcessManager.h"
-#include "MemoryManager.h"
-#include "VirtualMemory.h"
 #include "Interpreter.h"
-#include "Shell.h"
-#include "PCB.h"
+
 
 int main()
 {
-	//Modules
-	std::shared_ptr<FileMenager> fileManager = std::make_shared<FileMenager>();
-	std::shared_ptr<VirtualMemory> virtualMemory = std::make_shared<VirtualMemory>();
-	std::shared_ptr<Memory> memoryManager = std::make_shared<Memory>(virtualMemory);
-
-	Shell shell(fileManager, memoryManager, virtualMemory);
-	shell.run();
-
-	////TEST MENADERA PLIKOW
-	
-	
 	////TEST PAMIĘCI RAM
 	///*Memory mem;
 	//mem.printMemory();*/
@@ -84,19 +71,5 @@ int main()
 	//
 	//}
 
-	//VM TEST
-
-	/*int8_t data[16] = { 0 };
-	std::vector<VirtualMemory::Page> pages;
-	for (int8_t i = 0; i < 8; i++) {
-		for (int8_t &j : data) {
-			j = i;
-		}
-		pages.emplace_back(VirtualMemory::Page(data));
-	}
-	for (int i = 0; i<8; i++) virtualMemory->insertProgram(std::make_pair(i, pages));
-	virtualMemory->printSwapFile();
-	uint8_t byte = virtualMemory->getPage(7, 3).data[10];
-	std::cout << std::to_string(byte) << std::endl;*/
 }
 

@@ -23,19 +23,19 @@
     <ProjectGuid>{C4B71656-97AE-4CB7-A232-33C176C6B9FB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>randomOS</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -157,28 +157,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FileMenager.cpp" />
-    <ClCompile Include="Interpreter.cpp" />
-    <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="PCB.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
+    <ClCompile Include="Interpreter.cpp" />
+    <ClCompile Include="Memory.cpp" />
     <ClCompile Include="randomOS.cpp" />
-    <ClCompile Include="semaphore.cpp" />
-    <ClCompile Include="Shell.cpp" />
-    <ClCompile Include="VirtualMemory.cpp" />
+    <ClCompile Include="Scheduler.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FileMenager.h" />
-    <ClInclude Include="Includes.h" />
-    <ClInclude Include="Interpreter.h" />
-    <ClInclude Include="MemoryManager.h" />
     <ClInclude Include="PCB.h" />
     <ClInclude Include="ProcessManager.h" />
-    <ClInclude Include="semaphore.h" />
-    <ClInclude Include="Shell.h" />
-    <ClInclude Include="VirtualMemory.h" />
+    <ClInclude Include="Scheduler.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Interpreter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Includes.h" />
+    <ClInclude Include="Memory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
