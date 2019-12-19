@@ -476,7 +476,7 @@ void Shell::toLower(std::string &str)
 
 void Shell::printCode(uint8_t code)
 {
-	SetConsoleTextAttribute(hConsole, 14);
+	SetConsoleTextAttribute(hConsole, 12);
 
 	switch (code)
 	{
