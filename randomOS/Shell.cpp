@@ -19,7 +19,23 @@ Shell::Shell() :defaultColor(10)
 	system("color 0A");
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	//this->printLine("	           !#########       #\n	        !########!          ##!\n	     !########!               ###\n	  !##########                  ####\n	######### #####                ######\n	 !###!      !####!              ######\n	   !           #####            ######!\n	                 !####!         #######\n	                  #####       #######\n	                    !####!   #######!\n	                     ####!########\n         ##                   ##########\n       ,######!          !#############\n     ,#### ########################!####!\n   ,####'     ##################!'    #####\n ,####'            #######              !####!\n####'                                      #####\n~##                                          ##~\n", 206);
+	srand(time(time_t(NULL)));
+
+
+	for (unsigned int i = 0; i < 5; i++)
+	{
+		this->osName += (rand() % 26) + 97;
+	}
+	this->osName += "OS";
+	this->printLine(this->osName, 11);
+}
+
+Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm)
+:defaultColor(10), fileManager(fm), memoryManager(mm), virtualMemory(vm)
+{
+	system("color 0A");
+	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	srand(time(time_t(NULL)));
 
 
@@ -44,12 +60,10 @@ void Shell::run()
 	f.createFile("c");
 	f.openFile("c", 5);
 
-
-
 	system("color CE");
 	std::thread v1(voice1);
 
-	//this->printLine("\n\n\t	           !#########       #\n\t	        !########!          ##!\n\t	     !########!               ###\n\t	  !##########                  ####\n\t	######### #####                ######\n\t	 !###!      !####!              ######\n\t	   !           #####            ######!\n\t	                 !####!         #######\n\t	                  #####       #######\n\t	                    !####!   #######!\n\t	                     ####!########\n\t         ##                   ##########\n\t       ,######!          !#############\n\t     ,#### ########################!####!\n\t   ,####'     ##################!'    #####\n\t ,####'            #######              !####!\n\t####'                                      #####\n\t~##                                          ##~\n\t", 206);
+	this->printLine("\n\n\t	           !#########       #\n\t	        !########!          ##!\n\t	     !########!               ###\n\t	  !##########                  ####\n\t	######### #####                ######\n\t	 !###!      !####!              ######\n\t	   !           #####            ######!\n\t	                 !####!         #######\n\t	                  #####       #######\n\t	                    !####!   #######!\n\t	                     ####!########\n\t         ##                   ##########\n\t       ,######!          !#############\n\t     ,#### ########################!####!\n\t   ,####'     ##################!'    #####\n\t ,####'            #######              !####!\n\t####'                                      #####\n\t~##                                          ##~\n\t", 206);
 	//Sleep(3000);
 
 	system("color 0A");
@@ -235,6 +249,13 @@ void Shell::run()
 			this->printCode(0);
 
 		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^test$")))
+		{
+			for (int i = 0; i < 128; i++)
+			{
+				fmanager.append("b", 'a');
+			}
+		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^clear[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 6);
@@ -273,8 +294,6 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
 		{
-
-
 			auto names = fmanager.ls();
 
 			std::string str;
@@ -291,7 +310,15 @@ void Shell::run()
 					{
 						if (names[j] == owner)
 						{
-							color = j+10;
+							for (auto & x : Containers::Colors)
+							{
+								if (x.first == owner)
+								{
+									color = x.second + 1;
+									break;
+								}
+							}
+							
 							break;
 						}
 					}					
@@ -305,9 +332,81 @@ void Shell::run()
 			std::cout << std::endl;
 
 		}
-		else
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^p vm$")))
 		{
-			printLine("UNRECOGNISED COMMAND \"" + command + "\"\nTYPE \"MAN\" TO GET COMMAND LIST", 12);
+			this->printLine("DC QUEUE",14);
+			this->print("FRAME NUMBER    ",13);
+			this->printLine("REFERENCE BIT",13);
+			for (auto & pair : virtualMemory->queue)
+			{
+				this->print("     ",14);
+				this->print(int(pair.first),14);
+				this->print("               ",14);
+				this->printLine(int(pair.second),14);
+			}
+			std::cout << std::endl;
+
+			this->printLine("VIRTUAL MEMORZ CONTENT", 14);
+			this->print("PID   ", 13);
+			this->printLine("PAGE CONTENT", 13);
+
+			for (auto & pair : virtualMemory->swapFile)
+			{
+				for (auto & page : pair.second)
+				{
+					std::cout << " ";
+					this->print(pair.first, 9);
+
+					std::cout << "    ";
+					for (unsigned int i = 0; i < 16; i++)
+					{
+						this->print(page.data[i],14);
+						this->print(" ", 14);
+					}
+					std::cout << std::endl;
+				}
+				std::cout << std::endl;
+			}
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^p ram$")))
+		{
+			this->printLine("RAM CONTENT", 14);
+			this->print("FRAME NUMBER    ", 13);
+			this->printLine("CONTENT", 13);
+			for (unsigned int i = 0; i < 8; i++)
+			{
+				this->print("     ",9);
+				this->print(int(i),9);
+				std::cout << "          ";
+				for (unsigned int j = 0; j < 16; j++)
+				{
+					this->print(memoryManager->ram[i+j],14);
+					this->print(" ", 14);
+				}
+				std::cout << std::endl;
+			}
+			
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^test ram$")))
+		{
+			std::pair<uint8_t,int8_t&> t = memoryManager->getMemoryContent(0,0);
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^test vm$")))
+		{
+			//insert test program
+			VirtualMemory::Page testPage;
+			int8_t data[16]{ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };
+			std::vector<VirtualMemory::Page> testVector;
+			testVector.push_back(VirtualMemory::Page(data));
+			data[11] = 127;
+			testVector.push_back(VirtualMemory::Page(data));
+			std::pair<int, std::vector<VirtualMemory::Page>> testPair;
+			testPair.first = 0;
+			testPair.second = testVector;
+			virtualMemory->insertProgram(testPair);
+			testPair.first = 1;
+			virtualMemory->insertProgram(testPair);
+			//end test program
 		}
 	}
 	v1.join();
@@ -341,6 +440,13 @@ void Shell::print(char text, unsigned int color = 10)
 	SetConsoleTextAttribute(hConsole, this->defaultColor);
 }
 
+void Shell::print(int text, unsigned int color = 10)
+{
+	SetConsoleTextAttribute(hConsole, color);
+	std::cout << text;
+	SetConsoleTextAttribute(hConsole, this->defaultColor);
+}
+
 void Shell::changeConsoleColor(unsigned int color)
 {
 	SetConsoleTextAttribute(hConsole, color);
@@ -364,7 +470,7 @@ void Shell::toLower(std::string &str)
 
 void Shell::printCode(uint8_t code)
 {
-	SetConsoleTextAttribute(hConsole, 14);
+	SetConsoleTextAttribute(hConsole, 12);
 
 	switch (code)
 	{

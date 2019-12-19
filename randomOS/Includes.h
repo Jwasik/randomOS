@@ -3,6 +3,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <map>
 #include <string>
 #include <memory>
 #include <array>
@@ -12,3 +13,5 @@
 #include <cstdlib>
 #include <ctime>
 #include <regex>
+
+std::shared_ptr<PCB> RUNNING;

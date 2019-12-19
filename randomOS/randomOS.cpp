@@ -1,11 +1,16 @@
 ﻿
 #include "Includes.h"
+
 #include "FileMenager.h"
 #include "MemoryManager.h"
 
 #include "ProcessManager.h"
+#include "MemoryManager.h"
+#include "VirtualMemory.h"
 #include "Interpreter.h"
+#include "Scheduler.h"
 #include "Shell.h"
+#include "PCB.h"
 
 int main()
 {
@@ -45,31 +50,13 @@ int main()
 	
 
 
-	f.createFile("ja");
 
-	//f.openFile("jak", 2);
+	Shell shell(fileManager, memoryManager, virtualMemory);
+	shell.run();
 
-	for (int i = 0; i < 15; i++)
-	{
-		f.append("jak", 70);
-	}
-	for (int i = 0; i < 15; i++)
-	{
-		f.append("jak", 71);
-	}
-	f.append("jak",70);
-	f.openFile("jak", 1);
-	f.readFile(0,0,32,1);
-
-
-
-	//f.deleteFile("ja");
-	//std::pair< int8_t,std::string> t = f.cat("ja");
-	//std::cout << t.second;
-	//ShowMemory();
-	//f.readFile(0,70,20,2);
+	////TEST MENADERA PLIKOW
 	
-
+	
 	////TEST PAMIĘCI RAM
 	///*Memory mem;
 	//mem.printMemory();*/
@@ -131,5 +118,19 @@ int main()
 	//
 	//}
 
+	//VM TEST
+
+	/*int8_t data[16] = { 0 };
+	std::vector<VirtualMemory::Page> pages;
+	for (int8_t i = 0; i < 8; i++) {
+		for (int8_t &j : data) {
+			j = i;
+		}
+		pages.emplace_back(VirtualMemory::Page(data));
+	}
+	for (int i = 0; i<8; i++) virtualMemory->insertProgram(std::make_pair(i, pages));
+	virtualMemory->printSwapFile();
+	uint8_t byte = virtualMemory->getPage(7, 3).data[10];
+	std::cout << std::to_string(byte) << std::endl;*/
 }
 
