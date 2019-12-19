@@ -1,5 +1,5 @@
 project(randomOS)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
-add_executable(randomOS randomOS.cpp VirtualMemory.cpp VirtualMemory.h)
+add_executable(randomOS randomOS.cpp VirtualMemory.h VirtualMemory.cpp MemoryManager.h MemoryManager.cpp)
