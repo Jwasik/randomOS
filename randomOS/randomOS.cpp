@@ -7,6 +7,7 @@
 #include "MemoryManager.h"
 #include "VirtualMemory.h"
 #include "Interpreter.h"
+#include "Scheduler.h"
 #include "Shell.h"
 #include "PCB.h"
 
@@ -20,6 +21,9 @@ int main()
 
 	//Group 2
 	std::shared_ptr<ProcessManager> processManager = std::make_shared<ProcessManager>();
+	std::shared_ptr<Scheduler> scheduler = std::make_shared<Scheduler>();
+	std::shared_ptr<Interpreter> interpreter = std::make_shared<Interpreter>(memoryManager,fileManager,processManager);
+
 
 
 	Shell shell(fileManager, memoryManager, virtualMemory);

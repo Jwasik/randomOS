@@ -51,7 +51,7 @@ public:
 	//used in scheduling
 	uint8_t priority;
 	uint8_t basePriority;
-	int counter;
+	uint16_t counter;
 
 	/********************************
 	*            GETTERS            *
