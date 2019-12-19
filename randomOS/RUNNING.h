@@ -1,4 +1,4 @@
 #pragma once
 #include "PCB.h"
 
-std::shared_ptr<PCB> RUNNING;
+__declspec(selectany) std::shared_ptr<PCB> RUNNING = nullptr;

@@ -9,7 +9,7 @@ Scheduler::~Scheduler()
 {
 }
 
-uint8_t Scheduler::schedule() //
+uint8_t Scheduler::schedule()
 {
 	counter++;
 	if (counter > 1000000)
@@ -17,7 +17,7 @@ uint8_t Scheduler::schedule() //
 		counter = 0;
 	}
 
-	if (RUNNING->counter == this->counter || RUNNING = nullptr)
+	if (RUNNING->counter == this->counter || RUNNING == nullptr)
 	{
 		this->result = nextProcess();
 		if (this->result != 0)
@@ -64,7 +64,6 @@ uint8_t Scheduler::nextProcess()
 	if (this->result != 0)
 		return result;
 
-	return 0;
 	return 27; // b³¹d: WTF?
 }
 
@@ -121,9 +120,5 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 		process->counter = this->counter + ((140 - previousPriority) * 0.5);
 
 	}
-
-	return 0;
 	return 27;
 }
-
-

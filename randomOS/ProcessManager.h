@@ -1,6 +1,6 @@
 #pragma once
 #include "Includes.h"
-#include "PCB.h"
+#include "RUNNING.h"
 
 //POSSIBLE ERRORS (in range[32 - 64])
 #define ERROR_PM_PROCESS_NAME_TAKEN  32 //a process with such name already exists (when trying to fork a new process)

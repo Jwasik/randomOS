@@ -1,6 +1,6 @@
 #include "Interpreter.h"
 
-Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> fileSystem, std::shared_ptr<ProcessManager> processManager) {
+/*Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> fileSystem, std::shared_ptr<ProcessManager> processManager) {
 
 	this->scheduler = scheduler;
 	this->memory = memory;
@@ -19,7 +19,7 @@ Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<M
 	this->instructionHex.clear();
 	this->instructionString = "";
 }
-
+*/
 void Interpreter::loadPCB() {
 	PCB = RUNNING;
 	AX = PCB->getRegisterA();
@@ -34,7 +34,7 @@ void Interpreter::loadPCB() {
 }
 
 void Interpreter::loadCode() {
-	code = memory->getMemoryContent(PC, PID);
+	code = memory->getMemoryContent(PC, PID).second;
 	PC++;
 	instructionHex.push_back(code);
 }
@@ -149,7 +149,7 @@ void Interpreter::interpret() {
 }
 
 int8_t& Interpreter::loadArgAdrOrReg() {
-	int8_t& adr = memory->getMemoryContent(PC, PID);
+	int8_t& adr = memory->getMemoryContent(PC, PID).second;
 	PC++;
 
 	instructionHex.push_back(adr);
@@ -179,7 +179,7 @@ int8_t& Interpreter::loadArgAdrOrReg() {
 }
 
 int8_t Interpreter::loadArgNum() {
-	int8_t num = memory->getMemoryContent(PC, PID);
+	int8_t num = memory->getMemoryContent(PC, PID).second;
 	PC++;
 
 	instructionHex.push_back(num);
@@ -195,7 +195,7 @@ std::string Interpreter::loadArgText(int n) {
 	instructionString += " ";
 
 	for (int i = 0; i < n; i++) {
-		t = memory->getMemoryContent(PC, PID);
+		t = memory->getMemoryContent(PC, PID).second;
 		PC++;
 		text += t;
 
@@ -377,6 +377,10 @@ void Interpreter::NOP() {}
 // ******************************************
 // ******************* GO *******************
 // ******************************************
+
+Interpreter::Interpreter(std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> filesystem, std::shared_ptr<ProcessManager> processManager) : memory(memory), fileSystem(filesystem), processManager(processManager)
+{
+}
 
 uint8_t Interpreter::go() {
 	try {
