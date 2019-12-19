@@ -476,7 +476,28 @@ void Shell::printCode(uint8_t code)
 	{
 	case 0:
 		std::cout << "DONE" << std::endl;
-		break;
+	break;
+	case 32:
+		std::cout << "CODE 32 : ERROR_PM_PROCESS_NAME_TAKEN" << std::endl;
+	break;
+	case 33:
+		std::cout << "CODE 33 : ERROR_PM_PROCESS_NAME_TOO_LONG" << std::endl;
+	break;
+	case 34:
+		std::cout << "CODE 34 : ERROR_PM_PROCESS_NAME_CANNOT_BE_EMPTY" << std::endl;
+	break;
+	case 35:
+		std::cout << "CODE 35 : ERROR_PM_PROCESS_NAME_CONTAINS_UNALLOWED_CHARACTERS" << std::endl;
+	break;
+	case 36:
+		std::cout << "CODE 36 : ERROR_PM_PARENT_COULD_NOT_BE_FOUND" << std::endl;
+	break;
+	case 37:
+		std::cout << "CODE 37 : ERROR_PM_INIT_CANNOT_BE_DELETED" << std::endl;
+	break;
+	case 38:
+		std::cout << "CODE 38 : ERROR_PM_PROCESS_COULD_NOT_BE_FOUND" << std::endl;
+	break;
 	case 64:
 		std::cout << "CODE 64 : ERROR_ALREADY_EXISTING_FILE" << std::endl;
 		break;
@@ -498,12 +519,25 @@ void Shell::printCode(uint8_t code)
 	case 70:
 		std::cout << "CODE 70 : ERROR_FILE_IS_OPENED_CANNOT_DELETE" << std::endl;
 		break;
+	case 81:
+		std::cout << "CODE 81 : ERROR_PAGE_DOESNT_EXIST" << std::endl;
+		break;
+	case 200:
+		std::cout << "CODE 200 : ERROR_UNKNOWN_INSTRUCTION" << std::endl;
+		break;
+	case 201:
+		std::cout << "CODE 201 : ERROR_NUMBER_TO_LARGE" << std::endl;
+		break;
+	case 202:
+		std::cout << "CODE 202 : ERROR_NUMBER_TO_SMALL" << std::endl;
+		break;
+	case 203:
+		std::cout << "CODE 203 : ERROR_DIVIDING_BY_ZERO" << std::endl;
+		break;
 	default:
 		std::cout << "CODE " << int(code) << ": ERROR_UNRECOGNIZED_ERROR" << std::endl;
 		break;
 	}
-
-
 	SetConsoleTextAttribute(hConsole, this->defaultColor);
 }
 
