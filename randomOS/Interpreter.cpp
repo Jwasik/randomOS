@@ -1,6 +1,6 @@
 #include "Interpreter.h"
 
-Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> fileSystem, std::shared_ptr<ProcessManager> processManager) {
+/*Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> fileSystem, std::shared_ptr<ProcessManager> processManager) {
 
 	this->scheduler = scheduler;
 	this->memory = memory;
@@ -19,7 +19,7 @@ Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<M
 	this->instructionHex.clear();
 	this->instructionString = "";
 }
-
+*/
 void Interpreter::loadPCB() {
 	PCB = RUNNING;
 	AX = PCB->getRegisterA();
@@ -377,6 +377,10 @@ void Interpreter::NOP() {}
 // ******************************************
 // ******************* GO *******************
 // ******************************************
+
+Interpreter::Interpreter(std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> filesystem, std::shared_ptr<ProcessManager> processManager) : memory(memory), fileSystem(filesystem), processManager(processManager)
+{
+}
 
 uint8_t Interpreter::go() {
 	try {

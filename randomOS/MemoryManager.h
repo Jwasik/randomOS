@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include "Includes.h"
 #include "VirtualMemory.h"
 
@@ -13,20 +11,16 @@ class Memory
 	};
 
 	//pamiec wlasciwa
-	int8_t ram[128];
+	int8_t ram[128]{0};
 	//czyscze ramke
 	void deleteFromMem(int);
 	// informacja czy ramka jest zajeta i jaka strona jest w niej wpisana
 	Frame FrameTable[8]{
 
-
-
+		
+			
 	};
-
-
-
-
-
+	
 	std::shared_ptr<VirtualMemory> vm;
 
 public:
@@ -59,6 +53,5 @@ public:
 	std::pair<uint8_t, int8_t&> getMemoryContent(int pid, int logical);
 	void test();
 
-
-
+	friend class Shell;
 };
