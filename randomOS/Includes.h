@@ -14,4 +14,3 @@
 #include <ctime>
 #include <regex>
 
-std::shared_ptr<PCB> RUNNING;
