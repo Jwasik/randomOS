@@ -1,5 +1,4 @@
 
-#include "pch.h"
 #include "FileMenager.h"
 
 std::vector<File> Containers::Containers::MainFileCatalog;

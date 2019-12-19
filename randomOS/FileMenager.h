@@ -108,8 +108,11 @@ bool isFileOpen(std::string name, int PID); //sprawdza czy plik jest otwarty
 
 void clearBlock(int log); //czysci blok pamieci pod podanym adresem logicznym
 
+
+
 void showBitVector();
 void ShowMemory();
+
 
 
 
