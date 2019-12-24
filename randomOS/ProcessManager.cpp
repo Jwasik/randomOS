@@ -139,6 +139,7 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 
 
 	//LOAD THE SOURCE CODE INTO PAGE VECTOR
+
 	bool fileHasEnded = 0;//flag variable to keep track of whether the file has been read yet
 	std::queue<uint8_t> overflownBytes; // helper stack to keep the bytes that won't fit into page that is currently being filled
 
@@ -180,7 +181,7 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 				while (overflowingBytes!= 0)
 				{
 					//the overflowing bytes are the last bytes in the machineCode array
-					overflownBytes.push(machineCodeLine[machineCodeLine.size() - overflowingBytes]);
+					overflownBytes.push(machineCodeLine[machineCodeLine.size() -1- overflowingBytes]);
 					overflowingBytes--;
 				}
 			}
