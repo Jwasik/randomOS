@@ -5,19 +5,20 @@
 ProcessManager::ProcessManager(std::shared_ptr <Scheduler> scheduler, std::shared_ptr <VirtualMemory> virtualMemory):
 scheduler(scheduler), virtualMemory(virtualMemory)
 {
-
 	createInit();
 }
 
-
-ProcessManager::~ProcessManager()
-{
-}
+ProcessManager::~ProcessManager(){}
 
 void ProcessManager::createInit()
 {
 	this->init = std::make_shared<PCB>("Init", 0, nullptr);
+
 	//adds the program code to init's memory
+	std::string initCode = "JUM 0";
+	std::vector<Page> initPages { Page((convertToMachine(initCode))) };
+	virtualMemory->insertProgram(std::make_pair(0, initPages));
+
 	//ads innit to scheduler
 	addProcessToScheduler(this->init);
 }
@@ -26,7 +27,7 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 {
 	//helper variable for returning errors to shell
 	//0 if no errors occur, else error code
-	_int8 errorHandling = 0;
+	int8_t errorHandling = 0;
 
 	//check if the process name isn't unsutable
 	//too long, too short, only contains spaces, is already taken 
@@ -112,6 +113,7 @@ bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
 		{
 			//freeMemoryFromProcess(process)
 			//deleteProcessFromScheduler(process)
+			//freeUpAnySemaphores(process)
 			process->getParentPCB()->removeChild(process);
 			return true;
 		}
@@ -121,6 +123,7 @@ bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
 
 int8_t ProcessManager::addProcessToScheduler(const std::shared_ptr<PCB>& process)
 {
+	//still waiting for method
 	return 0;
 }
 
@@ -374,7 +377,6 @@ int8_t ProcessManager::isThisNameSutableForAProcess(const std::string & processN
 
 int8_t ProcessManager::isProcessNameUnique(const std::string & processName)
 {
-
 	std::stack<std::shared_ptr<PCB>> allProcesses;
 	allProcesses.push(init);
 

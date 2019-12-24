@@ -1,3 +1,8 @@
+Page::Page(std::vector<uint8_t> data)
+{
+	for (int i = 0; i < data.size() && i<PAGE_SIZE; i++)
+		this->data[i] = data[i];
+}
 
 int8_t Page::writeToPage(const unsigned int & index, int8_t byte)
 {
