@@ -6,6 +6,7 @@
 #include "FileMenager.h"
 #include "MemoryManager.h"
 #include "VirtualMemory.h"
+#include "Page.h"
 
 void voice1();
 
@@ -36,6 +37,6 @@ private:
 
 	std::string osName;
 
-	HANDLE  hConsole;
+	HANDLE hConsole;
 	unsigned int defaultColor;
 };

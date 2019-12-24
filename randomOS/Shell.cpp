@@ -19,7 +19,7 @@ Shell::Shell() :defaultColor(10)
 	system("color 0A");
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	srand(time(time_t(NULL)));
+	srand(time(NULL));
 
 
 	for (unsigned int i = 0; i < 5; i++)
@@ -36,7 +36,7 @@ Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::s
 	system("color 0A");
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	srand(time(time_t(NULL)));
+	srand(time(NULL));
 
 
 	for (unsigned int i = 0; i < 5; i++)
@@ -400,13 +400,13 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^test vm$")))
 		{
 			//insert test program
-			VirtualMemory::Page testPage;
+			Page testPage;
 			int8_t data[16]{ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };
-			std::vector<VirtualMemory::Page> testVector;
-			testVector.push_back(VirtualMemory::Page(data));
+			std::vector<Page> testVector;
+			testVector.push_back(Page(data));
 			data[11] = 127;
-			testVector.push_back(VirtualMemory::Page(data));
-			std::pair<int, std::vector<VirtualMemory::Page>> testPair;
+			testVector.push_back(Page(data));
+			std::pair<int, std::vector<Page>> testPair;
 			testPair.first = 0;
 			testPair.second = testVector;
 			virtualMemory->insertProgram(testPair);

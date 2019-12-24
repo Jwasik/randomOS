@@ -1,5 +1,6 @@
 #pragma once
 #include "Includes.h"
+#include "Page.h"
 #include "VirtualMemory.h"
 
 class Memory
