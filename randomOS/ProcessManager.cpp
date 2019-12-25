@@ -411,7 +411,7 @@ std::vector<uint8_t> ProcessManager::convertToMachine(std::string m) {
 		for (int i = 3; i < m.length(); i++) {
 			if (m[i] >= 48 && m[i] <= 57) {
 				arg.push_back("");
-				for (int j = i; m[j] != ' '; j++) {
+				for (int j = i; m[j] != ' ' && j<m.size(); j++) {
 					arg.back() += m[j];
 				}
 				i += arg.back().length();
