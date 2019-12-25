@@ -2,21 +2,23 @@
 
 
 
-ProcessManager::ProcessManager()
+ProcessManager::ProcessManager(std::shared_ptr <Scheduler> scheduler, std::shared_ptr <VirtualMemory> virtualMemory):
+scheduler(scheduler), virtualMemory(virtualMemory)
 {
 	createInit();
 }
 
-
-ProcessManager::~ProcessManager()
-{
-}
+ProcessManager::~ProcessManager(){}
 
 void ProcessManager::createInit()
 {
 	this->init = std::make_shared<PCB>("Init", 0, nullptr);
+
 	//adds the program code to init's memory
-	init->setMemoryPages(loadProgramIntoMemory("init_Path"));
+	std::string initCode = "JUM 0";
+	std::vector<Page> initPages { Page((convertToMachine(initCode))) };
+	virtualMemory->insertProgram(std::make_pair(0, initPages));
+
 	//ads innit to scheduler
 	addProcessToScheduler(this->init);
 }
@@ -25,7 +27,7 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 {
 	//helper variable for returning errors to shell
 	//0 if no errors occur, else error code
-	_int8 errorHandling = 0;
+	int8_t errorHandling = 0;
 
 	//check if the process name isn't unsutable
 	//too long, too short, only contains spaces, is already taken 
@@ -44,7 +46,7 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 			parentPCB->addChild(newProcess);
 
 			//load the program code to be executed by the process into its memory pages
-			newProcess->setMemoryPages(loadProgramIntoMemory(filePath));
+			loadProgramIntoMemory(filePath, PIDOfTheCreatedProcess);
 			//add the process 
 			addProcessToScheduler(newProcess);
 
@@ -111,6 +113,7 @@ bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
 		{
 			//freeMemoryFromProcess(process)
 			//deleteProcessFromScheduler(process)
+			//freeUpAnySemaphores(process)
 			process->getParentPCB()->removeChild(process);
 			return true;
 		}
@@ -120,13 +123,86 @@ bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
 
 int8_t ProcessManager::addProcessToScheduler(const std::shared_ptr<PCB>& process)
 {
+	//still waiting for method
 	return 0;
 }
 
-std::shared_ptr<std::vector<MemoryPage>> ProcessManager::loadProgramIntoMemory(const std::string& filePath)
+int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const unsigned int& PID)
 {
-	//WAITING FOR IMPLEMENTATION IN MEMORYMANAGEMENT MODULE
-	return nullptr;
+	//OPEN THE FILE CONTAINING SOURCE CODE
+	std::ifstream programFile(filePath);
+	//if the file cannot be opened throw appropriate error
+	if (!programFile) { return ERROR_PM_CANNOT_OPEN_SOURCE_CODE_FILE;}
+
+	//get the first line containing number of pages needed for the program and initialise a page vector
+	std::string line="";
+	std::getline(programFile, line);
+	std::vector<Page> programPages;
+	programPages.resize(std::stoi(line));
+
+
+	//LOAD THE SOURCE CODE INTO PAGE VECTOR
+
+	bool fileHasEnded = 0;//flag variable to keep track of whether the file has been read yet
+	std::queue<uint8_t> overflownBytes; // helper stack to keep the bytes that won't fit into page that is currently being filled
+
+	//iterate over the pages reserved for the program until they are filled or the source file ends
+	for (int i = 0; i < programPages.size() && !fileHasEnded; i++) {
+		int byteCounter = 0; //used to keep track of how many bytes have been loaded into the current page
+		bool workOnThisPage = 1; //flag variable to know wheter one should continue loading into the current page
+
+		//if there is anything "leftover" from the last page load it into current before reading from file
+		while(!overflownBytes.empty)
+		{
+			int8_t errorCode = programPages[i].writeToPage(byteCounter, overflownBytes.front());
+			if (errorCode != 0) { return errorCode; }
+			overflownBytes.pop();
+			byteCounter++;
+		}
+
+		//read the file line by line, translate to machineCode and push back to current page
+		while(workOnThisPage)
+		{
+			//READING & CONVERTING THE LINE FROM SOURCE FILE
+			//try to read a line from the file, if it cannot be read (reached end of file) break out of both loops
+			if (!std::getline(programFile, line)) 
+			{ 
+				fileHasEnded = 1; 
+				break;
+			}
+			//convert the read line into machine code
+			std::vector<uint8_t> machineCodeLine = convertToMachine(line);
+
+
+			//CHECKING IF BYTES WILL FIT IN CURRENT PAGE
+			int checkForOverFlow = byteCounter + machineCodeLine.size();
+			int overflowingBytes = PAGE_SIZE - checkForOverFlow;
+			//if the number of bytes that is to be written to the current page exceedes page size 
+			//save the overflowing bytes in the overflowBytes queue
+			if(overflowingBytes>0)
+			{
+				while (overflowingBytes!= 0)
+				{
+					//the overflowing bytes are the last bytes in the machineCode array
+					overflownBytes.push(machineCodeLine[machineCodeLine.size() -1- overflowingBytes]);
+					overflowingBytes--;
+				}
+			}
+
+			//WRITING THE BYTES INTO CURRENT PAGE (ommiting the overflowing bytes by checking against page_size)
+			for (int j = 0; j<machineCodeLine.size() && byteCounter<PAGE_SIZE; j++)
+			{
+				uint8_t errorCode= programPages[i].writeToPage(byteCounter,machineCodeLine[j]);
+				if (errorCode != 0) { return errorCode;}
+				byteCounter++;
+			}
+			//if the page has been fully filled
+			if (overflowingBytes == 0) { workOnThisPage = 0; }
+		}
+	}
+
+	virtualMemory->insertProgram(std::make_pair(PID, programPages));
+	return 0;
 }
 
 
@@ -301,7 +377,6 @@ int8_t ProcessManager::isThisNameSutableForAProcess(const std::string & processN
 
 int8_t ProcessManager::isProcessNameUnique(const std::string & processName)
 {
-
 	std::stack<std::shared_ptr<PCB>> allProcesses;
 	allProcesses.push(init);
 
@@ -321,6 +396,88 @@ int8_t ProcessManager::isProcessNameUnique(const std::string & processName)
 	}
 	//if the process cannot be found return 0 
 	return 0;
+}
+
+//code copied from Interpreter as to avoid a circular include (interpreter needs processManager mathods)
+std::vector<uint8_t> ProcessManager::convertToMachine(std::string m) {
+	std::vector<uint8_t> machine;
+	std::vector<std::string> arg;
+
+	std::string code = m.substr(0, 3);
+
+	if (m.length() > 3) {
+
+		for (int i = 3; i < m.length(); i++) {
+			if (m[i] >= 48 && m[i] <= 57) {
+				arg.push_back("");
+				for (int j = i; m[j] != ' '; j++) {
+					arg.back() += m[j];
+				}
+				i += arg.back().length();
+			}
+			else if (m[i] == '[') {
+				arg.push_back("");
+				for (int j = i + 1; m[j] != ']'; j++) {
+					arg.back() += m[j];
+				}
+				i += arg.back().length() + 1;
+			}
+			else if (m[i] >= 65 && m[i] <= 68) {
+				arg.push_back("");
+				arg.back() += m[i];
+				arg.back() += m[i + 1];
+				i += 2;
+			}
+			else if (m[i] == '"') {
+				arg.push_back("");
+				arg.back() += m[i + 1];
+				arg.back() += m[i + 2];
+				i += 3;
+			}
+
+		}
+	}
+
+	if (code == "RET") machine.push_back(0x00);
+	if (code == "MOV") machine.push_back(0x01);
+	if (code == "WRI") machine.push_back(0x02);
+	if (code == "ADD") machine.push_back(0x03);
+	if (code == "SUB") machine.push_back(0x04);
+	if (code == "MUL") machine.push_back(0x05);
+	if (code == "DIV") machine.push_back(0x06);
+	if (code == "MOD") machine.push_back(0x07);
+	if (code == "INC") machine.push_back(0x08);
+	if (code == "DEC") machine.push_back(0x09);
+	if (code == "JUM") machine.push_back(0x0A);
+	if (code == "JUA") machine.push_back(0x0B);
+	if (code == "JIF") machine.push_back(0x0C);
+	if (code == "JIA") machine.push_back(0x0D);
+	if (code == "CFI") machine.push_back(0x0E);
+	if (code == "DFI") machine.push_back(0x0F);
+	if (code == "OFI") machine.push_back(0x10);
+	if (code == "SFI") machine.push_back(0x11);
+	if (code == "EFI") machine.push_back(0x12);
+	if (code == "WFI") machine.push_back(0x13);
+	if (code == "PFI") machine.push_back(0x14);
+	if (code == "RFI") machine.push_back(0x15);
+	if (code == "AFI") machine.push_back(0x16);
+	if (code == "CPR") machine.push_back(0x17);
+	if (code == "NOP") machine.push_back(0xFF);
+
+	if (arg.size() > 0) {
+		for (int i = 0; i < arg.size(); i++) {
+			if (arg[i] == "AX") machine.push_back(0xFF);
+			else if (arg[i] == "BX") machine.push_back(0xFE);
+			else if (arg[i] == "CX") machine.push_back(0xFD);
+			else if (arg[i] == "DX") machine.push_back(0xFC);
+			else if (arg[i][0] >= 65 && arg[i][0] <= 90) {
+				machine.push_back(arg[i][0]);
+				machine.push_back(arg[i][1]);
+			}
+			else machine.push_back(std::stoi(arg[i]));
+		}
+	}
+	return machine;
 }
 
 
