@@ -20,8 +20,8 @@ int main()
 	std::shared_ptr<Memory> memoryManager = std::make_shared<Memory>(virtualMemory);
 
 	//Group 2
-	std::shared_ptr<ProcessManager> processManager = std::make_shared<ProcessManager>();
 	std::shared_ptr<Scheduler> scheduler = std::make_shared<Scheduler>();
+	std::shared_ptr<ProcessManager> processManager = std::make_shared<ProcessManager>(scheduler, virtualMemory);
 	std::shared_ptr<Interpreter> interpreter = std::make_shared<Interpreter>(memoryManager,fileManager,processManager);
 
 

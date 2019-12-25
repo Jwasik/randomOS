@@ -7,6 +7,12 @@ Page::Page(const int8_t data[]) {
 		this->data[i] = data[i];
 }
 
+Page::Page(std::vector<uint8_t> data)
+{
+	for (int i = 0; i < data.size() && i < PAGE_SIZE; i++)
+		this->data[i] = data[i];
+}
+
 void Page::print() const {
 	for (auto& x : data) {
 		if (x == 0) std::cout << "_";
@@ -14,11 +20,8 @@ void Page::print() const {
 	}
 	std::cout << std::endl;
 }
-Page::Page(std::vector<uint8_t> data)
-{
-	for (int i = 0; i < data.size() && i<PAGE_SIZE; i++)
-		this->data[i] = data[i];
-}
+
+
 
 int8_t Page::writeToPage(const unsigned int & index, int8_t byte)
 {

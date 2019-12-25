@@ -21,6 +21,7 @@ void ProcessManager::createInit()
 
 	//ads innit to scheduler
 	addProcessToScheduler(this->init);
+
 }
 
 std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processName,const unsigned int& parentPID,const std::string& filePath)
@@ -152,7 +153,7 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 		bool workOnThisPage = 1; //flag variable to know wheter one should continue loading into the current page
 
 		//if there is anything "leftover" from the last page load it into current before reading from file
-		while(!overflownBytes.empty)
+		while(!overflownBytes.empty())
 		{
 			int8_t errorCode = programPages[i].writeToPage(byteCounter, overflownBytes.front());
 			if (errorCode != 0) { return errorCode; }

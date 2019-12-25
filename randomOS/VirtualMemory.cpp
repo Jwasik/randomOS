@@ -2,7 +2,9 @@
 
 
 
-void VirtualMemory::insertProgram(std::pair<int, std::vector<Page>> program) {
+void VirtualMemory::insertProgram(std::pair<int, std::vector<Page>> program)
+{
+
 	swapFile.insert(program);
 }
 
