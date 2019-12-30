@@ -25,4 +25,6 @@ private:
 	std::vector<std::shared_ptr<PCB>> expired;
 
 	uint8_t normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process);
+	
+	friend class Shell;
 };

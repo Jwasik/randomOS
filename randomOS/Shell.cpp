@@ -30,8 +30,8 @@ Shell::Shell() :defaultColor(10)
 	this->printLine(this->osName, 11);
 }
 
-Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm)
-:defaultColor(10), fileManager(fm), memoryManager(mm), virtualMemory(vm)
+Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm, std::shared_ptr<ProcessManager> pm, std::shared_ptr<Scheduler> sch)
+	:defaultColor(10), fileManager(fm), memoryManager(mm), virtualMemory(vm), processManager(pm), scheduler(sch)
 {
 	system("color 0A");
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -137,7 +137,7 @@ void Shell::run()
 			this->printLine(" DIRECTORY: \\HOME>\n", 14);
 
 			this->printLine(" TYPE: FILENAME:             SIZE:", 14);
-			for (const auto & filename : files)
+			for (const auto& filename : files)
 			{
 				this->print(" <TXT> ", 14);
 				this->print(char(175), 14);
@@ -243,7 +243,7 @@ void Shell::run()
 			}
 			argument = command;
 
-			for (auto & letter : argument)
+			for (auto& letter : argument)
 			{
 				uint8_t code = fmanager.append(filename, letter);
 				if (code != 0)
@@ -277,9 +277,43 @@ void Shell::run()
 			uint8_t code = fmanager.clearFile(filename);
 			this->printCode(code);
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ][a-z0-9]+[ ][a-z0-9]+$")))
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ]+[a-z0-9]+[ ]+[a-z0-9]+$")))
 		{
-			std::cout << "fork" << std::endl;
+			command.erase(0, 5);
+			std::string filename = "";
+			std::string argument = "";
+
+			while (1)
+			{
+				if (command[0] == ' ')command.erase(0, 1);
+				else break;
+			}
+
+			filename = command;
+
+			for (auto it = filename.begin(); it != filename.end(); it++)
+			{
+				if (*it == ' ')
+				{
+					filename.erase(it, filename.end());
+					break;
+				}
+			}
+			command.erase(0, filename.length());
+			while (1)
+			{
+				if (command[0] == ' ')command.erase(0, 1);
+				else break;
+			}
+			argument = command;
+
+			std::pair<uint8_t, unsigned int> errorCode = this->processManager->fork(filename, 0, argument);
+			if (errorCode.first != 0)this->printCode(errorCode.first);
+			else
+			{
+				this->print("New process created with PID = ", 14);
+				this->printLine(errorCode.second, 3);
+			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^kill[ ][0-9]+$")))
 		{
@@ -289,10 +323,14 @@ void Shell::run()
 		{
 			std::cout << "kill name" << std::endl;
 		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
+		{
+			this->scheduler->schedule();
+		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
 			std::cout << "ps" << std::endl;
-			for(unsigned int i = 0; i < 255; i++)
+			for (unsigned int i = 0; i < 255; i++)
 			{
 				std::cout << i;
 				this->printLine("------------", i);
@@ -303,12 +341,12 @@ void Shell::run()
 			auto names = fmanager.ls();
 
 			std::string str;
-			for (unsigned int i = 0; i < Containers::bit_vector.size();i++)
+			for (unsigned int i = 0; i < Containers::bit_vector.size(); i++)
 			{
 				//this->print(i + '0', 14);
-				if (Containers::bit_vector[i] == 0) 
-				{ 
-					
+				if (Containers::bit_vector[i] == 0)
+				{
+
 
 					std::string owner = Containers::BitVectorWithFiles[i];
 					unsigned int color = 1;
@@ -316,7 +354,7 @@ void Shell::run()
 					{
 						if (names[j] == owner)
 						{
-							for (auto & x : Containers::Colors)
+							for (auto& x : Containers::Colors)
 							{
 								if (x.first == owner)
 								{
@@ -324,10 +362,10 @@ void Shell::run()
 									break;
 								}
 							}
-							
+
 							break;
 						}
-					}					
+					}
 					this->print(char(178), color);
 				}
 				else if (Containers::bit_vector[i] == 1)
@@ -340,15 +378,15 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p vm$")))
 		{
-			this->printLine("DC QUEUE",14);
-			this->print("FRAME NUMBER    ",13);
-			this->printLine("REFERENCE BIT",13);
-			for (auto & pair : virtualMemory->queue)
+			this->printLine("DC QUEUE", 14);
+			this->print("FRAME NUMBER    ", 13);
+			this->printLine("REFERENCE BIT", 13);
+			for (auto& pair : virtualMemory->queue)
 			{
-				this->print("     ",14);
-				this->print(int(pair.first),14);
-				this->print("               ",14);
-				this->printLine(int(pair.second),14);
+				this->print("     ", 14);
+				this->print(int(pair.first), 14);
+				this->print("               ", 14);
+				this->printLine(int(pair.second), 14);
 			}
 			std::cout << std::endl;
 
@@ -356,9 +394,9 @@ void Shell::run()
 			this->print("PID   ", 13);
 			this->printLine("PAGE CONTENT", 13);
 
-			for (auto & pair : virtualMemory->swapFile)
+			for (auto& pair : virtualMemory->swapFile)
 			{
-				for (auto & page : pair.second)
+				for (auto& page : pair.second)
 				{
 					std::cout << " ";
 					this->print(pair.first, 9);
@@ -366,7 +404,7 @@ void Shell::run()
 					std::cout << "    ";
 					for (unsigned int i = 0; i < 16; i++)
 					{
-						this->print(page.data[i],14);
+						this->print(page.data[i], 14);
 						this->print(" ", 14);
 					}
 					std::cout << std::endl;
@@ -381,21 +419,54 @@ void Shell::run()
 			this->printLine("CONTENT", 13);
 			for (unsigned int i = 0; i < 8; i++)
 			{
-				this->print("     ",9);
-				this->print(int(i),9);
+				this->print("     ", 9);
+				this->print(int(i), 9);
 				std::cout << "          ";
 				for (unsigned int j = 0; j < 16; j++)
 				{
-					this->print(memoryManager->ram[i+j],14);
+					this->print(memoryManager->ram[i + j], 14);
 					this->print(" ", 14);
 				}
 				std::cout << std::endl;
 			}
-			
+
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^p proc$")))
+		{
+			this->printLine(processManager->displayTree(), 14);
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^p sch")))
+		{
+		this->print("ACTIVE",6);
+		this->print("              ",6);
+		this->print("EXPIRED",12);
+			for (unsigned int i = 0; i < 1000; i++)//color 6 i 12
+			{
+				if (scheduler->active.size() < i && scheduler->expired.size() < i)break;
+
+				unsigned int spaceDelay = 20;
+				if (scheduler->active.size() > i)
+				{
+					this->print(scheduler->active[i]->getName(), 6);
+					this->print(" ", 6);
+					this->print(scheduler->active[i]->getPID(), 6);
+					spaceDelay -= scheduler->active[i]->getName().length();
+				}
+
+				for (unsigned int j = 0; j < spaceDelay; j++)this->print(" ", 6);
+
+				if (scheduler->expired.size() > i)
+				{
+					this->print(scheduler->expired[i]->getName(), 6);
+					this->print(" ", 6);
+					this->print(scheduler->expired[i]->getPID(), 6);
+				}
+				std::cout << std::endl;
+			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^test ram$")))
 		{
-			std::pair<uint8_t,int8_t&> t = memoryManager->getMemoryContent(0,0);
+			std::pair<uint8_t, int8_t&> t = memoryManager->getMemoryContent(0, 0);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^test vm$")))
 		{
@@ -418,35 +489,16 @@ void Shell::run()
 	v1.join();
 }
 
-void Shell::printLine(std::string text, unsigned int color = 10)
+template <typename T>
+void Shell::printLine(T text, unsigned int color)
 {
 	SetConsoleTextAttribute(hConsole, color);
 	std::cout << text << std::endl;
 	SetConsoleTextAttribute(hConsole, this->defaultColor);
 }
 
-void Shell::printLine(int text, unsigned int color)
-{
-	SetConsoleTextAttribute(hConsole, color);
-	std::cout << text << std::endl;
-	SetConsoleTextAttribute(hConsole, this->defaultColor);
-}
-
-void Shell::print(std::string text, unsigned int color = 10)
-{
-	SetConsoleTextAttribute(hConsole, color);
-	std::cout << text;
-	SetConsoleTextAttribute(hConsole, this->defaultColor);
-}
-
-void Shell::print(char text, unsigned int color = 10)
-{
-	SetConsoleTextAttribute(hConsole, color);
-	std::cout << text;
-	SetConsoleTextAttribute(hConsole, this->defaultColor);
-}
-
-void Shell::print(int text, unsigned int color = 10)
+template <typename T>
+void Shell::print(T text, unsigned int color)
 {
 	SetConsoleTextAttribute(hConsole, color);
 	std::cout << text;
@@ -463,9 +515,9 @@ void Shell::restoreDefaultColor()
 	SetConsoleTextAttribute(hConsole, this->defaultColor);
 }
 
-void Shell::toLower(std::string &str)
+void Shell::toLower(std::string& str)
 {
-	for (auto & letter : str)
+	for (auto& letter : str)
 	{
 		if (letter >= 65 && letter <= 90)
 		{
@@ -481,29 +533,32 @@ void Shell::printCode(uint8_t code)
 	switch (code)
 	{
 	case 0:
-		std::cout << "DONE" << std::endl;
-	break;
+		std::cout << "ALLES GING BESSER ALS ERWARTET" << std::endl;
+		break;
 	case 32:
 		std::cout << "CODE 32 : ERROR_PM_PROCESS_NAME_TAKEN" << std::endl;
-	break;
+		break;
 	case 33:
 		std::cout << "CODE 33 : ERROR_PM_PROCESS_NAME_TOO_LONG" << std::endl;
-	break;
+		break;
 	case 34:
 		std::cout << "CODE 34 : ERROR_PM_PROCESS_NAME_CANNOT_BE_EMPTY" << std::endl;
-	break;
+		break;
 	case 35:
 		std::cout << "CODE 35 : ERROR_PM_PROCESS_NAME_CONTAINS_UNALLOWED_CHARACTERS" << std::endl;
-	break;
+		break;
 	case 36:
 		std::cout << "CODE 36 : ERROR_PM_PARENT_COULD_NOT_BE_FOUND" << std::endl;
-	break;
+		break;
 	case 37:
 		std::cout << "CODE 37 : ERROR_PM_INIT_CANNOT_BE_DELETED" << std::endl;
-	break;
+		break;
 	case 38:
 		std::cout << "CODE 38 : ERROR_PM_PROCESS_COULD_NOT_BE_FOUND" << std::endl;
-	break;
+		break;
+	case 40:
+		std::cout << "CODE 40 : ERROR_PM_CANNOT_OPEN_SOURCE_CODE_FILE" << std::endl;
+		break;
 	case 64:
 		std::cout << "CODE 64 : ERROR_ALREADY_EXISTING_FILE" << std::endl;
 		break;
@@ -563,55 +618,55 @@ void voice1()
 	{
 		//2
 		Beep(c * 16, quarter);
-		Beep(g * 8, quarter*0.75);
+		Beep(g * 8, quarter * 0.75);
 		Beep(a * 8, quarter / 4);
 		Beep(h * 8, quarter);
 		Beep(e * 8, quarter / 2);
 		Beep(e * 8, quarter / 2);
 		//3
 		Beep(a * 8, quarter);
-		Beep(g * 8, quarter*0.75);
+		Beep(g * 8, quarter * 0.75);
 		Beep(f * 8, quarter / 4);
 		Beep(g * 8, quarter);
 		Beep(c * 8, quarter / 2);
 		Beep(c * 8, quarter / 2);
 		//4
 		Beep(d * 8, quarter);
-		Beep(d * 8, quarter*0.75);
+		Beep(d * 8, quarter * 0.75);
 		Beep(e * 8, quarter / 4);
 		Beep(f * 8, quarter);
-		Beep(f * 8, quarter*0.75);
+		Beep(f * 8, quarter * 0.75);
 		Beep(g * 8, quarter / 4);
 		//5
 		Beep(a * 8, quarter);
 		Beep(h * 8, quarter / 2);
 		Beep(c * 16, quarter / 2);
-		Beep(d * 16, quarter*1.5);
+		Beep(d * 16, quarter * 1.5);
 		Beep(g * 8, quarter / 2);
 		//6
 		Beep(e * 16, quarter);
-		Beep(d * 16, quarter*0.75);
+		Beep(d * 16, quarter * 0.75);
 		Beep(c * 16, quarter / 4);
 		Beep(d * 16, quarter);
 		Beep(h * 8, quarter / 2);
 		Beep(g * 8, quarter / 2);
 		//7
 		Beep(c * 16, quarter);
-		Beep(h * 8, quarter*0.75);
+		Beep(h * 8, quarter * 0.75);
 		Beep(a * 8, quarter / 4);
 		Beep(h * 8, quarter);
 		Beep(e * 8, quarter / 2);
 		Beep(e * 8, quarter / 2);
 		//8
 		Beep(a * 8, quarter);
-		Beep(g * 8, quarter*0.75);
+		Beep(g * 8, quarter * 0.75);
 		Beep(f * 8, quarter / 4);
 		Beep(g * 8, quarter);
-		Beep(c * 8, quarter*0.75);
+		Beep(c * 8, quarter * 0.75);
 		Beep(c * 8, quarter / 4);
 		//9
 		Beep(c * 16, quarter);
-		Beep(h * 8, quarter*0.75);
+		Beep(h * 8, quarter * 0.75);
 		Beep(a * 8, quarter / 4);
 		Beep(g * 8, quarter / 2);
 		Beep(h * 8, quarter / 2);
@@ -624,7 +679,7 @@ void voice1()
 		Beep(h * 8, quarter / 2);
 		Beep(c * 16, quarter / 2);
 		//11
-		Beep(d * 16, quarter*1.5);
+		Beep(d * 16, quarter * 1.5);
 		Beep(g * 8, quarter / 2);
 		Beep(g * 8, quarter / 2);
 		Beep(h * 8, quarter / 2);
@@ -637,7 +692,7 @@ void voice1()
 		Beep(g * 8, quarter / 2);
 		Beep(a * 8, quarter / 2);
 		//13
-		Beep(h * 8, quarter *1.5);
+		Beep(h * 8, quarter * 1.5);
 		Beep(e * 8, quarter / 2);
 		Beep(e * 8, quarter / 2);
 		Beep(g * 8, quarter / 2);
@@ -645,17 +700,17 @@ void voice1()
 		Beep(h * 8, quarter / 2);
 		//14
 		Beep(c * 16, quarter);
-		Beep(a * 8, quarter*0.75);
+		Beep(a * 8, quarter * 0.75);
 		Beep(h * 8, quarter / 4);
 		Beep(c * 16, quarter);
-		Beep(a * 8, quarter*0.75);
+		Beep(a * 8, quarter * 0.75);
 		Beep(h * 8, quarter / 4);
 		//15
 		Beep(c * 16, quarter);
 		Beep(a * 8, quarter / 2);
 		Beep(c * 16, quarter / 2);
-		Beep(f * 16, quarter*1.5);
-		Beep(0, quarter*1.5 / 2);
+		Beep(f * 16, quarter * 1.5);
+		Beep(0, quarter * 1.5 / 2);
 		//16
 		Beep(f * 16, quarter * 2);
 		Beep(e * 16, quarter / 2);
@@ -663,7 +718,7 @@ void voice1()
 		Beep(c * 16, quarter / 2);
 		Beep(d * 16, quarter / 2);
 		//17
-		Beep(e * 16, quarter *1.5);
+		Beep(e * 16, quarter * 1.5);
 		Beep(c * 16, quarter / 2);
 		Beep(c * 16, quarter * 2);
 		//18
@@ -673,21 +728,21 @@ void voice1()
 		Beep(a * 8, quarter / 2);
 		Beep(h * 8, quarter / 2);
 		//19
-		Beep(c * 16, quarter *1.5);
+		Beep(c * 16, quarter * 1.5);
 		Beep(a * 8, quarter / 2);
 		Beep(a * 8, quarter * 2);
 		if (zwrotka < 2)
 		{
 			//20 1st volta
 			Beep(c * 16, quarter);
-			Beep(h * 8, quarter*0.75);
+			Beep(h * 8, quarter * 0.75);
 			Beep(a * 8, quarter / 4);
 			Beep(g * 8, quarter);
-			Beep(c * 8, quarter*1.5);
+			Beep(c * 8, quarter * 1.5);
 			Beep(c * 8, quarter / 4);
 			//21
 			Beep(c * 16, quarter);
-			Beep(h * 8, quarter*0.75);
+			Beep(h * 8, quarter * 0.75);
 			Beep(a * 8, quarter / 4);
 			Beep(g * 8, quarter);
 			Beep(g * 8, quarter / 2);
@@ -698,16 +753,16 @@ void voice1()
 		{
 			//20 2nd volta
 			Beep(c * 16, quarter);
-			Beep(h * 8, quarter*0.75);
+			Beep(h * 8, quarter * 0.75);
 			Beep(a * 8, quarter / 4);
 			Beep(g * 8, quarter);
-			Beep(c * 8, quarter*1.5);
+			Beep(c * 8, quarter * 1.5);
 			Beep(c * 8, quarter / 4);
 			//21
 			Beep(g * 8, quarter * 2);
 			Beep(a * 8, quarter);
 			Beep(h * 8, quarter);
-			Beep(c * 16, quarter*2.5);
+			Beep(c * 16, quarter * 2.5);
 			break;
 		}
 	}

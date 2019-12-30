@@ -26,7 +26,7 @@ int main()
 
 
 
-	Shell shell(fileManager, memoryManager, virtualMemory);
+	Shell shell(fileManager, memoryManager, virtualMemory, processManager, scheduler);
 	shell.run();
 
 	////TEST MENADERA PLIKOW

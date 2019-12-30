@@ -71,6 +71,5 @@ private:
 	int8_t addProcessToScheduler(const std::shared_ptr<PCB>& process);
 	int8_t loadProgramIntoMemory(const std::string& filePath, const unsigned int& PID);
 	std::vector<uint8_t> convertToMachine(std::string m);
-
 };
 

@@ -47,7 +47,8 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 			parentPCB->addChild(newProcess);
 
 			//load the program code to be executed by the process into its memory pages
-			loadProgramIntoMemory(filePath, PIDOfTheCreatedProcess);
+			errorHandling = loadProgramIntoMemory(filePath, PIDOfTheCreatedProcess);
+			if (errorHandling != 0)return std::pair<int8_t, unsigned int>(errorHandling,0);
 			//add the process 
 			addProcessToScheduler(newProcess);
 
