@@ -2,6 +2,8 @@
 
 Scheduler::Scheduler()
 { 
+	this->active = std::make_shared<std::vector<std::shared_ptr<PCB>>>();
+	this->expired = std::make_shared<std::vector<std::shared_ptr<PCB>>>();
 	counter = 0;
 }
 
@@ -36,23 +38,23 @@ uint8_t Scheduler::nextProcess()
 
 	if (RUNNING != nullptr)
 	{
-		this->addProcess(RUNNING, &this->expired);
+		this->addProcess(RUNNING, this->expired);
 	}
 
-	if (this->active.size() == 0)
+	if (this->active->size() == 0)
 	{
-		if (this->expired.size() == 0)
+		if (this->expired->size() == 0)
 		{
 			//RUNNING = //dodaje dummy;
 				return 0;
 		}
 
 		this->active = this->expired;
-		this->expired.clear();
+		this->expired->clear();
 	}
 
-	RUNNING = this->active[0];
-	this->active.erase(this->active.begin());
+	RUNNING = (*this->active)[0];
+	this->active->erase(this->active->begin());
 
 	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
 	{
@@ -67,8 +69,9 @@ uint8_t Scheduler::nextProcess()
 	return 27; // b³¹d: WTF?
 }
 
-uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::vector<std::shared_ptr<PCB>> *queue)
+uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std::vector<std::shared_ptr<PCB>>> queue)
 {
+	if (queue == nullptr)queue = this->active;
 	//KODY B£ÊDÓW DODAÆ
 	if (process->priority > 139 || process->priority < 100)
 		return 0; //priority out of range <100, 139>
@@ -77,7 +80,7 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::vector<std::sha
 
 	for (int i = 0; i < queue->size(); i++)
 	{
-		if (expired[i]->priority > process->priority)
+		if ((*expired)[i]->priority > process->priority)
 		{
 			queue->insert(queue->begin() + i, process);
 			return 0;

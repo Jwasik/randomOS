@@ -54,24 +54,6 @@ Shell::~Shell()
 
 void Shell::run()
 {
-
-	system("color 0C");
-	while (1)
-	{
-		std::string str;
-		std::cout << "TYPE START TO START SYSTEM" << std::endl;
-		std::cin >> str;
-		if (str == "START" || str == "start")break;
-		std::cin.ignore();
-	}
-	system("cls");
-
-	system("color CE");
-	std::thread v1(voice1);
-
-	this->printLine("\n\n\t	           !#########       #\n\t	        !########!          ##!\n\t	     !########!               ###\n\t	  !##########                  ####\n\t	######### #####                ######\n\t	 !###!      !####!              ######\n\t	   !           #####            ######!\n\t	                 !####!         #######\n\t	                  #####       #######\n\t	                    !####!   #######!\n\t	                     ####!########\n\t         ##                   ##########\n\t       ,######!          !#############\n\t     ,#### ########################!####!\n\t   ,####'     ##################!'    #####\n\t ,####'            #######              !####!\n\t####'                                      #####\n\t~##                                          ##~\n\t", 206);
-	//Sleep(3000);
-
 	system("color 0A");
 	system("cls");
 
@@ -305,9 +287,10 @@ void Shell::run()
 				if (command[0] == ' ')command.erase(0, 1);
 				else break;
 			}
-			argument = command;
+			argument = command+".txt";
 
 			std::pair<uint8_t, unsigned int> errorCode = this->processManager->fork(filename, 0, argument);
+			std::cout << "ERRCODE " << errorCode.first << std::endl;
 			if (errorCode.first != 0)this->printCode(errorCode.first);
 			else
 			{
@@ -442,24 +425,25 @@ void Shell::run()
 		this->print("EXPIRED",12);
 			for (unsigned int i = 0; i < 1000; i++)//color 6 i 12
 			{
-				if (scheduler->active.size() < i && scheduler->expired.size() < i)break;
-
+				
+				if (scheduler->active->size() < i && scheduler->expired->size() < i)break;
+				
 				unsigned int spaceDelay = 20;
-				if (scheduler->active.size() > i)
+				if (scheduler->active->size() > i)
 				{
-					this->print(scheduler->active[i]->getName(), 6);
+					this->print((*scheduler->active)[i]->getName(), 6);
 					this->print(" ", 6);
-					this->print(scheduler->active[i]->getPID(), 6);
-					spaceDelay -= scheduler->active[i]->getName().length();
+					this->print((*scheduler->active)[i]->getPID(), 6);
+					spaceDelay -= (*scheduler->active)[i]->getName().length();
 				}
 
 				for (unsigned int j = 0; j < spaceDelay; j++)this->print(" ", 6);
 
-				if (scheduler->expired.size() > i)
+				if (scheduler->expired->size() > i)
 				{
-					this->print(scheduler->expired[i]->getName(), 6);
+					this->print((*scheduler->expired)[i]->getName(), 6);
 					this->print(" ", 6);
-					this->print(scheduler->expired[i]->getPID(), 6);
+					this->print((*scheduler->expired)[i]->getPID(), 6);
 				}
 				std::cout << std::endl;
 			}
@@ -485,8 +469,11 @@ void Shell::run()
 			virtualMemory->insertProgram(testPair);
 			//end test program
 		}
+		else
+		{
+		this->printLine("UNRECOGNISED COMMAND",4);
+		}
 	}
-	v1.join();
 }
 
 template <typename T>
@@ -600,170 +587,4 @@ void Shell::printCode(uint8_t code)
 		break;
 	}
 	SetConsoleTextAttribute(hConsole, this->defaultColor);
-}
-
-
-void voice1()
-{
-	int tempo = 80;
-	double quarter = 60000.0 / tempo;
-
-	int zwrotka = 1;
-
-	//1
-	Beep(g * 8, quarter * 3);
-	Beep(0, quarter / 2);
-	Beep(g * 8, quarter / 2);
-	while (1)
-	{
-		//2
-		Beep(c * 16, quarter);
-		Beep(g * 8, quarter * 0.75);
-		Beep(a * 8, quarter / 4);
-		Beep(h * 8, quarter);
-		Beep(e * 8, quarter / 2);
-		Beep(e * 8, quarter / 2);
-		//3
-		Beep(a * 8, quarter);
-		Beep(g * 8, quarter * 0.75);
-		Beep(f * 8, quarter / 4);
-		Beep(g * 8, quarter);
-		Beep(c * 8, quarter / 2);
-		Beep(c * 8, quarter / 2);
-		//4
-		Beep(d * 8, quarter);
-		Beep(d * 8, quarter * 0.75);
-		Beep(e * 8, quarter / 4);
-		Beep(f * 8, quarter);
-		Beep(f * 8, quarter * 0.75);
-		Beep(g * 8, quarter / 4);
-		//5
-		Beep(a * 8, quarter);
-		Beep(h * 8, quarter / 2);
-		Beep(c * 16, quarter / 2);
-		Beep(d * 16, quarter * 1.5);
-		Beep(g * 8, quarter / 2);
-		//6
-		Beep(e * 16, quarter);
-		Beep(d * 16, quarter * 0.75);
-		Beep(c * 16, quarter / 4);
-		Beep(d * 16, quarter);
-		Beep(h * 8, quarter / 2);
-		Beep(g * 8, quarter / 2);
-		//7
-		Beep(c * 16, quarter);
-		Beep(h * 8, quarter * 0.75);
-		Beep(a * 8, quarter / 4);
-		Beep(h * 8, quarter);
-		Beep(e * 8, quarter / 2);
-		Beep(e * 8, quarter / 2);
-		//8
-		Beep(a * 8, quarter);
-		Beep(g * 8, quarter * 0.75);
-		Beep(f * 8, quarter / 4);
-		Beep(g * 8, quarter);
-		Beep(c * 8, quarter * 0.75);
-		Beep(c * 8, quarter / 4);
-		//9
-		Beep(c * 16, quarter);
-		Beep(h * 8, quarter * 0.75);
-		Beep(a * 8, quarter / 4);
-		Beep(g * 8, quarter / 2);
-		Beep(h * 8, quarter / 2);
-		Beep(c * 16, quarter / 2);
-		Beep(d * 16, quarter / 2);
-		//10
-		Beep(e * 16, quarter * 2);
-		Beep(d * 16, quarter / 2);
-		Beep(c * 16, quarter / 2);
-		Beep(h * 8, quarter / 2);
-		Beep(c * 16, quarter / 2);
-		//11
-		Beep(d * 16, quarter * 1.5);
-		Beep(g * 8, quarter / 2);
-		Beep(g * 8, quarter / 2);
-		Beep(h * 8, quarter / 2);
-		Beep(c * 16, quarter / 2);
-		Beep(d * 16, quarter / 2);
-		//12
-		Beep(c * 16, quarter * 2);
-		Beep(h * 8, quarter / 2);
-		Beep(a * 8, quarter / 2);
-		Beep(g * 8, quarter / 2);
-		Beep(a * 8, quarter / 2);
-		//13
-		Beep(h * 8, quarter * 1.5);
-		Beep(e * 8, quarter / 2);
-		Beep(e * 8, quarter / 2);
-		Beep(g * 8, quarter / 2);
-		Beep(a * 8, quarter / 2);
-		Beep(h * 8, quarter / 2);
-		//14
-		Beep(c * 16, quarter);
-		Beep(a * 8, quarter * 0.75);
-		Beep(h * 8, quarter / 4);
-		Beep(c * 16, quarter);
-		Beep(a * 8, quarter * 0.75);
-		Beep(h * 8, quarter / 4);
-		//15
-		Beep(c * 16, quarter);
-		Beep(a * 8, quarter / 2);
-		Beep(c * 16, quarter / 2);
-		Beep(f * 16, quarter * 1.5);
-		Beep(0, quarter * 1.5 / 2);
-		//16
-		Beep(f * 16, quarter * 2);
-		Beep(e * 16, quarter / 2);
-		Beep(d * 16, quarter / 2);
-		Beep(c * 16, quarter / 2);
-		Beep(d * 16, quarter / 2);
-		//17
-		Beep(e * 16, quarter * 1.5);
-		Beep(c * 16, quarter / 2);
-		Beep(c * 16, quarter * 2);
-		//18
-		Beep(d * 16, quarter * 2);
-		Beep(c * 16, quarter / 2);
-		Beep(h * 8, quarter / 2);
-		Beep(a * 8, quarter / 2);
-		Beep(h * 8, quarter / 2);
-		//19
-		Beep(c * 16, quarter * 1.5);
-		Beep(a * 8, quarter / 2);
-		Beep(a * 8, quarter * 2);
-		if (zwrotka < 2)
-		{
-			//20 1st volta
-			Beep(c * 16, quarter);
-			Beep(h * 8, quarter * 0.75);
-			Beep(a * 8, quarter / 4);
-			Beep(g * 8, quarter);
-			Beep(c * 8, quarter * 1.5);
-			Beep(c * 8, quarter / 4);
-			//21
-			Beep(c * 16, quarter);
-			Beep(h * 8, quarter * 0.75);
-			Beep(a * 8, quarter / 4);
-			Beep(g * 8, quarter);
-			Beep(g * 8, quarter / 2);
-			Beep(g * 8, quarter / 2);
-			zwrotka++;
-		}
-		else
-		{
-			//20 2nd volta
-			Beep(c * 16, quarter);
-			Beep(h * 8, quarter * 0.75);
-			Beep(a * 8, quarter / 4);
-			Beep(g * 8, quarter);
-			Beep(c * 8, quarter * 1.5);
-			Beep(c * 8, quarter / 4);
-			//21
-			Beep(g * 8, quarter * 2);
-			Beep(a * 8, quarter);
-			Beep(h * 8, quarter);
-			Beep(c * 16, quarter * 2.5);
-			break;
-		}
-	}
 }

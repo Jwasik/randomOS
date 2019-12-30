@@ -14,15 +14,14 @@ public:
 	uint8_t schedule();
 
 	uint8_t nextProcess(); //put new process in RUNNING, old goes to waiting queue
-	uint8_t addProcess(std::shared_ptr<PCB> process, std::vector<std::shared_ptr<PCB>> *queue);
-	
+	uint8_t addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std::vector<std::shared_ptr<PCB>>> queue);
 
 
 private:
 
 	uint8_t result;
-	std::vector<std::shared_ptr<PCB>> active;
-	std::vector<std::shared_ptr<PCB>> expired;
+	std::shared_ptr<std::vector<std::shared_ptr<PCB>>> active;
+	std::shared_ptr < std::vector<std::shared_ptr<PCB>>> expired;
 
 	uint8_t normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process);
 	

@@ -126,6 +126,8 @@ bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
 int8_t ProcessManager::addProcessToScheduler(const std::shared_ptr<PCB>& process)
 {
 	//still waiting for method
+	this->scheduler->addProcess(process, nullptr);
+
 	return 0;
 }
 
@@ -134,7 +136,7 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 	//OPEN THE FILE CONTAINING SOURCE CODE
 	std::ifstream programFile(filePath);
 	//if the file cannot be opened throw appropriate error
-	if (!programFile) { return ERROR_PM_CANNOT_OPEN_SOURCE_CODE_FILE;}
+	if (!programFile.good()) { return ERROR_PM_CANNOT_OPEN_SOURCE_CODE_FILE;}
 
 	//get the first line containing number of pages needed for the program and initialise a page vector
 	std::string line="";
