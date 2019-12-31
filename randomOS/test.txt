@@ -1,3 +1,3 @@
 1
-JMP 1
-JMP 0
+JUM 1
+JUM 0

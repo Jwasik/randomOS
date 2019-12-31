@@ -312,11 +312,29 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
-			std::cout << "ps" << std::endl;
+		
+			std::cout << this->processManager->displayTree() << std::endl; 
+			//stare kolorki nie wiem co to xD
+		/*	std::cout << "ps" << std::endl;
 			for (unsigned int i = 0; i < 255; i++)
 			{
 				std::cout << i;
 				this->printLine("------------", i);
+			}*/
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps[ ]-[wra]$")))
+		{
+			if(command.at(command.length()-1)=='w')
+			{ 
+				std::cout << this->processManager->displayWithState(PCB::ProcessState::WAITING) << std::endl; 
+			}
+			else if (command.at(command.length() - 1) == 'r') 
+			{ 
+				std::cout << this->processManager->displayWithState(PCB::ProcessState::RUNNING) << std::endl;
+			}
+			else if (command.at(command.length() - 1) == 'a') 
+			{
+				std::cout << this->processManager->displayWithState(PCB::ProcessState::READY) << std::endl; 
 			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
@@ -373,7 +391,7 @@ void Shell::run()
 			}
 			std::cout << std::endl;
 
-			this->printLine("VIRTUAL MEMORZ CONTENT", 14);
+			this->printLine("VIRTUAL MEMORY CONTENT", 14);
 			this->print("PID   ", 13);
 			this->printLine("PAGE CONTENT", 13);
 

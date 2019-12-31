@@ -39,21 +39,23 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 		std::shared_ptr<PCB> parentPCB = getPCBByPID(parentPID);
 		if (parentPCB != nullptr)
 		{
-			//create a new process
-			std::shared_ptr<PCB> newProcess = std::make_shared<PCB>(processName, this->freePID, parentPCB);
 			///assign the PID of the created process to the PIDOfTheCreatedProcess funtion argument
 			unsigned int PIDOfTheCreatedProcess = freePID;
-			///add the newly created process as a child of its parent
-			parentPCB->addChild(newProcess);
 
 			//load the program code to be executed by the process into its memory pages
 			errorHandling = loadProgramIntoMemory(filePath, PIDOfTheCreatedProcess);
-			if (errorHandling != 0)return std::pair<int8_t, unsigned int>(errorHandling,0);
+			if (errorHandling != 0) { return std::pair<int8_t, unsigned int>(errorHandling, 0); }
+
+			//create a new process
+			std::shared_ptr<PCB> newProcess = std::make_shared<PCB>(processName, this->freePID, parentPCB);
+			///add the newly created process as a child of its parent
+			parentPCB->addChild(newProcess);
 			//add the process 
 			addProcessToScheduler(newProcess);
-
 			//increment the free PID field, because the current one is now taken
 			freePID++;
+
+
 			return std::make_pair(errorHandling,PIDOfTheCreatedProcess);
 		}
 		//if the given parent cannot be found
@@ -150,6 +152,7 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 	bool fileHasEnded = 0;//flag variable to keep track of whether the file has been read yet
 	std::queue<uint8_t> overflownBytes; // helper stack to keep the bytes that won't fit into page that is currently being filled
 
+
 	//iterate over the pages reserved for the program until they are filled or the source file ends
 	for (int i = 0; i < programPages.size() && !fileHasEnded; i++) {
 		int byteCounter = 0; //used to keep track of how many bytes have been loaded into the current page
@@ -180,7 +183,7 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 
 			//CHECKING IF BYTES WILL FIT IN CURRENT PAGE
 			int checkForOverFlow = byteCounter + machineCodeLine.size();
-			int overflowingBytes = PAGE_SIZE - checkForOverFlow;
+			int overflowingBytes = checkForOverFlow- PAGE_SIZE;
 			//if the number of bytes that is to be written to the current page exceedes page size 
 			//save the overflowing bytes in the overflowBytes queue
 			if(overflowingBytes>0)
@@ -204,6 +207,7 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 			if (overflowingBytes == 0) { workOnThisPage = 0; }
 		}
 	}
+
 
 	virtualMemory->insertProgram(std::make_pair(PID, programPages));
 	return 0;
@@ -235,7 +239,7 @@ std::shared_ptr<PCB> ProcessManager::getPCBByPID(const unsigned int& PID)
 
 std::string ProcessManager::displayTree()
 {
-	std::string result{"\n"};
+	std::string result{""};
 
 	struct informationForDisplay {
 		std::shared_ptr<PCB> process;
@@ -314,7 +318,7 @@ std::string ProcessManager::displayProcesses()
 
 std::string ProcessManager::displayWithState(PCB::ProcessState state)
 {
-	std::string result{ "\n" };
+	std::string result{ "" };
 
 	std::stack<std::shared_ptr<PCB>> allProcesses;
 	allProcesses.push(init);
