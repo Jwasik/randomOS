@@ -28,6 +28,7 @@ private:
 	std::shared_ptr<Scheduler> scheduler;
 
 	template <typename T>	void print(T, unsigned int);
+	template<typename I> std::string toHexString(I w);
 	template <typename T>	void printLine(T, unsigned int);
 	void changeConsoleColor(unsigned int);
 	void restoreDefaultColor();

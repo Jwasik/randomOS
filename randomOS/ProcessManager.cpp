@@ -208,7 +208,7 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 		}
 	}
 
-	//if there is still come code left in the file throw a warining
+	//if there is still come code left in the file throw an error
 	if (std::getline(programFile, line)){return ERROR_PM_CODE_DOESNT_FIT_INTO_NUMBER_OF_DECLARED_PAGES;}
 
 	virtualMemory->insertProgram(std::make_pair(PID, programPages));

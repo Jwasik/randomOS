@@ -290,8 +290,8 @@ void Shell::run()
 			argument = command+".txt";
 
 			std::pair<uint8_t, unsigned int> errorCode = this->processManager->fork(filename, 0, argument);
-			std::cout << "ERRCODE " << errorCode.first << std::endl;
-			if (errorCode.first != 0)this->printCode(errorCode.first);
+
+			if (errorCode.first != 0){ this->printLine("AN ERROR OCCURED!",4); this->printCode(errorCode.first);}
 			else
 			{
 				this->print("New process created with PID = ", 14);
@@ -408,7 +408,11 @@ void Shell::run()
 					std::cout << "    ";
 					for (unsigned int i = 0; i < 16; i++)
 					{
-						this->print(std::to_string(page.data[i]), 14);
+						//print as hexa
+						this->print(toHexString(page.data[i]), 14);
+
+						////print as decimal
+						//this->print(std::to_string(page.data[i]), 14);
 						this->print(" ", 14);
 					}
 					std::cout << std::endl;
@@ -611,4 +615,13 @@ void Shell::printCode(uint8_t code)
 		break;
 	}
 	SetConsoleTextAttribute(hConsole, this->defaultColor);
+}
+
+template <typename I> std::string Shell::toHexString(I w) {
+	size_t hex_len = sizeof(I) << 1;
+	static const char* digits = "0123456789ABCDEF";
+	std::string rc(hex_len, '0');
+	for (size_t i = 0, j = (hex_len - 1) * 4; i < hex_len; ++i, j -= 4)
+		rc[i] = digits[(w >> j) & 0x0f];
+	return rc;
 }
