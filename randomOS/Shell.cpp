@@ -313,7 +313,7 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
 		
-			std::cout << this->processManager->displayTree() << std::endl; 
+			this->printLine(processManager->displayTree(), 14);
 			//stare kolorki nie wiem co to xD
 		/*	std::cout << "ps" << std::endl;
 			for (unsigned int i = 0; i < 255; i++)
@@ -326,15 +326,18 @@ void Shell::run()
 		{
 			if(command.at(command.length()-1)=='w')
 			{ 
-				std::cout << this->processManager->displayWithState(PCB::ProcessState::WAITING) << std::endl; 
+				this->print("WAITING PROCESSES", 6);
+				this->printLine(this->processManager->displayWithState(PCB::ProcessState::WAITING), 14);
 			}
 			else if (command.at(command.length() - 1) == 'r') 
 			{ 
-				std::cout << this->processManager->displayWithState(PCB::ProcessState::RUNNING) << std::endl;
+				this->print("RUNNING PROCESSES", 6);
+				this->printLine(this->processManager->displayWithState(PCB::ProcessState::RUNNING), 14);
 			}
 			else if (command.at(command.length() - 1) == 'a') 
 			{
-				std::cout << this->processManager->displayWithState(PCB::ProcessState::READY) << std::endl; 
+				this->print("READY PROCESSES", 6);
+				this->printLine(this->processManager->displayWithState(PCB::ProcessState::READY), 14);
 			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
@@ -405,7 +408,7 @@ void Shell::run()
 					std::cout << "    ";
 					for (unsigned int i = 0; i < 16; i++)
 					{
-						this->print(page.data[i], 14);
+						this->print(std::to_string(page.data[i]), 14);
 						this->print(" ", 14);
 					}
 					std::cout << std::endl;
@@ -563,6 +566,9 @@ void Shell::printCode(uint8_t code)
 		break;
 	case 40:
 		std::cout << "CODE 40 : ERROR_PM_CANNOT_OPEN_SOURCE_CODE_FILE" << std::endl;
+		break;
+	case 41:
+		std::cout<< "CODE 41 : ERROR_PM_CODE_DOESNT_FIT_INTO_NUMBER_OF_DECLARED_PAGES" << std::endl;
 		break;
 	case 64:
 		std::cout << "CODE 64 : ERROR_ALREADY_EXISTING_FILE" << std::endl;
