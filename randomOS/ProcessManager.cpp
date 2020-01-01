@@ -10,7 +10,7 @@ scheduler(scheduler), virtualMemory(virtualMemory)
 
 ProcessManager::~ProcessManager(){}
 
-void ProcessManager::createInit()
+int8_t ProcessManager::createInit()
 {
 	this->init = std::make_shared<PCB>("Init", 0, nullptr);
 
@@ -18,10 +18,9 @@ void ProcessManager::createInit()
 	std::string initCode = "JUM 0";
 	std::vector<Page> initPages { Page((convertToMachine(initCode))) };
 	virtualMemory->insertProgram(std::make_pair(0, initPages));
-
 	//ads innit to scheduler
-	addProcessToScheduler(this->init);
-
+	return addProcessToScheduler(this->init);
+	
 }
 
 std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processName,const unsigned int& parentPID,const std::string& filePath)
@@ -31,38 +30,34 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 	int8_t errorHandling = 0;
 
 	//check if the process name isn't unsutable
-	//too long, too short, only contains spaces, is already taken 
+	///too long, too short, only contains spaces, is already taken 
 	errorHandling = isThisNameSutableForAProcess(processName);
-	if (errorHandling == 0)
-	{
-		//find the PCB of the parent by parentPID
-		std::shared_ptr<PCB> parentPCB = getPCBByPID(parentPID);
-		if (parentPCB != nullptr)
-		{
-			///assign the PID of the created process to the PIDOfTheCreatedProcess funtion argument
-			unsigned int PIDOfTheCreatedProcess = freePID;
+	///if the process has an unsutable name, return appropriate error code
+	if (errorHandling != 0){ return  std::make_pair(errorHandling, 0); } 
 
-			//load the program code to be executed by the process into its memory pages
-			errorHandling = loadProgramIntoMemory(filePath, PIDOfTheCreatedProcess);
-			if (errorHandling != 0) { return std::pair<int8_t, unsigned int>(errorHandling, 0); }
+	//find the PCB of the parent by parentPID
+	std::shared_ptr<PCB> parentPCB = getPCBByPID(parentPID);
+	///if the parent process cannot be found return error
+	if (parentPCB == nullptr) { return std::make_pair(ERROR_PM_PARENT_COULD_NOT_BE_FOUND, 0); }
 
-			//create a new process
-			std::shared_ptr<PCB> newProcess = std::make_shared<PCB>(processName, this->freePID, parentPCB);
-			///add the newly created process as a child of its parent
-			parentPCB->addChild(newProcess);
-			//add the process 
-			addProcessToScheduler(newProcess);
-			//increment the free PID field, because the current one is now taken
-			freePID++;
+	//assign the PID of the created process to the PIDOfTheCreatedProcess funtion argument
+	unsigned int PIDOfTheCreatedProcess = freePID;
 
+	//load the program code to be executed by the process into its memory pages
+	errorHandling = loadProgramIntoMemory(filePath, PIDOfTheCreatedProcess);
+	if (errorHandling != 0) { return std::pair<int8_t, unsigned int>(errorHandling, 0); }
 
-			return std::make_pair(errorHandling,PIDOfTheCreatedProcess);
-		}
-		//if the given parent cannot be found
-		return std::make_pair(ERROR_PM_PARENT_COULD_NOT_BE_FOUND,0);
-	}
-	//if the process has an unsutable name, return appropriate error code
-	return  std::make_pair(errorHandling, 0);
+	//create a new process
+	std::shared_ptr<PCB> newProcess = std::make_shared<PCB>(processName, this->freePID, parentPCB);
+
+	//add the process to scheduler
+	errorHandling= addProcessToScheduler(newProcess);
+	if (errorHandling != 0) { return std::pair<int8_t, unsigned int>(errorHandling, 0); }
+
+	// if all else went well, increment the free PID field, because the current one is now taken and linkt the process to a parent
+	parentPCB->addChild(newProcess);
+	freePID++;
+	return std::make_pair(0,PIDOfTheCreatedProcess);
 }
 
 
@@ -77,19 +72,12 @@ int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 
 	//try to find the process by PID
 	std::shared_ptr<PCB> found = getPCBByPID(PID);
-	if (found != nullptr) 
-	{
-		errorHandling = checkIfProcessCanBeClosed(found);
-		if(errorHandling==0)
-		{
-			//call for reccurent deletion of the process and its children
-			deleteProcess(found);
-			return 0;
-		}
-		return errorHandling;
-	}
-	//if the process couldn't be found
-	return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND;
+	///if the process couldn't be found
+	if (found == nullptr){ return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND; }
+	
+	//call for reccurent deletion of the process and its children
+	deleteProcess(found);
+	return 0;
 }
 
 
@@ -99,18 +87,8 @@ bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
 		if (process->getHasChildren())
 		{
 			std::shared_ptr<PCB> child = process->getChildren()[0];
-			if (checkIfProcessCanBeClosed(child)==0)
-			{
-				deleteProcess(child);
-				deleteProcess(process);
-			}
-			else
-			{
-				child->setParent(init);
-				init->addChild(child);
-				process->removeChild(child);
-				deleteProcess(process);
-			}
+			deleteProcess(child);
+			deleteProcess(process);
 		}
 		//if the process doesn't have children it can simply be deleted
 		else
@@ -127,10 +105,7 @@ bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
 
 int8_t ProcessManager::addProcessToScheduler(const std::shared_ptr<PCB>& process)
 {
-	//still waiting for method
-	this->scheduler->addProcess(process, nullptr);
-
-	return 0;
+	return this->scheduler->addProcess(process, nullptr);
 }
 
 int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const unsigned int& PID)
@@ -365,11 +340,6 @@ std::string ProcessManager::getIndentation(const unsigned int& ammountOfIndentat
 	return result += "  ";
 }
 
-int8_t ProcessManager::checkIfProcessCanBeClosed(const std::shared_ptr<PCB>& process)
-{
-	//check for open files in file manager
-	return 0;
-}
 
 int8_t ProcessManager::isThisNameSutableForAProcess(const std::string & processName)
 {

@@ -2,6 +2,11 @@
 #include "Includes.h"
 #include "RUNNING.h"
 
+//ERROR CODES
+//IN RANGE: <16,32)
+#define ERROR_SH_PRIORITY_OUT_OF_RANGE 16
+#define ERROR_SH_ADDED_PROCESS_DOES_NOT_EXIST 17
+
 
 static class Scheduler
 {

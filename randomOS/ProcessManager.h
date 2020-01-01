@@ -30,7 +30,7 @@ public:
 	/********************************
 	*           MAIN METHODS        *
 	********************************/
-	void createInit();
+	int8_t createInit();
 	std::pair<int8_t, unsigned int> fork(const std::string& processName, const unsigned int& parentPID, const std::string& filePath);
 	int8_t deleteProcess(const unsigned int& PID);
 
@@ -61,7 +61,6 @@ private:
 	unsigned int freePID = 1;
 
 
-	int8_t checkIfProcessCanBeClosed(const std::shared_ptr<PCB>& process);
 	int8_t isThisNameSutableForAProcess(const std::string& processName);
 	int8_t isProcessNameUnique(const std::string& processName);
 	bool deleteProcess(const std::shared_ptr<PCB>& process);
