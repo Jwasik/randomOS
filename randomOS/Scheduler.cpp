@@ -29,7 +29,6 @@ uint8_t Scheduler::schedule()
 	}
 
 	return 0;
-	return 27;
 }
 
 uint8_t Scheduler::nextProcess()
@@ -71,27 +70,28 @@ uint8_t Scheduler::nextProcess()
 
 uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std::vector<std::shared_ptr<PCB>>> queue)
 {
-	if (queue == nullptr)queue = this->active;
-	//KODY B£ÊDÓW DODAÆ
-	if (process->priority > 139 || process->priority < 100)
-		return 0; //priority out of range <100, 139>
-	if (process == NULL)
-		return 0; //process does not exist
+	//if the queue is not specified (passed as null) the active queue is assumed
+	if (queue == NULL) { queue = this->active; }
+	
+	//error checks
+	if (process->priority > 139 || process->priority < 100) { return ERROR_SH_PRIORITY_OUT_OF_RANGE; } //priority out of range <100, 139>
+	if (process == NULL) { return ERROR_SH_ADDED_PROCESS_DOES_NOT_EXIST; } //process does not exist
 
+	//position the process at a appropriate place in the queue
+	/// iterate through the queue and put it just before an element with higher priority
 	for (int i = 0; i < queue->size(); i++)
 	{
-		if ((*expired)[i]->priority > process->priority)
+		if ((*queue)[i]->priority > process->priority)
 		{
 			queue->insert(queue->begin() + i, process);
 			return 0;
 		}
 	}
-	if (queue->size() == 0)
-	{
-		queue->push_back(process);
-		return 0;
-	}
-	return 27; // b³¹d: WTF?
+	///if the palce hasn't been found during iteration, either the queue is empty or it should be the last element, so just push it back
+	queue->push_back(process);
+
+	process->setStateReady();
+	return 0; 
 }
 
 uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process)

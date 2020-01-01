@@ -49,9 +49,9 @@ public:
 	*       PUBLIC VARIABLES        *
 	********************************/
 	//used in scheduling
-	uint8_t priority;
-	uint8_t basePriority;
-	uint16_t counter;
+	uint8_t priority=100;
+	uint8_t basePriority=110;
+	uint16_t counter=0;
 
 	/********************************
 	*            GETTERS            *

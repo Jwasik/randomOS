@@ -1,5 +1,6 @@
 ﻿#include "Shell.h"
 
+
 //nie pytać
 #define c	32.7
 #define cis	34.6
@@ -65,13 +66,16 @@ void Shell::run()
 		std::getline(std::cin, command);
 		this->toLower(command);
 
+		//initialize variable used to store regex matches for further parsing
+		std::smatch match;
+
 		//GENERAL COMMANDS
 		if (std::regex_match(command.begin(), command.end(), std::regex("^man$")))
 		{
 			printLine("\nFOR MORE INFO TYPE: COMMAND --HELP", 14);
 			printLine("GENERAL COMMANDS", 13);
 			std::cout << "POWEROFF   " << "- shutdown" << std::endl;
-			std::cout << "CLEAR      " << "- clear console window" << std::endl;
+			std::cout << "CLEAN      " << "- clear console window" << std::endl;
 			std::cout << "MAN        " << "- print commands list" << std::endl;
 			printLine("FILE SYSTEM COMMANDS", 13);
 			std::cout << "LS         " << "- print directory content" << std::endl;
@@ -104,14 +108,39 @@ void Shell::run()
 		{
 			system("cls");
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex(".*--help$")))
+		else if (std::regex_match(command, match, std::regex("(.*)(--help)$")))
 		{
-			std::cout << "HELP" << std::endl;
-			if (std::regex_match(command.begin(), command.end(), std::regex("^ls --help$")))
+			std::string helpFor = match[1];
+
+			//print header
+			///capitalize the string
+			std::string capitalized = helpFor;
+			for (int i = 0; i < capitalized.length(); ++i) { capitalized[i] = toupper(capitalized[i]); }
+			this->printLine("--HELP FOR "+ capitalized +"--", 14);
+
+
+			//print command specific help
+			if (helpFor == "ls") 
 			{
 
 			}
+			else if (helpFor == "fork")
+			{
+				
+			}
+			else if (helpFor == "") 
+			{
+
+			}
+			//unrecognized help command
+			else 
+			{
+				this->printLine("This command does not exist, you can't be helped", 15);
+			}
+
 		}
+
+
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ls$")))
 		{
 			auto files = fmanager.ls();
