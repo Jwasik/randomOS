@@ -307,7 +307,8 @@ std::string ProcessManager::displayWithState(PCB::ProcessState state)
 		allProcesses.pop();
 		if (currentProcess->getHasState(state))
 		{
-			result += "\n-" + currentProcess->getNameAndPIDString();
+			if(state == PCB::ProcessState::RUNNING){ result += currentProcess->getInformation(); }
+			else{ result += "\n-" + currentProcess->getNameAndPIDString(); }
 		}
 
 		//add all of its children to the queue

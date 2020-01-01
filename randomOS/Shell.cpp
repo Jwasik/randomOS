@@ -108,34 +108,124 @@ void Shell::run()
 		{
 			system("cls");
 		}
-		else if (std::regex_match(command, match, std::regex("(.*)(--help)$")))
+		else if (std::regex_match(command, match, std::regex("(.*)( )(--help)$")))
 		{
 			std::string helpFor = match[1];
 
-			//print header
-			///capitalize the string
-			std::string capitalized = helpFor;
-			for (int i = 0; i < capitalized.length(); ++i) { capitalized[i] = toupper(capitalized[i]); }
-			this->printLine("--HELP FOR "+ capitalized +"--", 14);
-
-
-			//print command specific help
 			if (helpFor == "ls") 
 			{
 
 			}
-			else if (helpFor == "fork")
+			else if(helpFor =="fork")
 			{
-				
-			}
-			else if (helpFor == "") 
-			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  creates a new processes from the level of the console.\n", 14);
 
+				//USAGE
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >fork", 14);
+				this->print(" [pName]",12);
+				this->print(" [pSource]",11);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  pName", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the process.", 14);
+				///usefull information, exceptions, what cannot be used
+				this->print(" (cannot be longer then " + std::to_string(MAX_PROCESS_NAME_LENGHT) + " characters|cannot contain spaces)", 6);
+		
+				//var 2
+				///variable name type and description
+				this->print("\n  pSource", 11);
+				this->print("   <string>", 3);
+				this->print("   name of the .txt file containing the source code.", 14);
+				///usefull information, exceptions, what cannot be used
+				this->print(" (no file extension neccesarry|must be located in program directory)", 6);
+
+
+				//example
+				this->printLine("\n\n  Example", 5);
+				this->print("  >fork", 14);
+				this->print(" foo", 12);
+				this->print(" test", 11);
+				this->printLine("  (creates a new process \"foo\" from source code in test.txt)", 14);
+			}
+			else if (helpFor == "kill") 
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  removes a specified process and all of its children.", 14);
+
+				//USAGE
+				this->printLine("\nUSAGE: ", 13);
+				//general form of the command
+				this->print("  >kill", 14);
+				this->print(" [pName]", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  pName", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the process that is to be killed.", 14);
+
+				//example
+				this->printLine("\n\n  Example", 5);
+				this->print("  >kill", 14);
+				this->print(" foo", 12);
+				this->printLine("  (kills a process called \"foo\")", 14);
+			}
+			else if (helpFor == "ps")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  prints currently exisitng processes. Can be modified with a parameter to show only ones of certain state.", 14);
+
+				//USAGE
+				this->printLine("\nUSAGE: ", 13);
+				//general form of the command
+				this->print("  >ps", 14);
+				this->print(" <pState>", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  pState", 12);
+				this->print("    <param>", 3);
+				this->print("    specifies the state the processes must have in order to be printed.", 14);
+
+				this->print("\n    -r", 12);
+				this->print(" running state.", 14);
+				this->print("\n    -w", 12);
+				this->print(" waiting state.", 14);
+				this->print("\n    -a", 12);
+				this->print(" ready state.", 14);
+
+				//example
+				this->printLine("\n\n  Examples", 5);
+				this->print("  >ps", 14);
+				this->printLine("  (prints a tree of all the processes)", 14);
+				this->print("  >ps", 14);
+				this->print(" -r", 12);
+				this->printLine("  (prints only the running process)", 14);
 			}
 			//unrecognized help command
 			else 
 			{
-				this->printLine("This command does not exist, you can't be helped", 15);
+				this->printLine("Help for this command does not exist, you can't be helped :(", 14);
 			}
 
 		}
@@ -341,8 +431,8 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
-		
-			this->printLine(processManager->displayTree(), 14);
+			this->print("PROCESSES TREE", 13);
+			this->printLine("\n"+processManager->displayTree(), 14);
 			//stare kolorki nie wiem co to xD
 		/*	std::cout << "ps" << std::endl;
 			for (unsigned int i = 0; i < 255; i++)
@@ -353,20 +443,27 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps[ ]-[wra]$")))
 		{
+			std::string temp = "";
 			if(command.at(command.length()-1)=='w')
 			{ 
-				this->print("WAITING PROCESSES", 6);
-				this->printLine(this->processManager->displayWithState(PCB::ProcessState::WAITING), 14);
+				this->print("WAITING PROCESSES", 13);
+				temp = this->processManager->displayWithState(PCB::ProcessState::WAITING);
+				this->printLine(temp, 14);
+				if (temp == "") { this->printLine("<No processes found>", 4); }
 			}
 			else if (command.at(command.length() - 1) == 'r') 
 			{ 
-				this->print("RUNNING PROCESSES", 6);
-				this->printLine(this->processManager->displayWithState(PCB::ProcessState::RUNNING), 14);
+				this->print("RUNNING PROCESS", 13);
+				temp = this->processManager->displayWithState(PCB::ProcessState::RUNNING);
+				this->printLine(temp, 14);
+				if(temp==""){ this->printLine("<No processes found>", 4); }
 			}
 			else if (command.at(command.length() - 1) == 'a') 
 			{
-				this->print("READY PROCESSES", 6);
-				this->printLine(this->processManager->displayWithState(PCB::ProcessState::READY), 14);
+				this->print("READY PROCESSES", 13);
+				temp = this->processManager->displayWithState(PCB::ProcessState::READY);
+				this->printLine(temp, 14);
+				if (temp == "") { this->printLine("<No processes found>", 4); }
 			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
