@@ -46,6 +46,9 @@
     <ClCompile Include="Scheduler.cpp">
       <Filter>MAIN</Filter>
     </ClCompile>
+    <ClCompile Include="Page.cpp">
+      <Filter>MAIN</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Interpreter.cpp">
@@ -68,7 +71,6 @@
     <ClInclude Include="FileMenager.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="Memory.h" />
     <ClInclude Include="Shell.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
@@ -88,6 +90,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="Scheduler.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Page.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,6 @@
 #pragma once
 #include "Includes.h"
+#include "Page.h"
 #include "VirtualMemory.h"
 
 class Memory
@@ -7,25 +8,24 @@ class Memory
 	struct Frame
 	{
 		int pid;
+		int page;
 		bool dirtyflag = 0;
 	};
 
 	//pamiec wlasciwa
-	int8_t ram[128]{0};
+	int8_t ram[128];
 	//czyscze ramke
 	void deleteFromMem(int);
 	// informacja czy ramka jest zajeta i jaka strona jest w niej wpisana
-	Frame FrameTable[8]{
+	Frame FrameTable[8];
 
-		
-			
-	};
-	
 	std::shared_ptr<VirtualMemory> vm;
-
 public:
 	Memory();
 	Memory(std::shared_ptr<VirtualMemory>);
+	void creatProcess(int pid);
+
+
 
 	std::vector<std::pair<int, bool>> ProcessPages
 	{
