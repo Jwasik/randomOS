@@ -73,14 +73,14 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std:
 {
 	if (queue == nullptr)queue = this->active;
 	//KODY B£ÊDÓW DODAÆ
-	if (process->priority > 139 || process->priority < 100)
-		return 0; //priority out of range <100, 139>
+	/*if (process->priority > 139 || process->priority < 100)
+		return 0; //priority out of range <100, 139>*/
 	if (process == NULL)
-		return 0; //process does not exist
+		return 999; //process does not exist
 
 	for (int i = 0; i < queue->size(); i++)
 	{
-		if ((*expired)[i]->priority > process->priority)
+		if ((*queue)[i]->priority > process->priority)
 		{
 			queue->insert(queue->begin() + i, process);
 			return 0;
@@ -91,7 +91,7 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std:
 		queue->push_back(process);
 		return 0;
 	}
-	return 27; // b³¹d: WTF?
+	return 999; // b³¹d: WTF?
 }
 
 uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process)

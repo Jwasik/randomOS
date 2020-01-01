@@ -448,6 +448,7 @@ void Shell::run()
 		this->print("ACTIVE",6);
 		this->print("              ",6);
 		this->print("EXPIRED",12);
+		std::cout << std::endl;
 			for (unsigned int i = 0; i < 1000; i++)//color 6 i 12
 			{
 				
