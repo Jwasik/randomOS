@@ -91,6 +91,11 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::vector<std::sha
 	return 27; // b³¹d: WTF?
 }
 
+uint8_t Scheduler::addNewProcess(std::shared_ptr<PCB> process)
+{
+	return addProcess(process, &active);
+}
+
 uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process)
 {
 	int waitingTime = this->counter - process->counter;

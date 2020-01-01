@@ -15,6 +15,7 @@ public:
 
 	uint8_t nextProcess(); //put new process in RUNNING, old goes to waiting queue
 	uint8_t addProcess(std::shared_ptr<PCB> process, std::vector<std::shared_ptr<PCB>> *queue);
+	uint8_t addNewProcess(std::shared_ptr<PCB> process);
 	
 
 
