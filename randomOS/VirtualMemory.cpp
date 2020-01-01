@@ -1,10 +1,21 @@
 #include "VirtualMemory.h"
 
+VirtualMemory::Page::Page() = default;
 
+VirtualMemory::Page::Page(const int8_t data[]) {
+	for (int i = 0; i < 16; i++)
+		this->data[i] = data[i];
+}
 
-void VirtualMemory::insertProgram(std::pair<int, std::vector<Page>> program)
-{
+void VirtualMemory::Page::print() const {
+	for (auto &x : data) {
+		if (x == 0) std::cout << "_";
+		else std::cout << std::to_string(x);
+	}
+	std::cout << std::endl;
+}
 
+void VirtualMemory::insertProgram(std::pair<int, std::vector<Page>> program) {
 	swapFile.insert(program);
 }
 
@@ -13,7 +24,7 @@ void VirtualMemory::updateQueue(int frameNumber) {
 		if (frame.first == frameNumber) frame.second = true;
 }
 
-void VirtualMemory::updateSwapFilePage(int pid, int pageNumber, Page page) {
+void VirtualMemory::updateSwapFilePage(int pid, int pageNumber, VirtualMemory::Page page) {
 	for (auto &program : swapFile) {
 		if (program.first == pid)
 			for (int i = 0; i < sizeof(page.data); i++)
@@ -36,7 +47,7 @@ int VirtualMemory::getVictimFrameNumber() {
 	return temp.first;
 }
 
-Page VirtualMemory::getPage(int pid, int pageNumber) {
+VirtualMemory::Page VirtualMemory::getPage(int pid, int pageNumber) {
 	return swapFile.find(pid)->second[pageNumber];
 }
 

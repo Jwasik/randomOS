@@ -2,11 +2,6 @@
 #include "Includes.h"
 #include "RUNNING.h"
 
-//ERROR CODES
-//IN RANGE: <16,32)
-#define ERROR_SH_PRIORITY_OUT_OF_RANGE 16
-#define ERROR_SH_ADDED_PROCESS_DOES_NOT_EXIST 17
-
 
 static class Scheduler
 {
@@ -19,16 +14,16 @@ public:
 	uint8_t schedule();
 
 	uint8_t nextProcess(); //put new process in RUNNING, old goes to waiting queue
-	uint8_t addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std::vector<std::shared_ptr<PCB>>> queue);
+	uint8_t addProcess(std::shared_ptr<PCB> process, std::vector<std::shared_ptr<PCB>> *queue);
+	uint8_t addNewProcess(std::shared_ptr<PCB> process);
+	
 
 
 private:
 
 	uint8_t result;
-	std::shared_ptr<std::vector<std::shared_ptr<PCB>>> active;
-	std::shared_ptr < std::vector<std::shared_ptr<PCB>>> expired;
+	std::vector<std::shared_ptr<PCB>> active;
+	std::vector<std::shared_ptr<PCB>> expired;
 
 	uint8_t normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process);
-	
-	friend class Shell;
 };
