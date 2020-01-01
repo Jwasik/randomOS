@@ -4,11 +4,8 @@
 #include <stdio.h>
 #include <thread>
 #include "FileMenager.h"
-#include "Scheduler.h"
-#include "ProcessManager.h"
 #include "MemoryManager.h"
 #include "VirtualMemory.h"
-#include "Page.h"
 
 void voice1();
 
@@ -16,7 +13,7 @@ class Shell
 {
 public:
 	Shell();
-	Shell(std::shared_ptr<FileMenager>, std::shared_ptr<Memory>, std::shared_ptr<VirtualMemory>, std::shared_ptr<ProcessManager>, std::shared_ptr<Scheduler>);
+	Shell(std::shared_ptr<FileMenager> fileMenager,std::shared_ptr<Memory> memoryManager,std::shared_ptr<VirtualMemory> virtualMemory);
 	~Shell();
 	void run();
 
@@ -24,12 +21,12 @@ private:
 	std::shared_ptr<FileMenager> fileManager;
 	std::shared_ptr<Memory> memoryManager;
 	std::shared_ptr<VirtualMemory> virtualMemory;
-	std::shared_ptr<ProcessManager> processManager;
-	std::shared_ptr<Scheduler> scheduler;
 
-	template <typename T>	void print(T, unsigned int);
-	template<typename I> std::string toHexString(I w);
-	template <typename T>	void printLine(T, unsigned int);
+	void print(std::string, unsigned int);
+	void print(char, unsigned int);
+	void print(int, unsigned int);
+	void printLine(std::string, unsigned int);
+	void printLine(int, unsigned int);
 	void changeConsoleColor(unsigned int);
 	void restoreDefaultColor();
 	void toLower(std::string&);
@@ -39,6 +36,6 @@ private:
 
 	std::string osName;
 
-	HANDLE hConsole;
+	HANDLE  hConsole;
 	unsigned int defaultColor;
 };
