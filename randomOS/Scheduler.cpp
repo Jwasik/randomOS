@@ -19,7 +19,7 @@ uint8_t Scheduler::schedule()
 		counter = 0;
 	}
 
-	if (RUNNING->counter == this->counter || RUNNING == nullptr)
+	if  (RUNNING == nullptr || RUNNING->counter == this->counter )
 	{
 		this->result = nextProcess();
 		if (this->result != 0)

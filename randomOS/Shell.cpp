@@ -139,7 +139,7 @@ void Shell::run()
 				this->print("     <string>", 3);
 				this->print("   the name of the process.", 14);
 				///usefull information, exceptions, what cannot be used
-				this->print(" (cannot be longer then " + std::to_string(MAX_PROCESS_NAME_LENGHT) + " characters|cannot contain spaces)", 6);
+				this->print(" (cannot be longer then " + std::to_string(MAX_PROCESS_NAME_LENGHT) + " characters| cannot contain spaces| case insensitive)", 6);
 		
 				//var 2
 				///variable name type and description
@@ -147,7 +147,7 @@ void Shell::run()
 				this->print("   <string>", 3);
 				this->print("   name of the .txt file containing the source code.", 14);
 				///usefull information, exceptions, what cannot be used
-				this->print(" (no file extension neccesarry|must be located in program directory)", 6);
+				this->print(" (no file extension neccesarry| must be located in program directory)", 6);
 
 
 				//example
@@ -178,6 +178,8 @@ void Shell::run()
 				this->print("  pName", 12);
 				this->print("     <string>", 3);
 				this->print("   the name of the process that is to be killed.", 14);
+				this->print("\n            <int>", 3);
+				this->print("      the PID of the process that is to be killed.", 14);
 
 				//example
 				this->printLine("\n\n  Example", 5);
@@ -229,7 +231,6 @@ void Shell::run()
 			}
 
 		}
-
 
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ls$")))
 		{
@@ -417,13 +418,29 @@ void Shell::run()
 				this->printLine(errorCode.second, 3);
 			}
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^kill[ ][0-9]+$")))
+		else if (std::regex_match(command,match, std::regex("^(kill)([ ])([0-9]+)$")))
 		{
-			std::cout << "kill pid" << std::endl;
+			//delete with pid
+			uint8_t errorCode= processManager->deleteProcess(std::stoi(match[3]));
+			if(errorCode!=0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			else
+			{
+				this->print("Process ", 14);
+				this->print("[PID: "+match[3].str()+"]", 11);
+				this->printLine(" has been deleted,", 14);
+			}
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^kill[ ][a-z0-9]+$")))
+		else if (std::regex_match(command, match, std::regex("^(kill)([ ])([a-z0-9]+)$")))
 		{
-			std::cout << "kill name" << std::endl;
+			//delete with name
+			uint8_t errorCode = processManager->deleteProcess(match[3]);
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			else
+			{
+				this->print("Process ", 14);
+				this->print("[" + match[3].str() + "]", 11);
+				this->printLine(" has been deleted.", 14);
+			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
@@ -432,7 +449,7 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
 			this->print("PROCESSES TREE", 13);
-			this->printLine("\n"+processManager->displayTree(), 14);
+			this->printWithPadding("\n"+processManager->displayTree(), 14,2);
 			//stare kolorki nie wiem co to xD
 		/*	std::cout << "ps" << std::endl;
 			for (unsigned int i = 0; i < 255; i++)
@@ -636,6 +653,35 @@ void Shell::printLine(T text, unsigned int color)
 }
 
 template <typename T>
+void Shell::printWithPadding(T str, unsigned int color, unsigned int spaces)
+{
+	SetConsoleTextAttribute(hConsole, color);
+
+	//split string by newline 
+	std::vector<std::string> strings;
+	std::string::size_type pos = 0;
+	std::string::size_type prev = 0;
+	while ((pos = str.find('\n', prev)) != std::string::npos)
+	{
+		strings.push_back(str.substr(prev, pos - prev));
+		prev = pos + 1;
+	}
+	strings.push_back(str.substr(prev));
+
+	//generate the padding spaces
+	std::string padding = "";
+	for (int i = 0; i < spaces; i++) { padding.append(" "); }
+
+	//output with padding added to each line
+	for (auto s : strings) 
+	{
+		std::cout << padding + s << std::endl;
+	}
+
+	SetConsoleTextAttribute(hConsole, this->defaultColor);
+}
+
+template <typename T>
 void Shell::print(T text, unsigned int color)
 {
 	SetConsoleTextAttribute(hConsole, color);
@@ -673,6 +719,12 @@ void Shell::printCode(uint8_t code)
 	case 0:
 		std::cout << "ALLES GING BESSER ALS ERWARTET" << std::endl;
 		break;
+	case 16:
+		std::cout << "CODE 16 : ERROR_SH_PRIORITY_OUT_OF_RANGE" << std::endl;
+		break;
+	case 17:
+		std::cout << "CODE 17 : ERROR_SH_ADDED_PROCESS_DOES_NOT_EXIST" << std::endl;
+		break;
 	case 32:
 		std::cout << "CODE 32 : ERROR_PM_PROCESS_NAME_TAKEN" << std::endl;
 		break;
@@ -699,6 +751,9 @@ void Shell::printCode(uint8_t code)
 		break;
 	case 41:
 		std::cout<< "CODE 41 : ERROR_PM_CODE_DOESNT_FIT_INTO_NUMBER_OF_DECLARED_PAGES" << std::endl;
+		break;
+	case 42:
+		std::cout << "CODE 41 : ERROR_PM_PROCESS_NAME_HAS_TO_CONTAIN_AT_LEAST_ONE_LETTER" << std::endl;
 		break;
 	case 64:
 		std::cout << "CODE 64 : ERROR_ALREADY_EXISTING_FILE" << std::endl;

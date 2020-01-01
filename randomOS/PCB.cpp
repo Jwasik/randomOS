@@ -62,7 +62,12 @@ std::string PCB::getName(){ return this->name;}
 
 bool PCB::getHasName(const std::string& nameToCompare)
 {
-	if (this->name._Equal(nameToCompare)) { return true; }
+	std::string thisNameTemp = this->name;
+	std::string nameToCompareTemp = nameToCompare;
+	for(int i=0;i<thisNameTemp.length();i++){ thisNameTemp[i]= toupper(thisNameTemp[i]);}
+	for (int j = 0; j < nameToCompareTemp.length(); j++) { nameToCompareTemp[j] = toupper(nameToCompareTemp[j]); }
+
+	if (thisNameTemp == nameToCompareTemp) { return true; }
 	return false;	
 }
 

@@ -80,6 +80,13 @@ int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 	return 0;
 }
 
+int8_t ProcessManager::deleteProcess(const std::string & processName)
+{
+	int PID = getPIDbyName(processName);
+	if (PID == -1) { return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND; }
+	return deleteProcess(PID);
+}
+
 
 bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
 {
@@ -349,9 +356,12 @@ int8_t ProcessManager::isThisNameSutableForAProcess(const std::string & processN
 	//check if isn't too long
 	if (processName.length()>MAX_PROCESS_NAME_LENGHT) { return ERROR_PM_PROCESS_NAME_TOO_LONG;}
 	//check if doesn't contain notAllowedcharacters
+	bool containsLetterFlag = 0;
 	for (auto it = processName.begin(); it != processName.end(); it++) {
 		if (*it == ' ') { return ERROR_PM_PROCESS_NAME_CONTAINS_UNALLOWED_CHARACTERS; }
+		if ((*it >= 65 && *it < 90) || (*it >= 97 && *it < 122)) { containsLetterFlag = 1; }
 	}
+	if (!containsLetterFlag) { return ERROR_PM_PROCESS_NAME_HAS_TO_CONTAIN_AT_LEAST_ONE_LETTER; }
 
 	return isProcessNameUnique(processName);
 }
@@ -459,6 +469,28 @@ std::vector<uint8_t> ProcessManager::convertToMachine(std::string m) {
 		}
 	}
 	return machine;
+}
+
+int ProcessManager::getPIDbyName(const std::string & processName)
+{
+	std::stack<std::shared_ptr<PCB>> allProcesses;
+	allProcesses.push(init);
+
+	std::shared_ptr<PCB> currentProcess;
+	while (!allProcesses.empty())
+	{
+		currentProcess = allProcesses.top();
+		allProcesses.pop();
+
+		if (currentProcess->getHasName(processName)) { return currentProcess->getPID(); }
+
+		//add all of its children to the queue
+		std::vector<std::shared_ptr<PCB>> childrenOfCurrent = currentProcess->getChildren();
+		for (auto child : childrenOfCurrent) {
+			allProcesses.push(child);
+		}
+	}
+	return -1;
 }
 
 
