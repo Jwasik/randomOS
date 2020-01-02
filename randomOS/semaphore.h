@@ -11,6 +11,7 @@ private:
 
 public:
 	Semaphore(int new_value);
+	Semaphore();
 	bool wait(); //returns 1 if a semaphore is down, 0 if it's not
 	void signal();
 

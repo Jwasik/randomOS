@@ -6,6 +6,10 @@ Semaphore::Semaphore(int new_value)
 	value = new_value;
 }
 
+Semaphore::Semaphore()
+{
+	value = 0;
+}
 
 bool Semaphore::wait()
 {

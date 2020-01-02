@@ -1,6 +1,7 @@
 #pragma once
 #include "Includes.h"
 #include "semaphore.h"
+#include "MemoryManager.h"
 
 #define BlockSize 32 //Wielko�� bloku wyrazona w bajtach
 #define DiskSize  1024 //Wielko�� dysku wyra�ona w bajtach

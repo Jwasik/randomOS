@@ -58,7 +58,7 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 			if (isFileOpen(name, PID)) return ERROR_FILE_OPENED_BY_OTHER_PROCESS;//sprawdza czy plik nie jest otwarty przez inny proes
 			else//je�eli nie to ustawiam PID na te jakie odsta�em i dodaje plik do tabilcy otwartych plik�w
 			{
-				//Containers::MainFileCatalog[i].s.wait();
+				Containers::MainFileCatalog[i].s.wait();
 				Containers::MainFileCatalog[i].PID = PID;
 				Containers::MainFileCatalog[i].isOpen = true;
 				Containers::open_file_table.push_back(i);
@@ -274,8 +274,8 @@ int8_t FileMenager::closeFile(std::string name, unsigned int PID)
 		if (Containers::MainFileCatalog[pom].name == name && Containers::MainFileCatalog[pom].PID == PID)
 		{
 			Containers::MainFileCatalog[pom].isOpen = false;
+			Containers::MainFileCatalog[pom].s.signal();
 			Containers::open_file_table.erase(Containers::open_file_table.begin() + i);
-			//Containers::open_file_table[i]->size.signal();
 			return 0;
 		}
 	}
