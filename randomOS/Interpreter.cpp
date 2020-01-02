@@ -33,6 +33,8 @@ void Interpreter::loadPCB() {
 }
 
 void Interpreter::loadCode() {
+	uint8_t error = memory->getMemoryContent(PC, PID).first;
+	if (error != 0) throw error;
 	code = memory->getMemoryContent(PC, PID).second;
 	PC++;
 	instructionHex.push_back(code);
@@ -148,6 +150,9 @@ void Interpreter::interpret() {
 }
 
 int8_t& Interpreter::loadArgAdrOrReg() {
+	uint8_t error = memory->getMemoryContent(PC, PID).first;
+	if (error != 0) throw error;
+
 	int8_t& adr = memory->getMemoryContent(PC, PID).second;
 	PC++;
 
@@ -178,6 +183,9 @@ int8_t& Interpreter::loadArgAdrOrReg() {
 }
 
 int8_t Interpreter::loadArgNum() {
+	uint8_t error = memory->getMemoryContent(PC, PID).first;
+	if (error != 0) throw error;
+
 	int8_t num = memory->getMemoryContent(PC, PID).second;
 	PC++;
 
@@ -188,6 +196,9 @@ int8_t Interpreter::loadArgNum() {
 }
 
 std::string Interpreter::loadArgText(int n) {
+	uint8_t error = memory->getMemoryContent(PC, PID).first;
+	if (error != 0) throw error;
+
 	std::string text = "";
 	char t;
 
@@ -296,13 +307,13 @@ void Interpreter::JUA() {
 void Interpreter::JIF() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
-	if (a == 0) PC = b;
+	if (a <= 0) PC = b;
 }
 
 void Interpreter::JIA() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
-	if (a == 0) PC = b;
+	if (a <= 0) PC = b;
 }
 
 void Interpreter::CFI() {
@@ -399,6 +410,11 @@ uint8_t Interpreter::go() {
 std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
 	std::vector<uint8_t> machine;
 	std::vector<std::string> arg;
+
+	if (m[0] >= 48 && m[0] <= 57) {
+		machine.push_back(std::stoi(m));
+		return machine;
+	}
 
 	std::string code = m.substr(0, 3);
 

@@ -14,6 +14,9 @@
     <Filter Include="Interpreter">
       <UniqueIdentifier>{a01965e8-180c-4d8d-a13b-84d6bf59523d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Programs">
+      <UniqueIdentifier>{aea7b007-01df-42f2-8b26-cde5eba3ab1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="randomOS.cpp">
@@ -95,5 +98,15 @@
     <ClInclude Include="Page.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dummy.txt">
+      <Filter>Programs</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="pn.txt">
+      <Filter>Programs</Filter>
+    </Text>
   </ItemGroup>
 </Project>

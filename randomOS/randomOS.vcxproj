@@ -184,6 +184,10 @@
     <ClInclude Include="VirtualMemory.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="dummy.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="pn.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
