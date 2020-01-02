@@ -1,6 +1,8 @@
 #pragma once
 #include "Includes.h"
-#include "RUNNING.h"
+#include "PCB.h"
+#include "VirtualMemory.h"
+#include "Scheduler.h"
 
 //POSSIBLE ERRORS (in range[32 - 64])
 #define ERROR_PM_PROCESS_NAME_TAKEN  32 //a process with such name already exists (when trying to fork a new process)
@@ -11,6 +13,9 @@
 #define ERROR_PM_INIT_CANNOT_BE_DELETED 37
 #define ERROR_PM_PROCESS_COULD_NOT_BE_FOUND 38
 #define ERROR_PM_THIS_PROCESS_HAS_OPEN_FILES 39
+#define ERROR_PM_CANNOT_OPEN_SOURCE_CODE_FILE 40
+#define ERROR_PM_CODE_DOESNT_FIT_INTO_NUMBER_OF_DECLARED_PAGES 41
+#define ERROR_PM_PROCESS_NAME_HAS_TO_CONTAIN_AT_LEAST_ONE_LETTER 42
 
 
 /*****************************************
@@ -20,15 +25,16 @@
 class ProcessManager
 {
 public:
-	ProcessManager();
+	ProcessManager(std::shared_ptr <Scheduler> scheduler,std::shared_ptr <VirtualMemory> virtualMemory);
 	~ProcessManager();
 
 	/********************************
 	*           MAIN METHODS        *
 	********************************/
-	void createInit();
+	int8_t createInit();
 	std::pair<int8_t, unsigned int> fork(const std::string& processName, const unsigned int& parentPID, const std::string& filePath);
 	int8_t deleteProcess(const unsigned int& PID);
+	int8_t deleteProcess(const std::string& processName);
 
 	
 	/********************************
@@ -45,14 +51,19 @@ public:
 	*            GETTERS            *
 	********************************/
 	std::shared_ptr<PCB> getPCBByPID(const unsigned int& PID);
+	std::shared_ptr<PCB> getPCBByName(const std::string& processName);
 	std::shared_ptr<PCB> getInit();
 
 
 private:
+	//pointers to other modules
+	std::shared_ptr <Scheduler> scheduler = NULL;
+	std::shared_ptr <VirtualMemory> virtualMemory = NULL;
+
 	std::shared_ptr<PCB> init;
 	unsigned int freePID = 1;
 
-	int8_t checkIfProcessCanBeClosed(const std::shared_ptr<PCB>& process);
+
 	int8_t isThisNameSutableForAProcess(const std::string& processName);
 	int8_t isProcessNameUnique(const std::string& processName);
 	bool deleteProcess(const std::shared_ptr<PCB>& process);
@@ -61,7 +72,8 @@ private:
 
 
 	int8_t addProcessToScheduler(const std::shared_ptr<PCB>& process);
-	std::shared_ptr<std::vector<MemoryPage>> loadProgramIntoMemory(const std::string& filePath);
-
+	int8_t loadProgramIntoMemory(const std::string& filePath, const unsigned int& PID);
+	std::vector<uint8_t> convertToMachine(std::string m);
+	int getPIDbyName(const std::string& processName);
 };
 
