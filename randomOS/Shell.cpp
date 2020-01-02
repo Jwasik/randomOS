@@ -261,7 +261,7 @@ void Shell::run()
 			//unrecognized help command
 			else 
 			{
-				this->printLine("Help for this command does not exist.", 14);
+				this->printLine("Help for this command does not exist.", 4);
 			}
 
 		}
@@ -750,19 +750,19 @@ void Shell::printProcessInformation(std::shared_ptr<PCB> PCB)
 	printLine(PCB->getName(), 3);
 
 	print("  PID: ", 14);
-	printLine(PCB->getPID(), 4);
+	printLine(PCB->getPID(), 3);
 
 	print("  State: ", 14);
-	printLine(PCB->getStateAsString(), 5);
+	printLine(PCB->getStateAsString(), 3);
 
 	print("  Parent: ", 14);
-	printLine(PCB->getParentAsString(), 6);
+	printLine(PCB->getParentAsString(), 3);
 
 	print("  Children: ", 14);
-	printLine(PCB->getChildrenAsString(), 7);
+	printLine(PCB->getChildrenAsString(), 11);
 
 	print("  IC: ", 14);
-	printLine(PCB->getInstructionCounter(), 8);
+	printLine(PCB->getInstructionCounter(), 3);
 
 	print("  Registers: ", 14); 
 	print("[",14);
