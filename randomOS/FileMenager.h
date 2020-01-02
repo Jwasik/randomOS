@@ -1,6 +1,6 @@
 #pragma once
 #include "Includes.h"
-//#include "semaphore.h"
+#include "semaphore.h"
 
 #define BlockSize 32 //Wielko�� bloku wyrazona w bajtach
 #define DiskSize  1024 //Wielko�� dysku wyra�ona w bajtach
@@ -25,7 +25,8 @@ struct File
 	int size = 0, PID = -1;
 	std::vector<int> i_node;
 	bool isOpen = false;
-	//Semaphore s;
+	Semaphore s;
+	File();
 };
 
 struct Containers

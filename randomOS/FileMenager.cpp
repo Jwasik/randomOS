@@ -13,6 +13,11 @@ FileMenager::FileMenager()
 	Containers::DiskArray.fill(0);
 }
 
+File::File()
+{
+	s = Semaphore(0);
+}
+
 int8_t FileMenager::createFile(std::string nazwa_pliku)
 {
 	if (isNameColision(nazwa_pliku))//sprawdzam czy nie istnieje ju� plik o podanej nazwie

@@ -1,13 +1,11 @@
 #pragma once
 #include "PCB.h"
-#include <mutex>
 #include <memory>
 #include <queue>
 
 class Semaphore //TODO: output for step-by-step execution
 {
 private:
-	std::mutex mtx; //mutex locks provide protection for the constructor, wait() and signal() methods without negative impacts for multithreaded systems
 	int value;
 	std::queue<std::shared_ptr<PCB>> list;
 
