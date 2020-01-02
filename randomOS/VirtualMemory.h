@@ -1,20 +1,11 @@
 #pragma once
-/*#ifndef RANDOMOS_VIRTUALMEMORY_H
-#define RANDOMOS_VIRTUALMEMORY_H*/
 
 #include "Includes.h"
+#include "Page.h"
 
 class VirtualMemory {
 
 private:
-
-	// structure of a single process page
-	struct Page {
-		int8_t data[16]{ 0 }; // page data, initialized with zeroes
-		Page();
-		explicit Page(const int8_t data[]);
-		void print() const;
-	};
 
 	// map of pairs (pid, pageVector) to store programs
 	std::map<int, std::vector<Page>> swapFile;
@@ -54,5 +45,3 @@ public:
 	friend class Memory;
 	friend class Shell;
 };
-
-//#endif //RANDOMOS_VIRTUALMEMORY_H
