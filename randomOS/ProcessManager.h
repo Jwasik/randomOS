@@ -51,6 +51,7 @@ public:
 	*            GETTERS            *
 	********************************/
 	std::shared_ptr<PCB> getPCBByPID(const unsigned int& PID);
+	std::shared_ptr<PCB> getPCBByName(const std::string& processName);
 	std::shared_ptr<PCB> getInit();
 
 

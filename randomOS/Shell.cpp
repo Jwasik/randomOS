@@ -90,6 +90,7 @@ void Shell::run()
 			std::cout << "FORK       " << "- create new process" << std::endl;
 			std::cout << "KILL       " << "- kill process" << std::endl;
 			std::cout << "PS -w -r -a" << "- print process list" << std::endl;
+			std::cout << "PROC       " << "- print process' information" << std::endl;
 			printLine("INTERPRETER COMMANDS", 13);
 			std::cout << "GO         " << "- execute one ASSEMBLER command" << std::endl;
 			printLine("MODULE COMMANDS", 13);
@@ -187,6 +188,39 @@ void Shell::run()
 				this->print(" foo", 12);
 				this->printLine("  (kills a process called \"foo\")", 14);
 			}
+			else if (helpFor == "proc")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  get detailed information about a process.", 14);
+
+				//USAGE
+				this->printLine("\nUSAGE: ", 13);
+				//general form of the command
+				this->print("  >proc", 14);
+				this->print(" [pName]", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  pName", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the process that is to be displayed.", 14);
+				this->print("\n            <int>", 3);
+				this->print("      the PID of the process that is to be displayed.", 14);
+
+				//example
+				this->printLine("\n\n  Examples", 5);
+				this->print("  >proc", 14);
+				this->print(" foo", 12);
+				this->printLine("  (displays a process called \"foo\")", 14);
+				this->print("  >proc", 14);
+				this->print(" 10", 12);
+				this->printLine("  (displays a process with PID 10)", 14);
+			}
 			else if (helpFor == "ps")
 			{
 				//DESCRIPTION
@@ -227,11 +261,32 @@ void Shell::run()
 			//unrecognized help command
 			else 
 			{
-				this->printLine("Help for this command does not exist, you can't be helped :(", 14);
+				this->printLine("Help for this command does not exist.", 14);
 			}
 
 		}
-
+		else if (std::regex_match(command, match, std::regex("^(proc)([ ])([0-9]+)$")))
+		{
+			//print info with pid
+			std::shared_ptr<PCB> temp= processManager->getPCBByPID(std::stoi(match[3]));
+			if (temp == nullptr) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(38); }
+			else
+			{
+				this->print("PROCESS INFORMATION ", 13);
+				printProcessInformation(temp);
+			}
+			}
+		else if (std::regex_match(command, match, std::regex("^(proc)([ ])([a-z0-9]+)$")))
+		{
+			//print info with name
+			std::shared_ptr<PCB> temp = processManager->getPCBByName(match[3]);
+			if (temp == nullptr) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(38); }
+			else
+			{
+				this->print("PROCESS INFORMATION ", 13);
+				printProcessInformation(temp);
+			}
+		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ls$")))
 		{
 			auto files = fmanager.ls();
@@ -687,6 +742,42 @@ void Shell::print(T text, unsigned int color)
 	SetConsoleTextAttribute(hConsole, color);
 	std::cout << text;
 	SetConsoleTextAttribute(hConsole, this->defaultColor);
+}
+
+void Shell::printProcessInformation(std::shared_ptr<PCB> PCB)
+{
+	print("\n  Name: ", 14);
+	printLine(PCB->getName(), 3);
+
+	print("  PID: ", 14);
+	printLine(PCB->getPID(), 4);
+
+	print("  State: ", 14);
+	printLine(PCB->getStateAsString(), 5);
+
+	print("  Parent: ", 14);
+	printLine(PCB->getParentAsString(), 6);
+
+	print("  Children: ", 14);
+	printLine(PCB->getChildrenAsString(), 7);
+
+	print("  IC: ", 14);
+	printLine(PCB->getInstructionCounter(), 8);
+
+	print("  Registers: ", 14); 
+	print("[",14);
+	print(std::to_string(PCB->getRegisterA()), 3);
+	print("]", 14);
+	print("[", 14);
+	print(std::to_string(PCB->getRegisterB()), 3);
+	print("]", 14);
+	print("[", 14);
+	print(std::to_string(PCB->getRegisterC()), 3);
+	print("]", 14);
+	print("[", 14);
+	print(std::to_string(PCB->getRegisterD()), 3);
+	print("]", 14);
+	std::cout << std::endl;
 }
 
 void Shell::changeConsoleColor(unsigned int color)

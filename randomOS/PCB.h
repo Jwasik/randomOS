@@ -65,6 +65,7 @@ public:
 	bool getIsWaiting();
 	bool getIsTerminated();
 	bool getHasState(ProcessState state);
+	std::string getStateAsString();
 	
 
 	//-----------|| PID ||-------------||
@@ -82,6 +83,7 @@ public:
 	std::shared_ptr<PCB> getParentPCB();
 	unsigned int getPartentPID();
 	bool getIsParentOf(unsigned int PID);
+	std::string getParentAsString();
 
 
 	//---------|| CHILDREN ||----------||
@@ -91,6 +93,7 @@ public:
 	bool getHasChildren();
 	unsigned int getLastChildPID();
 	bool getIsLastChild();
+	std::string getChildrenAsString();
 	
 
 	//----|| INSTRUCTION COUNTER ||----||
@@ -213,8 +216,5 @@ private:
 	* will return 0 if the operation WILL OVERFLOW, and 1 if it won't.
 	*/
 	bool checkWontOverflowInt(int currentValue, int valueToBeAdded);
-	std::string getStateAsString();
-	std::string getChildrenAsString();
-	std::string getParentAsString();
 };
 

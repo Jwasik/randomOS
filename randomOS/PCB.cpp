@@ -361,7 +361,7 @@ std::string PCB::getChildrenAsString()
 	if (children.size() < 1) { return "----"; }
 	std::string result{};
 	for (auto child : children) {
-		result += "\n  "+child->getName() + "  (" + std::to_string(child->PID) + ")";
+		result += "\n    -"+child->getName() + "  (" + std::to_string(child->PID) + ")";
 	}
 
 	return result;

@@ -31,6 +31,7 @@ private:
 	template<typename I> std::string toHexString(I w);
 	template <typename T>	void printLine(T, unsigned int);
 	template<typename T>    void printWithPadding(T text, unsigned int color, unsigned int spaces);
+	void printProcessInformation(std::shared_ptr<PCB>);
 	void changeConsoleColor(unsigned int);
 	void restoreDefaultColor();
 	void toLower(std::string&);

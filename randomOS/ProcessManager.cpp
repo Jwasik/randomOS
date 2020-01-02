@@ -63,9 +63,6 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 
 int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 {
-	//helper variable for returning errors to shell
-	//0 if no errors occur, else error code
-	_int8 errorHandling = 0;
 
 	//If the process that is to be deleted is init, it cannot be done
 	if (PID == 0){ return  ERROR_PM_INIT_CANNOT_BE_DELETED;}
@@ -82,9 +79,21 @@ int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 
 int8_t ProcessManager::deleteProcess(const std::string & processName)
 {
-	int PID = getPIDbyName(processName);
-	if (PID == -1) { return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND; }
-	return deleteProcess(PID);
+
+
+
+	//try to find the process by PID
+	std::shared_ptr<PCB> found = getPCBByName(processName);
+
+	//If the process that is to be deleted is init, it cannot be done
+	if (found->getHasPID(0)) { return  ERROR_PM_INIT_CANNOT_BE_DELETED; }
+
+	///if the process couldn't be found
+	if (found == nullptr) { return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND; }
+
+	//call for reccurent deletion of the process and its children
+	deleteProcess(found);
+	return 0;
 }
 
 
@@ -211,6 +220,28 @@ std::shared_ptr<PCB> ProcessManager::getPCBByPID(const unsigned int& PID)
 		allProcesses.pop();
 
 		if (currentProcess->getHasPID(PID)) { return currentProcess; }
+
+		//add all of its children to the queue
+		std::vector<std::shared_ptr<PCB>> childrenOfCurrent = currentProcess->getChildren();
+		for (auto child : childrenOfCurrent) {
+			allProcesses.push(child);
+		}
+	}
+	return nullptr;
+}
+
+std::shared_ptr<PCB> ProcessManager::getPCBByName(const std::string& processName)
+{
+	std::stack<std::shared_ptr<PCB>> allProcesses;
+	allProcesses.push(init);
+
+	std::shared_ptr<PCB> currentProcess;
+	while (!allProcesses.empty())
+	{
+		currentProcess = allProcesses.top();
+		allProcesses.pop();
+
+		if (currentProcess->getHasName(processName)) { return currentProcess; }
 
 		//add all of its children to the queue
 		std::vector<std::shared_ptr<PCB>> childrenOfCurrent = currentProcess->getChildren();
