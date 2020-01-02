@@ -7,11 +7,10 @@ std::vector<int> Containers::Containers::open_file_table;
 std::array<std::string, DiskSize / BlockSize> Containers::BitVectorWithFiles;
 std::vector<std::pair<std::string, unsigned int>> Containers::Colors;
 
-FileMenager::FileMenager(Memory* memory)
+FileMenager::FileMenager(std::shared_ptr<Memory> memory) : memory(memory)
 {
 	Containers::bit_vector.fill(1);
 	Containers::DiskArray.fill(0);
-	this->memory = memory;
 }
 
 File::File()
