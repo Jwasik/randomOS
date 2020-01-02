@@ -55,9 +55,9 @@ class FileMenager
 private:
 	unsigned int color = 0;
 	int number_of_opened_files = 0, number_of_existing_files = 0;
-
+	Memory* memory;
 public:
-	FileMenager();
+	FileMenager(Memory* memory);
 
 	int8_t createFile(std::string nazwa_pliku); //funkcja do tworzenia pliku o podanej nazwie w katalogu glownym
 	// 64 istnieje plik o danej nazwie

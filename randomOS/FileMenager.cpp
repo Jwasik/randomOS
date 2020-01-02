@@ -7,10 +7,11 @@ std::vector<int> Containers::Containers::open_file_table;
 std::array<std::string, DiskSize / BlockSize> Containers::BitVectorWithFiles;
 std::vector<std::pair<std::string, unsigned int>> Containers::Colors;
 
-FileMenager::FileMenager()
+FileMenager::FileMenager(Memory* memory)
 {
 	Containers::bit_vector.fill(1);
 	Containers::DiskArray.fill(0);
+	this->memory = memory;
 }
 
 File::File()
@@ -189,19 +190,19 @@ int8_t FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned
 				if (curr_pos < 32)
 				{
 					phycial = (t->i_node[0] * BlockSize) + (curr_pos%BlockSize);
-					std::cout << Containers::DiskArray[phycial]; // tu write do ramu
+					memory->writeInMem(PID, addr, Containers::DiskArray[phycial]);
 				}
 				else if (curr_pos < 64)
 				{
 					phycial = (t->i_node[1] * BlockSize) + (curr_pos % BlockSize);
-					std::cout << Containers::DiskArray[phycial]; // tu write do ramu
+					memory->writeInMem(PID, addr, Containers::DiskArray[phycial]);
 				}
 				else
 				{
 					phycial = (t->i_node[2] * BlockSize) + (curr_pos / BlockSize) - 2;
 					phycial = Containers::DiskArray[phycial];
 					phycial = (phycial * BlockSize) + (curr_pos % BlockSize);
-					std::cout << Containers::DiskArray[phycial]; // tu write do ramu
+					memory->writeInMem(PID, addr, Containers::DiskArray[phycial]);
 				}
 				curr_pos++;//obecna pozycja
 			}
