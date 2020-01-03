@@ -390,7 +390,9 @@ void Interpreter::AFI() {
 
 void Interpreter::LFI() {
 	int8_t& a = loadArgAdrOrReg();
-	//a = fileSystem->wc(PID);
+	uint8_t error = fileSystem->wc(PID).first;
+	if (error != 0) throw error;
+	a = fileSystem->wc(PID).second;
 }
 
 void Interpreter::CPR() {
