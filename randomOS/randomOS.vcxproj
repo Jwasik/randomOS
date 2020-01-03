@@ -157,14 +157,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CA" />
     <ClCompile Include="FileMenager.cpp" />
     <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="MemoryManager.cpp" />
     <ClCompile Include="Page.cpp" />
     <ClCompile Include="PCB.cpp" />
     <ClCompile Include="ProcessManager.cpp" />
-    <ClCompile Include="PS" />
     <ClCompile Include="randomOS.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="semaphore.cpp" />
@@ -184,12 +182,6 @@
     <ClInclude Include="semaphore.h" />
     <ClInclude Include="Shell.h" />
     <ClInclude Include="VirtualMemory.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="DU" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="PN" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

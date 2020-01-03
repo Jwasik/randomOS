@@ -351,9 +351,7 @@ void Interpreter::OFI() {
 }
 
 void Interpreter::SFI() {
-	std::string a = loadArgText(2);
-	uint8_t error = fileSystem->closeFile(a, PID);
-	if (error != 0) throw error;
+	fileSystem->closeProcessFiles(PID);
 }
 
 void Interpreter::EFI() {
@@ -392,7 +390,7 @@ void Interpreter::AFI() {
 
 void Interpreter::LFI() {
 	int8_t& a = loadArgAdrOrReg();
-	a = fileSystem->wc(PID);
+	//a = fileSystem->wc(PID);
 }
 
 void Interpreter::CPR() {

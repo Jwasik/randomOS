@@ -14,9 +14,6 @@
     <Filter Include="Interpreter">
       <UniqueIdentifier>{a01965e8-180c-4d8d-a13b-84d6bf59523d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Programs">
-      <UniqueIdentifier>{aea7b007-01df-42f2-8b26-cde5eba3ab1f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="randomOS.cpp">
@@ -51,12 +48,6 @@
     </ClCompile>
     <ClCompile Include="Page.cpp">
       <Filter>MAIN</Filter>
-    </ClCompile>
-    <ClCompile Include="PS">
-      <Filter>Programs</Filter>
-    </ClCompile>
-    <ClCompile Include="CA">
-      <Filter>Programs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,15 +95,5 @@
     <ClInclude Include="Page.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="DU">
-      <Filter>Programs</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="PN">
-      <Filter>Programs</Filter>
-    </Text>
   </ItemGroup>
 </Project>
