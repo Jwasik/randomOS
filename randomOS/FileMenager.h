@@ -1,6 +1,7 @@
 #pragma once
 #include "Includes.h"
-//#include "semaphore.h"
+#include "semaphore.h"
+#include "MemoryManager.h"
 
 #define BlockSize 32 //Wielko�� bloku wyrazona w bajtach
 #define DiskSize  1024 //Wielko�� dysku wyra�ona w bajtach
@@ -25,7 +26,8 @@ struct File
 	int size = 0, PID = -1;
 	std::vector<int> i_node;
 	bool isOpen = false;
-	//Semaphore s;
+	Semaphore s;
+	File();
 };
 
 struct Containers
@@ -53,9 +55,9 @@ class FileMenager
 private:
 	unsigned int color = 0;
 	int number_of_opened_files = 0, number_of_existing_files = 0;
-
+	std::shared_ptr<Memory> memory;
 public:
-	FileMenager();
+	FileMenager(std::shared_ptr<Memory> memory);
 
 	int8_t createFile(std::string nazwa_pliku); //funkcja do tworzenia pliku o podanej nazwie w katalogu glownym
 	// 64 istnieje plik o danej nazwie
@@ -105,6 +107,10 @@ public:
 	//   0 udalo sie usunac plik
 
 	std::pair<int8_t,int> wc(std::string name);//zwraca liczb� znak�w podanego pliku
+	// 66 brak pliku o podanej nazwie
+	//  0 uda�o si� uzyskac liczbe
+
+	std::pair<int8_t, int> wc(unsigned int PID);//zwraca liczb� znak�w podanego pliku
 	// 66 brak pliku o podanej nazwie
 	//  0 uda�o si� uzyskac liczbe
 

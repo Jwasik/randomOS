@@ -19,6 +19,7 @@ int8_t ProcessManager::createInit()
 	std::vector<Page> initPages { Page((convertToMachine(initCode))) };
 	virtualMemory->insertProgram(std::make_pair(0, initPages));
 	//ads innit to scheduler
+	RUNNING = this->init;
 	return addProcessToScheduler(this->init);
 	
 }

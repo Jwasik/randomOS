@@ -7,10 +7,15 @@ std::vector<int> Containers::Containers::open_file_table;
 std::array<std::string, DiskSize / BlockSize> Containers::BitVectorWithFiles;
 std::vector<std::pair<std::string, unsigned int>> Containers::Colors;
 
-FileMenager::FileMenager()
+FileMenager::FileMenager(std::shared_ptr<Memory> memory) : memory(memory)
 {
 	Containers::bit_vector.fill(1);
 	Containers::DiskArray.fill(0);
+}
+
+File::File()
+{
+	s = Semaphore(0);
 }
 
 int8_t FileMenager::createFile(std::string nazwa_pliku)
@@ -53,7 +58,7 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 			if (isFileOpen(name, PID)) return ERROR_FILE_OPENED_BY_OTHER_PROCESS;//sprawdza czy plik nie jest otwarty przez inny proes
 			else//je�eli nie to ustawiam PID na te jakie odsta�em i dodaje plik do tabilcy otwartych plik�w
 			{
-				//Containers::MainFileCatalog[i].s.wait();
+				Containers::MainFileCatalog[i].s.wait();
 				Containers::MainFileCatalog[i].PID = PID;
 				Containers::MainFileCatalog[i].isOpen = true;
 				Containers::open_file_table.push_back(i);
@@ -184,19 +189,19 @@ int8_t FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned
 				if (curr_pos < 32)
 				{
 					phycial = (t->i_node[0] * BlockSize) + (curr_pos%BlockSize);
-					std::cout << Containers::DiskArray[phycial]; // tu write do ramu
+					memory->writeInMem(PID, addr, Containers::DiskArray[phycial]);
 				}
 				else if (curr_pos < 64)
 				{
 					phycial = (t->i_node[1] * BlockSize) + (curr_pos % BlockSize);
-					std::cout << Containers::DiskArray[phycial]; // tu write do ramu
+					memory->writeInMem(PID, addr, Containers::DiskArray[phycial]);
 				}
 				else
 				{
 					phycial = (t->i_node[2] * BlockSize) + (curr_pos / BlockSize) - 2;
 					phycial = Containers::DiskArray[phycial];
 					phycial = (phycial * BlockSize) + (curr_pos % BlockSize);
-					std::cout << Containers::DiskArray[phycial]; // tu write do ramu
+					memory->writeInMem(PID, addr, Containers::DiskArray[phycial]);
 				}
 				curr_pos++;//obecna pozycja
 			}
@@ -269,8 +274,8 @@ int8_t FileMenager::closeFile(std::string name, unsigned int PID)
 		if (Containers::MainFileCatalog[pom].name == name && Containers::MainFileCatalog[pom].PID == PID)
 		{
 			Containers::MainFileCatalog[pom].isOpen = false;
+			Containers::MainFileCatalog[pom].s.signal();
 			Containers::open_file_table.erase(Containers::open_file_table.begin() + i);
-			//Containers::open_file_table[i]->size.signal();
 			return 0;
 		}
 	}
@@ -368,6 +373,22 @@ std::pair <int8_t, int> FileMenager::wc(std::string name)
 	return res;
 }
 
+
+std::pair<int8_t, int> FileMenager::wc(unsigned int PID)
+{
+	std::pair <int8_t, int> res;
+	for (int i = 0; i < (int)Containers::open_file_table.size(); i++)
+	{
+		if (Containers::MainFileCatalog[Containers::open_file_table[i]].PID == PID)
+		{
+			res.second = Containers::MainFileCatalog[i].size;
+			res.first = 0;
+			return res;
+		}
+	}
+	res.first = ERROR_NO_FILE_WITH_THAT_NAME;
+	return res;
+}
 
 void clearBlock(int log)
 {

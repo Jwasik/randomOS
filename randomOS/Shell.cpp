@@ -59,7 +59,6 @@ void Shell::run()
 	system("cls");
 
 	std::string command = "";
-	FileMenager fmanager;
 	while (1)
 	{
 		std::cout << this->osName + "\\home>";
@@ -298,7 +297,7 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ls$")))
 		{
-			auto files = fmanager.ls();
+			auto files = fileManager->ls();
 
 			this->printLine(" DIRECTORY: \\HOME>\n", 14);
 
@@ -310,26 +309,26 @@ void Shell::run()
 				this->print(" " + filename, 14);
 
 				for (unsigned int i = filename.length(); i < 20; i++)std::cout << " ";
-				this->printLine(fmanager.wc(filename).second, 14);
+				this->printLine(fileManager->wc(filename).second, 14);
 			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^rm[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 3);
-			fmanager.closeFile(command, 0);
-			uint8_t code = fmanager.deleteFile(command);
+			fileManager->closeFile(command, 0);
+			uint8_t code = fileManager->deleteFile(command);
 			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^touch[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 6);
-			uint8_t code = fmanager.createFile(command);
+			uint8_t code = fileManager->createFile(command);
 			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^cat[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 4);
-			std::pair<uint8_t, std::string> code = fmanager.cat(command);
+			std::pair<uint8_t, std::string> code = fileManager->cat(command);
 			this->printCode(code.first);
 			if (code.first == 0)this->printLine(code.second, 14);
 		}
@@ -346,7 +345,7 @@ void Shell::run()
 
 			filename = command;
 
-			std::pair<uint8_t, unsigned int> code = fmanager.wc(filename);
+			std::pair<uint8_t, unsigned int> code = fileManager->wc(filename);
 			if (code.first == 0)this->printLine(code.second, 14);
 			else this->printCode(code.first);
 		}
@@ -378,7 +377,7 @@ void Shell::run()
 			}
 			argument = command;
 
-			uint8_t code = fmanager.rename(filename, argument);
+			uint8_t code = fileManager->rename(filename, argument);
 			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^append[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-z]+$")))
@@ -411,7 +410,7 @@ void Shell::run()
 
 			for (auto& letter : argument)
 			{
-				uint8_t code = fmanager.append(filename, letter);
+				uint8_t code = fileManager->append(filename, letter);
 				if (code != 0)
 				{
 					this->printCode(code);
@@ -425,7 +424,7 @@ void Shell::run()
 		{
 			for (int i = 0; i < 128; i++)
 			{
-				fmanager.append("b", 'a');
+				fileManager->append("b", 'a');
 			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^clear[ ]+[0-9a-zA-z]+$")))
@@ -440,7 +439,7 @@ void Shell::run()
 			}
 			filename = command;
 
-			uint8_t code = fmanager.clearFile(filename);
+			uint8_t code = fileManager->clearFile(filename);
 			this->printCode(code);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ]+[a-z0-9]+[ ]+.+$")))
@@ -549,7 +548,7 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
 		{
-			auto names = fmanager.ls();
+			auto names = fileManager->ls();
 
 			std::string str;
 			for (unsigned int i = 0; i < Containers::bit_vector.size(); i++)
