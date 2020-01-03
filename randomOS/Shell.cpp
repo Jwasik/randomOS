@@ -132,7 +132,7 @@ void Shell::run()
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description", 5);
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
 
 				//var 1
 				///variable name and what it is
@@ -140,23 +140,32 @@ void Shell::run()
 				this->print("     <string>", 3);
 				this->print("   the name of the process.", 14);
 				///usefull information, exceptions, what cannot be used
-				this->print(" (cannot be longer then " + std::to_string(MAX_PROCESS_NAME_LENGHT) + " characters| cannot contain spaces| case insensitive)", 6);
+				this->print("                            no longer then " + std::to_string(MAX_PROCESS_NAME_LENGHT) + " chars, no spaces, at least one letter.", 6);
 		
 				//var 2
 				///variable name type and description
 				this->print("\n  pSource", 11);
 				this->print("   <string>", 3);
 				this->print("   name of the .txt file containing the source code.", 14);
+				this->print("   no file extension neccesarry, always assumed to be .txt.", 6);
 				///usefull information, exceptions, what cannot be used
-				this->print(" (no file extension neccesarry| must be located in program directory)", 6);
+				this->print("\n    \"filename\"", 11);
+				this->print("   for file in project directory.", 14);
+				this->print("\n    \"C:\\dir\\\"filename\"", 11);
+				this->print("   for specifing different path", 14);
+			
 
 
 				//example
-				this->printLine("\n\n  Example", 5);
+				this->printLine("\n\n  Examples", 5);
 				this->print("  >fork", 14);
 				this->print(" foo", 12);
 				this->print(" test", 11);
-				this->printLine("  (creates a new process \"foo\" from source code in test.txt)", 14);
+				this->printLine("  (creates a new process \"foo\" from source code in test.txt in default dir)", 14);
+				this->print("  >fork", 14);
+				this->print(" foo", 12);
+				this->print(" C:\\Bar\\test", 11);
+				this->printLine("  (creates a new process \"foo\" from source code in test.txt located in specified directory)", 14);
 			}
 			else if (helpFor == "kill") 
 			{
@@ -434,7 +443,7 @@ void Shell::run()
 			uint8_t code = fmanager.clearFile(filename);
 			this->printCode(code);
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ]+[a-z0-9]+[ ]+[a-z0-9]+$")))
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ]+[a-z0-9]+[ ]+.+$")))
 		{
 			command.erase(0, 5);
 			std::string filename = "";
@@ -897,3 +906,6 @@ template <typename I> std::string Shell::toHexString(I w) {
 		rc[i] = digits[(w >> j) & 0x0f];
 	return rc;
 }
+
+
+void Shell::printLogo
