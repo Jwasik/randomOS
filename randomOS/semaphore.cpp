@@ -1,5 +1,4 @@
 #include "semaphore.h"
-std::shared_ptr<PCB> pcb;//TODO: Delete once there's a global PCB available
 
 Semaphore::Semaphore(int new_value)
 {
@@ -16,8 +15,8 @@ bool Semaphore::wait()
 	value--;
 	if (value < 0)
 	{
-		list.push(pcb);
-		pcb->setStateWaiting();
+		list.push(RUNNING);
+		RUNNING->setStateWaiting();
 		return 1;
 	}
 	return 0;
