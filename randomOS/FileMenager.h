@@ -110,6 +110,10 @@ public:
 	// 66 brak pliku o podanej nazwie
 	//  0 uda�o si� uzyskac liczbe
 
+	std::pair<int8_t, int> wc(unsigned int PID);//zwraca liczb� znak�w podanego pliku
+	// 66 brak pliku o podanej nazwie
+	//  0 uda�o si� uzyskac liczbe
+
 	std::vector<std::string> ls(); //zwraca wszystkie nazwy plikow jakie istnieja w folderze glownym
 	std::pair<int8_t, std::string> cat(std::string name); //zwraca zawartosc calego pliku jako string
 	void closeProcessFiles(unsigned int PID); //zamyka wszystkie pliki u�ywane przez proces o podanym I

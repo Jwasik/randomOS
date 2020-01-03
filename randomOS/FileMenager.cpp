@@ -374,6 +374,22 @@ std::pair <int8_t, int> FileMenager::wc(std::string name)
 }
 
 
+std::pair<int8_t, int> FileMenager::wc(unsigned int PID)
+{
+	std::pair <int8_t, int> res;
+	for (int i = 0; i < (int)Containers::open_file_table.size(); i++)
+	{
+		if (Containers::MainFileCatalog[Containers::open_file_table[i]].PID == PID)
+		{
+			res.second = Containers::MainFileCatalog[i].size;
+			res.first = 0;
+			return res;
+		}
+	}
+	res.first = ERROR_NO_FILE_WITH_THAT_NAME;
+	return res;
+}
+
 void clearBlock(int log)
 {
 
