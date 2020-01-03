@@ -87,54 +87,62 @@ void Interpreter::interpret() {
 		JUM();
 		break;
 	case 0x0B:
-		instructionString += "JUA";
-		JUA();
+		instructionString += "IFS";
+		IFS();
 		break;
 	case 0x0C:
-		instructionString += "JIF";
-		JIF();
+		instructionString += "IFE";
+		IFE();
 		break;
 	case 0x0D:
-		instructionString += "JIA";
-		JIA();
+		instructionString += "IFB";
+		IFB();
 		break;
 	case 0x0E:
+		instructionString += "IFN";
+		IFN();
+		break;
+	case 0x0F:
 		instructionString += "CFI";
 		CFI();
 		break;
-	case 0x0F:
+	case 0x10:
 		instructionString += "DFI";
 		DFI();
 		break;
-	case 0x10:
+	case 0x11:
 		instructionString += "OFI";
 		OFI();
 		break;
-	case 0x11:
+	case 0x12:
 		instructionString += "SFI";
 		SFI();
 		break;
-	case 0x12:
+	case 0x13:
 		instructionString += "EFI";
 		EFI();
 		break;
-	case 0x13:
+	case 0x14:
 		instructionString += "WFI";
 		WFI();
 		break;
-	case 0x14:
+	case 0x15:
 		instructionString += "PFI";
 		PFI();
 		break;
-	case 0x15:
+	case 0x16:
 		instructionString += "RFI";
 		RFI();
 		break;
-	case 0x16:
+	case 0x17:
 		instructionString += "AFI";
 		AFI();
 		break;
-	case 0x17:
+	case 0x18:
+		instructionString += "LFI";
+		LFI();
+		break;
+	case 0x19:
 		instructionString += "CPR";
 		CPR();
 		break;
@@ -299,21 +307,28 @@ void Interpreter::JUM() {
 	PC = a;
 }
 
-void Interpreter::JUA() {
-	int8_t& a = loadArgAdrOrReg();
-	PC = a;
-}
-
-void Interpreter::JIF() {
+void Interpreter::IFS() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
-	if (a <= 0) PC = b;
+	if (a < 0) PC = b;
 }
 
-void Interpreter::JIA() {
+void Interpreter::IFE() {
 	int8_t& a = loadArgAdrOrReg();
-	int8_t& b = loadArgAdrOrReg();
-	if (a <= 0) PC = b;
+	int8_t b = loadArgNum();
+	if (a == 0) PC = b;
+}
+
+void Interpreter::IFB() {
+	int8_t& a = loadArgAdrOrReg();
+	int8_t b = loadArgAdrOrReg();
+	if (a > 0) PC = b;
+}
+
+void Interpreter::IFN() {
+	int8_t& a = loadArgAdrOrReg();
+	int8_t b = loadArgAdrOrReg();
+	if (a != 0) PC = b;
 }
 
 void Interpreter::CFI() {
@@ -373,6 +388,11 @@ void Interpreter::AFI() {
 	int8_t& b = loadArgAdrOrReg();
 	uint8_t error = fileSystem->readFile(a, b, 1, PID);
 	if (error != 0) throw error;
+}
+
+void Interpreter::LFI() {
+	int8_t& a = loadArgAdrOrReg();
+	a = fileSystem->wc(PID);
 }
 
 void Interpreter::CPR() {
@@ -462,19 +482,21 @@ std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
 	if (code == "INC") machine.push_back(0x08);
 	if (code == "DEC") machine.push_back(0x09);
 	if (code == "JUM") machine.push_back(0x0A);
-	if (code == "JUA") machine.push_back(0x0B);
-	if (code == "JIF") machine.push_back(0x0C);
-	if (code == "JIA") machine.push_back(0x0D);
-	if (code == "CFI") machine.push_back(0x0E);
-	if (code == "DFI") machine.push_back(0x0F);
-	if (code == "OFI") machine.push_back(0x10);
-	if (code == "SFI") machine.push_back(0x11);
-	if (code == "EFI") machine.push_back(0x12);
-	if (code == "WFI") machine.push_back(0x13);
-	if (code == "PFI") machine.push_back(0x14);
-	if (code == "RFI") machine.push_back(0x15);
-	if (code == "AFI") machine.push_back(0x16);
-	if (code == "CPR") machine.push_back(0x17);
+	if (code == "IFS") machine.push_back(0x0B);
+	if (code == "IFE") machine.push_back(0x0C);
+	if (code == "IFB") machine.push_back(0x0D);
+	if (code == "IFN") machine.push_back(0x0E);
+	if (code == "CFI") machine.push_back(0x0F);
+	if (code == "DFI") machine.push_back(0x10);
+	if (code == "OFI") machine.push_back(0x11);
+	if (code == "SFI") machine.push_back(0x12);
+	if (code == "EFI") machine.push_back(0x13);
+	if (code == "WFI") machine.push_back(0x14);
+	if (code == "PFI") machine.push_back(0x15);
+	if (code == "RFI") machine.push_back(0x16);
+	if (code == "AFI") machine.push_back(0x17);
+	if (code == "LFI") machine.push_back(0x18);
+	if (code == "CPR") machine.push_back(0x19);
 	if (code == "NOP") machine.push_back(0xFF);
 
 	if (arg.size() > 0) {

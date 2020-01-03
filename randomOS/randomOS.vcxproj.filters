@@ -52,6 +52,12 @@
     <ClCompile Include="Page.cpp">
       <Filter>MAIN</Filter>
     </ClCompile>
+    <ClCompile Include="PS">
+      <Filter>Programs</Filter>
+    </ClCompile>
+    <ClCompile Include="CA">
+      <Filter>Programs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Interpreter.cpp">
@@ -100,12 +106,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="dummy.txt">
+    <None Include="DU">
       <Filter>Programs</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="pn.txt">
+    <Text Include="PN">
       <Filter>Programs</Filter>
     </Text>
   </ItemGroup>
