@@ -10,8 +10,6 @@
 #include "VirtualMemory.h"
 #include "Page.h"
 
-void voice1();
-
 class Shell
 {
 public:
