@@ -31,8 +31,8 @@ Shell::Shell() :defaultColor(10)
 	this->printLine(this->osName, 11);
 }
 
-Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm, std::shared_ptr<ProcessManager> pm, std::shared_ptr<Scheduler> sch)
-	:defaultColor(10), fileManager(fm), memoryManager(mm), virtualMemory(vm), processManager(pm), scheduler(sch)
+Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm, std::shared_ptr<ProcessManager> pm, std::shared_ptr<Scheduler> sch,std::shared_ptr<Interpreter> inte)
+	:defaultColor(10), fileManager(fm), memoryManager(mm), virtualMemory(vm), processManager(pm), scheduler(sch), interpreter(inte)
 {
 	system("color 0A");
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -507,7 +507,15 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
-			this->scheduler->schedule();
+			uint8_t errorCode = this->interpreter->go();
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			else
+			{
+			this->printLine("One instruction completed.", 14);
+			}
+
+			errorCode = this->scheduler->schedule();
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
@@ -638,7 +646,7 @@ void Shell::run()
 				std::cout << "          ";
 				for (unsigned int j = 0; j < 16; j++)
 				{
-					this->print(memoryManager->ram[i + j], 14);
+					this->print(std::to_string(memoryManager->ram[i + j]), 14);
 					this->print(" ", 14);
 				}
 				std::cout << std::endl;

@@ -11,7 +11,7 @@ scheduler(scheduler), virtualMemory(virtualMemory)
 ProcessManager::~ProcessManager(){}
 
 int8_t ProcessManager::createInit()
-{
+{	
 	this->init = std::make_shared<PCB>("Init", 0, nullptr);
 	init->setStateRunning();
 
@@ -55,13 +55,13 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 
 	//create a new process
 	std::shared_ptr<PCB> newProcess = std::make_shared<PCB>(processName, this->freePID, parentPCB);
+	newProcess->setStateReady();
 
 	//add the process to scheduler
 	errorHandling= addProcessToScheduler(newProcess);
 	if (errorHandling != 0) { return std::pair<int8_t, unsigned int>(errorHandling, 0); }
 
 	// if all else went well, increment the free PID field, because the current one is now taken and linkt the process to a parent
-	newProcess->setStateReady();
 	parentPCB->addChild(newProcess);
 	freePID++;
 	return std::make_pair(0,PIDOfTheCreatedProcess);

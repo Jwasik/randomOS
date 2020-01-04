@@ -8,13 +8,14 @@
 #include "ProcessManager.h"
 #include "MemoryManager.h"
 #include "VirtualMemory.h"
+#include "Interpreter.h"
 #include "Page.h"
 
 class Shell
 {
 public:
 	Shell();
-	Shell(std::shared_ptr<FileMenager>, std::shared_ptr<Memory>, std::shared_ptr<VirtualMemory>, std::shared_ptr<ProcessManager>, std::shared_ptr<Scheduler>);
+	Shell(std::shared_ptr<FileMenager>, std::shared_ptr<Memory>, std::shared_ptr<VirtualMemory>, std::shared_ptr<ProcessManager>, std::shared_ptr<Scheduler>, std::shared_ptr<Interpreter>);
 	~Shell();
 	void run();
 
@@ -24,6 +25,7 @@ private:
 	std::shared_ptr<VirtualMemory> virtualMemory;
 	std::shared_ptr<ProcessManager> processManager;
 	std::shared_ptr<Scheduler> scheduler;
+	std::shared_ptr<Interpreter> interpreter;
 
 	template <typename T>	void print(T, unsigned int);
 	template<typename I> std::string toHexString(I w);
