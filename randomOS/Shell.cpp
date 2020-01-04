@@ -970,5 +970,5 @@ template <typename I> std::string Shell::toHexString(I w) {
 		rc[i] = digits[(temp >> j) & 0x0f];
 
 	if (w < 0) { return "-" + rc; }
-	return "0"+rc;
+	return " "+rc;
 }
