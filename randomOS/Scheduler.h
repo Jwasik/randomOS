@@ -13,7 +13,7 @@
 static class Scheduler
 {
 public:
-	uint16_t counter=0;
+	uint16_t counter;
 
 	Scheduler();
 	~Scheduler();

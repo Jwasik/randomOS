@@ -93,7 +93,9 @@ void Shell::run()
 			printLine("INTERPRETER COMMANDS", 13);
 			std::cout << "GO         " << "- execute one ASSEMBLER command" << std::endl;
 			printLine("MODULE COMMANDS", 13);
-			std::cout << "PRINT RAM  " << "- print RAM content" << std::endl;
+			std::cout << "P RAM " << "- print RAM content" << std::endl;
+			std::cout << "P VM " << "- print vMemory content" << std::endl;
+			std::cout << "P SCH " << "- print Scheduler state" << std::endl;
 			std::cout << std::endl;
 
 			restoreDefaultColor();
@@ -513,7 +515,6 @@ void Shell::run()
 			{
 			this->printLine("One instruction completed.", 14);
 			}
-
 			errorCode = this->scheduler->schedule();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
 		}
@@ -646,7 +647,7 @@ void Shell::run()
 				std::cout << "          ";
 				for (unsigned int j = 0; j < 16; j++)
 				{
-					std::string temp = std::to_string(memoryManager->ram[i + j]);
+					std::string temp = std::to_string(memoryManager->ram[(PAGE_SIZE*i)+j]);
 					this->print(temp, 14);
 					int spaceNumber = 4 - temp.length();
 					for (int z = 0; z < spaceNumber; z++) { print(" ", 1);}
