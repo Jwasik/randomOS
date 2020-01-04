@@ -6,6 +6,7 @@ ProcessManager::ProcessManager(std::shared_ptr <Scheduler> scheduler, std::share
 scheduler(scheduler), virtualMemory(virtualMemory)
 {
 	createInit();
+	freePID = 1;
 }
 
 ProcessManager::~ProcessManager(){}
@@ -86,8 +87,6 @@ int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 
 int8_t ProcessManager::deleteProcess(const std::string & processName)
 {
-
-
 
 	//try to find the process by PID
 	std::shared_ptr<PCB> found = getPCBByName(processName);

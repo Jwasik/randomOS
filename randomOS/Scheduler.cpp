@@ -1,4 +1,5 @@
 #include "Scheduler.h"
+#include "ProcessManager.h"
 
 Scheduler::Scheduler()
 { 
@@ -18,7 +19,10 @@ uint8_t Scheduler::schedule()
 	counter++;
 	if (counter > 1000000) { counter = 0; } //to avoid overflow
 
-	if  (RUNNING == nullptr || RUNNING->counter <= this->counter )
+	//if dummy is running and any other process is in the queue, switch to it
+	if (RUNNING->getHasPID(0)){ if(active->size()>0){ return nextProcess(); }}
+
+	if  (RUNNING == nullptr || RUNNING->counter <= this->counter || RUNNING->getIsTerminated() )
 	{
 		return nextProcess();
 	}
@@ -31,9 +35,12 @@ uint8_t Scheduler::nextProcess()
 	//move the currently running process into the expired queue and remove it from active
 	if (RUNNING != nullptr){ 
 		RUNNING->setStateReady();
-		//if it was dummy don't put it back into expired (wastes processor time)
-		if(RUNNING!= DUMMY){this->addProcess(RUNNING, this->expired);}
+		//if it was dummy or terminated don't put it into expired 
+		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) { this->addProcess(RUNNING, this->expired); }
 		this->active->erase(this->active->begin());
+
+		//if it was terminated call processManager to deleteIt
+		if (RUNNING->getIsTerminated()) { ProcessManager::deleteProcess(RUNNING); }
 	}
 	
 	//check if the queueues should be swapped
@@ -119,6 +126,4 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 	//else
 	process->counter = this->counter + ((140 - previousPriority) * 0.5);
 	return 0;
-	
-
 }
