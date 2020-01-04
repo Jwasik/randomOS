@@ -30,6 +30,7 @@ uint8_t Scheduler::nextProcess()
 {
 	//move the currently running process into the expired queue and remove it from active
 	if (RUNNING != nullptr){ 
+		RUNNING->setStateReady();
 		//if it was dummy don't put it back into expired (wastes processor time)
 		if(RUNNING!= DUMMY){this->addProcess(RUNNING, this->expired);}
 		this->active->erase(this->active->begin());
@@ -41,7 +42,9 @@ uint8_t Scheduler::nextProcess()
 		if (this->expired->size() == 0)
 		{
 			RUNNING = DUMMY;
-			this->addProcess(DUMMY,NULL);
+			RUNNING->setInstructionCounter(0);
+			RUNNING->setStateRunning();
+			this->addProcess(RUNNING,NULL);
 			return 0;
 		}
 		for (int i = 0; i < expired->size(); i++) { active->push_back(expired->at(i)); }

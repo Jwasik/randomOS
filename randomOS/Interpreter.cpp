@@ -34,7 +34,7 @@ void Interpreter::loadPCB() {
 }
 
 void Interpreter::loadCode() {
-	code = memory->getMemoryContent(PC, PID).second;
+	code = memory->getMemoryContent(PID, PC).second;
 	PC++;
 	instructionHex.push_back(code);
 }
@@ -179,7 +179,7 @@ int8_t& Interpreter::loadArgAdrOrReg() {
 }
 
 int8_t Interpreter::loadArgNum() {
-	int8_t num = memory->getMemoryContent(PC, PID).second;
+	int8_t num = memory->getMemoryContent(PID, PC).second;
 	PC++;
 
 	instructionHex.push_back(num);
