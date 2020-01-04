@@ -2,6 +2,8 @@
 #include "Includes.h"
 #include "RUNNING.h"
 
+
+#define DUMMY_TICS 2 //ammount of processor tics one runtime of dummy process takes
 //ERROR CODES
 //IN RANGE: <16,32)
 #define ERROR_SH_PRIORITY_OUT_OF_RANGE 16
@@ -11,7 +13,7 @@
 static class Scheduler
 {
 public:
-	uint16_t counter;
+	uint16_t counter=0;
 
 	Scheduler();
 	~Scheduler();

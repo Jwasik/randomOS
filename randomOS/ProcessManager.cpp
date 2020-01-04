@@ -13,15 +13,20 @@ ProcessManager::~ProcessManager(){}
 int8_t ProcessManager::createInit()
 {
 	this->init = std::make_shared<PCB>("Init", 0, nullptr);
+	init->setStateRunning();
+
 
 	//adds the program code to init's memory
 	std::string initCode = "JUM 0";
 	std::vector<Page> initPages { Page((convertToMachine(initCode))) };
 	virtualMemory->insertProgram(std::make_pair(0, initPages));
 	//ads innit to scheduler
-	RUNNING = this->init;
-	return addProcessToScheduler(this->init);
+	DUMMY = this->init;
+
 	
+	RUNNING = this->init;
+	addProcessToScheduler(this->init);
+	return 0;
 }
 
 std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processName,const unsigned int& parentPID,const std::string& filePath)
@@ -56,6 +61,7 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 	if (errorHandling != 0) { return std::pair<int8_t, unsigned int>(errorHandling, 0); }
 
 	// if all else went well, increment the free PID field, because the current one is now taken and linkt the process to a parent
+	newProcess->setStateReady();
 	parentPCB->addChild(newProcess);
 	freePID++;
 	return std::make_pair(0,PIDOfTheCreatedProcess);
