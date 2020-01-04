@@ -161,31 +161,33 @@ int8_t& Interpreter::loadArgAdrOrReg() {
 	uint8_t error = memory->getMemoryContent(PID, PC).first;
 	if (error != 0) throw error;
 
-	int8_t& adr = memory->getMemoryContent(PID, PC).second;
+	int8_t adr = memory->getMemoryContent(PID, PC).second;
 	PC++;
 
 	instructionHex.push_back(adr);
 
 	switch (adr) {
-	case 0xFF:
+	case -0x01:
 		instructionString += " AX";
 		return AX;
 		break;
-	case 0xFE:
+	case -0x02:
 		instructionString += " BX";
 		return BX;
 		break;
-	case 0xFD:
+	case -0x03:
 		instructionString += " CX";
 		return CX;
 		break;
-	case 0xFC:
+	case -0x04:
 		instructionString += " DX";
 		return DX;
 		break;
 	default:
 		instructionString += " [" + std::to_string(adr) + "]";
-		return adr;
+		error = memory->getMemoryContent(PID, adr).first;
+		if (error != 0) throw error;
+		return memory->getMemoryContent(PID, adr).second;
 		break;
 	}
 }
@@ -414,6 +416,7 @@ uint8_t Interpreter::go() {
 		loadCode();
 		interpret();
 		returnToPCB();
+		std::cout << instructionString << std::endl;
 		if (changeToTerminated) PCB->setStateTerminated();
 	}
 	catch (uint8_t e) {
@@ -427,8 +430,8 @@ uint8_t Interpreter::go() {
 // **************** KONWERSJA ****************
 // *******************************************
 
-std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
-	std::vector<uint8_t> machine;
+std::vector<int8_t> Interpreter::convertToMachine(std::string m) {
+	std::vector<int8_t> machine;
 	std::vector<std::string> arg;
 
 	if (m[0] >= 48 && m[0] <= 57) {
@@ -501,10 +504,10 @@ std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
 
 	if (arg.size() > 0) {
 		for (int i = 0; i < arg.size(); i++) {
-			if (arg[i] == "AX") machine.push_back(0xFF);
-			else if (arg[i] == "BX") machine.push_back(0xFE);
-			else if (arg[i] == "CX") machine.push_back(0xFD);
-			else if (arg[i] == "DX") machine.push_back(0xFC);
+			if (arg[i] == "AX") machine.push_back(-0x01);
+			else if (arg[i] == "BX") machine.push_back(-0x02);
+			else if (arg[i] == "CX") machine.push_back(-0x03);
+			else if (arg[i] == "DX") machine.push_back(-0x04);
 			else if (arg[i][0] >= 65 && arg[i][0] <= 90) {
 				machine.push_back(arg[i][0]);
 				machine.push_back(arg[i][1]);
