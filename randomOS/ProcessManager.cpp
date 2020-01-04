@@ -143,70 +143,24 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 	std::vector<Page> programPages;
 	programPages.resize(std::stoi(line));
 
-
+	std::vector<int8_t> allMachineCode;
 	//LOAD THE SOURCE CODE INTO PAGE VECTOR
-
-	bool fileHasEnded = 0;//flag variable to keep track of whether the file has been read yet
-	std::queue<uint8_t> overflownBytes; // helper stack to keep the bytes that won't fit into page that is currently being filled
-
-
-	//iterate over the pages reserved for the program until they are filled or the source file ends
-	for (int i = 0; i < programPages.size() && !fileHasEnded; i++) {
-		int byteCounter = 0; //used to keep track of how many bytes have been loaded into the current page
-		bool workOnThisPage = 1; //flag variable to know wheter one should continue loading into the current page
-
-		//if there is anything "leftover" from the last page load it into current before reading from file
-		while(!overflownBytes.empty())
-		{
-			int8_t errorCode = programPages[i].writeToPage(byteCounter, overflownBytes.front());
-			if (errorCode != 0) { return errorCode; }
-			overflownBytes.pop();
-			byteCounter++;
-		}
-
-		//read the file line by line, translate to machineCode and push back to current page
-		while(workOnThisPage)
-		{
-			//READING & CONVERTING THE LINE FROM SOURCE FILE
-			//try to read a line from the file, if it cannot be read (reached end of file) break out of both loops
-			if (!std::getline(programFile, line)) 
-			{ 
-				fileHasEnded = 1; 
-				break;
-			}
-			//convert the read line into machine code
-			std::vector<int8_t> machineCodeLine = Interpreter::convertToMachine(line);
-
-
-			//CHECKING IF BYTES WILL FIT IN CURRENT PAGE
-			int checkForOverFlow = byteCounter + machineCodeLine.size();
-			int overflowingBytes = checkForOverFlow- PAGE_SIZE;
-			//if the number of bytes that is to be written to the current page exceedes page size 
-			//save the overflowing bytes in the overflowBytes queue
-			if(overflowingBytes>0)
-			{
-				while (overflowingBytes!= 0)
-				{
-					//the overflowing bytes are the last bytes in the machineCode array
-					overflownBytes.push(machineCodeLine[machineCodeLine.size() -1- overflowingBytes]);
-					overflowingBytes--;
-				}
-			}
-
-			//WRITING THE BYTES INTO CURRENT PAGE (ommiting the overflowing bytes by checking against page_size)
-			for (int j = 0; j<machineCodeLine.size() && byteCounter<PAGE_SIZE; j++)
-			{
-				uint8_t errorCode= programPages[i].writeToPage(byteCounter,machineCodeLine[j]);
-				if (errorCode != 0) { return errorCode;}
-				byteCounter++;
-			}
-			//if the page has been fully filled
-			if (overflowingBytes == 0) { workOnThisPage = 0; }
-		}
+	//translate all source code into machine code
+	while (std::getline(programFile, line))
+	{
+		std::vector<int8_t> machineCodeLine = Interpreter::convertToMachine(line);
+		for (auto e : machineCodeLine) { allMachineCode.push_back(e); }
 	}
 
-	//if there is still come code left in the file throw an error
-	if (std::getline(programFile, line)){return ERROR_PM_CODE_DOESNT_FIT_INTO_NUMBER_OF_DECLARED_PAGES;}
+	int currentByte = 0;
+	//divide it and push into the pages
+	for (int i = 0; i < programPages.size(); i++) {
+		for (int j = 0; j < PAGE_SIZE && currentByte < allMachineCode.size(); j++) {
+			uint8_t errorCode = programPages[i].writeToPage(j,allMachineCode[currentByte]);
+			if (errorCode != 0) { return errorCode; }
+			currentByte++;
+		}
+	}
 
 	virtualMemory->insertProgram(std::make_pair(PID, programPages));
 	return 0;
