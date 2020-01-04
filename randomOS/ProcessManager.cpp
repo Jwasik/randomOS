@@ -1,5 +1,5 @@
 #include "ProcessManager.h"
-
+#include "Interpreter.h"
 
 
 ProcessManager::ProcessManager(std::shared_ptr <Scheduler> scheduler, std::shared_ptr <VirtualMemory> virtualMemory):
@@ -18,7 +18,7 @@ int8_t ProcessManager::createInit()
 
 	//adds the program code to init's memory
 	std::string initCode = "JUM 0";
-	std::vector<Page> initPages { Page((convertToMachine(initCode))) };
+	std::vector<Page> initPages { Page((Interpreter::convertToMachine(initCode))) };
 	virtualMemory->insertProgram(std::make_pair(0, initPages));
 	//ads innit to scheduler
 	DUMMY = this->init;
@@ -176,7 +176,7 @@ int8_t ProcessManager::loadProgramIntoMemory(const std::string& filePath, const 
 				break;
 			}
 			//convert the read line into machine code
-			std::vector<uint8_t> machineCodeLine = convertToMachine(line);
+			std::vector<int8_t> machineCodeLine = Interpreter::convertToMachine(line);
 
 
 			//CHECKING IF BYTES WILL FIT IN CURRENT PAGE
@@ -425,88 +425,6 @@ int8_t ProcessManager::isProcessNameUnique(const std::string & processName)
 	}
 	//if the process cannot be found return 0 
 	return 0;
-}
-
-//code copied from Interpreter as to avoid a circular include (interpreter needs processManager mathods)
-std::vector<uint8_t> ProcessManager::convertToMachine(std::string m) {
-	std::vector<uint8_t> machine;
-	std::vector<std::string> arg;
-
-	std::string code = m.substr(0, 3);
-
-	if (m.length() > 3) {
-
-		for (int i = 3; i < m.length(); i++) {
-			if (m[i] >= 48 && m[i] <= 57) {
-				arg.push_back("");
-				for (int j = i; m[j] != ' ' && j<m.size(); j++) {
-					arg.back() += m[j];
-				}
-				i += arg.back().length();
-			}
-			else if (m[i] == '[') {
-				arg.push_back("");
-				for (int j = i + 1; m[j] != ']'; j++) {
-					arg.back() += m[j];
-				}
-				i += arg.back().length() + 1;
-			}
-			else if (m[i] >= 65 && m[i] <= 68) {
-				arg.push_back("");
-				arg.back() += m[i];
-				arg.back() += m[i + 1];
-				i += 2;
-			}
-			else if (m[i] == '"') {
-				arg.push_back("");
-				arg.back() += m[i + 1];
-				arg.back() += m[i + 2];
-				i += 3;
-			}
-
-		}
-	}
-
-	if (code == "RET") machine.push_back(0x00);
-	if (code == "MOV") machine.push_back(0x01);
-	if (code == "WRI") machine.push_back(0x02);
-	if (code == "ADD") machine.push_back(0x03);
-	if (code == "SUB") machine.push_back(0x04);
-	if (code == "MUL") machine.push_back(0x05);
-	if (code == "DIV") machine.push_back(0x06);
-	if (code == "MOD") machine.push_back(0x07);
-	if (code == "INC") machine.push_back(0x08);
-	if (code == "DEC") machine.push_back(0x09);
-	if (code == "JUM") machine.push_back(0x0A);
-	if (code == "JUA") machine.push_back(0x0B);
-	if (code == "JIF") machine.push_back(0x0C);
-	if (code == "JIA") machine.push_back(0x0D);
-	if (code == "CFI") machine.push_back(0x0E);
-	if (code == "DFI") machine.push_back(0x0F);
-	if (code == "OFI") machine.push_back(0x10);
-	if (code == "SFI") machine.push_back(0x11);
-	if (code == "EFI") machine.push_back(0x12);
-	if (code == "WFI") machine.push_back(0x13);
-	if (code == "PFI") machine.push_back(0x14);
-	if (code == "RFI") machine.push_back(0x15);
-	if (code == "AFI") machine.push_back(0x16);
-	if (code == "CPR") machine.push_back(0x17);
-	if (code == "NOP") machine.push_back(0xFF);
-
-	if (arg.size() > 0) {
-		for (int i = 0; i < arg.size(); i++) {
-			if (arg[i] == "AX") machine.push_back(0xFF);
-			else if (arg[i] == "BX") machine.push_back(0xFE);
-			else if (arg[i] == "CX") machine.push_back(0xFD);
-			else if (arg[i] == "DX") machine.push_back(0xFC);
-			else if (arg[i][0] >= 65 && arg[i][0] <= 90) {
-				machine.push_back(arg[i][0]);
-				machine.push_back(arg[i][1]);
-			}
-			else machine.push_back(std::stoi(arg[i]));
-		}
-	}
-	return machine;
 }
 
 int ProcessManager::getPIDbyName(const std::string & processName)

@@ -7,7 +7,7 @@ Page::Page(const int8_t data[]) {
 		this->data[i] = data[i];
 }
 
-Page::Page(std::vector<uint8_t> data)
+Page::Page(std::vector<int8_t> data)
 {
 	for (int i = 0; i < data.size() && i < PAGE_SIZE; i++)
 		this->data[i] = data[i];
