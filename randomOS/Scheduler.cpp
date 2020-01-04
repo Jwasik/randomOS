@@ -32,7 +32,7 @@ uint8_t Scheduler::nextProcess()
 	if (RUNNING != nullptr){ 
 		RUNNING->setStateReady();
 		//if it was dummy don't put it back into expired (wastes processor time)
-		if(RUNNING!= DUMMY){this->addProcess(RUNNING, this->expired);}
+		if(RUNNING != DUMMY){ this->addProcess(RUNNING, this->expired); }
 		this->active->erase(this->active->begin());
 	}
 	
@@ -53,6 +53,9 @@ uint8_t Scheduler::nextProcess()
 
 	//set the process on top of teh active queue as running
 	RUNNING = (*this->active)[0];
+	if (RUNNING == nullptr) nextProcess();
+
+
 
 	//if the now running porocess is under a semaphore, switch to next
 	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
