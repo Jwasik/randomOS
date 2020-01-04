@@ -34,13 +34,13 @@ uint8_t Scheduler::nextProcess()
 {
 	//move the currently running process into the expired queue and remove it from active
 	if (RUNNING != nullptr){ 
-		RUNNING->setStateReady();
-		//if it was dummy or terminated don't put it into expired 
+		//if it wasn't dummy or terminated put it into expired 
 		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) { this->addProcess(RUNNING, this->expired); }
-		this->active->erase(this->active->begin());
-
 		//if it was terminated call processManager to deleteIt
 		if (RUNNING->getIsTerminated()) { ProcessManager::deleteProcess(RUNNING); }
+		this->active->erase(this->active->begin());
+
+		RUNNING->setStateReady();
 	}
 	
 	//check if the queueues should be swapped
