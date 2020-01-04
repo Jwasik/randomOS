@@ -509,14 +509,16 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
-			uint8_t errorCode = this->interpreter->go();
+			uint8_t errorCode = this->scheduler->schedule();
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			
+			errorCode = this->interpreter->go();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
 			else
 			{
 			this->printLine("One instruction completed.", 14);
 			}
-			errorCode = this->scheduler->schedule();
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
@@ -647,7 +649,7 @@ void Shell::run()
 				std::cout << "          ";
 				for (unsigned int j = 0; j < 16; j++)
 				{
-					std::string temp = std::to_string(memoryManager->ram[(PAGE_SIZE*i)+j]);
+					std::string temp = toHexString(memoryManager->ram[(PAGE_SIZE*i)+j]);
 					this->print(temp, 14);
 					int spaceNumber = 4 - temp.length();
 					for (int z = 0; z < spaceNumber; z++) { print(" ", 1);}

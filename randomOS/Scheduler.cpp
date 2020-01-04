@@ -1,4 +1,5 @@
 #include "Scheduler.h"
+#include "ProcessManager.h"
 
 Scheduler::Scheduler()
 { 
@@ -18,7 +19,10 @@ uint8_t Scheduler::schedule()
 	counter++;
 	if (counter > 1000000) { counter = 0; } //to avoid overflow
 
-	if  (RUNNING == nullptr || RUNNING->counter <= this->counter )
+	//if dummy is running and any other process is in the queue, switch to it
+	if (RUNNING->getHasPID(0)){ if(active->size()>1){ return nextProcess(); }}
+
+	if  (RUNNING == nullptr || RUNNING->counter <= this->counter || RUNNING->getIsTerminated() )
 	{
 		return nextProcess();
 	}
@@ -30,9 +34,15 @@ uint8_t Scheduler::nextProcess()
 {
 	//move the currently running process into the expired queue and remove it from active
 	if (RUNNING != nullptr){ 
+		//if it wasn't dummy or terminated put it into expired 
+		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) { this->addProcess(RUNNING, this->expired); }
+		//if it was terminated call processManager to deleteIt
+		if (RUNNING->getIsTerminated()) { ProcessManager::deleteProcess(RUNNING); }
+		this->active->erase(this->active->begin());
+
 		RUNNING->setStateReady();
 		//if it was dummy don't put it back into expired (wastes processor time)
-		if(RUNNING != DUMMY){ this->addProcess(RUNNING, this->expired); }
+		if(RUNNING!= DUMMY){this->addProcess(RUNNING, this->expired);}
 		this->active->erase(this->active->begin());
 	}
 	
@@ -42,7 +52,6 @@ uint8_t Scheduler::nextProcess()
 		if (this->expired->size() == 0)
 		{
 			RUNNING = DUMMY;
-			RUNNING->setInstructionCounter(0);
 			RUNNING->setStateRunning();
 			this->addProcess(RUNNING,NULL);
 			return 0;
