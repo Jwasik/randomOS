@@ -67,7 +67,7 @@ public:
 
 	Interpreter(std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> filesystem, std::shared_ptr<ProcessManager> processManager);
 	uint8_t go();
-	std::vector<int8_t> convertToMachine(std::string m);
+	static std::vector<int8_t> convertToMachine(std::string m);
 
 
 
