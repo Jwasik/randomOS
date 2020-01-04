@@ -509,14 +509,16 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
-			uint8_t errorCode = this->interpreter->go();
+			uint8_t errorCode = this->scheduler->schedule();
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			
+			errorCode = this->interpreter->go();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
 			else
 			{
 			this->printLine("One instruction completed.", 14);
 			}
-			errorCode = this->scheduler->schedule();
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{

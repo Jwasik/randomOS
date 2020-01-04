@@ -55,6 +55,8 @@ public:
 	std::shared_ptr<PCB> getPCBByName(const std::string& processName);
 	std::shared_ptr<PCB> getInit();
 
+	//used in scheduler
+	static bool deleteProcess(const std::shared_ptr<PCB>& process);
 
 private:
 	//pointers to other modules
@@ -62,12 +64,11 @@ private:
 	std::shared_ptr <VirtualMemory> virtualMemory = NULL;
 
 	std::shared_ptr<PCB> init;
-	unsigned int freePID = 1;
+	unsigned int freePID;
 
 
 	int8_t isThisNameSutableForAProcess(const std::string& processName);
 	int8_t isProcessNameUnique(const std::string& processName);
-	bool deleteProcess(const std::shared_ptr<PCB>& process);
 	std::string getIndentation(const unsigned int& ammountOfIndentation, const bool& endsInProcess, const std::vector<unsigned int>& skipsIndentionBites);
 	
 
