@@ -1,8 +1,7 @@
 #include "Interpreter.h"
 
-/*Interpreter::Interpreter(std::shared_ptr<Scheduler> scheduler, std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> fileSystem, std::shared_ptr<ProcessManager> processManager) {
+Interpreter::Interpreter(std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> fileSystem, std::shared_ptr<ProcessManager> processManager) {
 
-	this->scheduler = scheduler;
 	this->memory = memory;
 	this->fileSystem = fileSystem;
 	this->processManager = processManager;
@@ -19,7 +18,7 @@
 	this->instructionHex.clear();
 	this->instructionString = "";
 }
-*/
+
 void Interpreter::loadPCB() {
 	PCB = RUNNING;
 	AX = PCB->getRegisterA();
@@ -34,6 +33,8 @@ void Interpreter::loadPCB() {
 }
 
 void Interpreter::loadCode() {
+	uint8_t error = memory->getMemoryContent(PID, PC).first;
+	if (error != 0) throw error;
 	code = memory->getMemoryContent(PID, PC).second;
 	PC++;
 	instructionHex.push_back(code);
@@ -86,54 +87,62 @@ void Interpreter::interpret() {
 		JUM();
 		break;
 	case 0x0B:
-		instructionString += "JUA";
-		JUA();
+		instructionString += "IFS";
+		IFS();
 		break;
 	case 0x0C:
-		instructionString += "JIF";
-		JIF();
+		instructionString += "IFE";
+		IFE();
 		break;
 	case 0x0D:
-		instructionString += "JIA";
-		JIA();
+		instructionString += "IFB";
+		IFB();
 		break;
 	case 0x0E:
+		instructionString += "IFN";
+		IFN();
+		break;
+	case 0x0F:
 		instructionString += "CFI";
 		CFI();
 		break;
-	case 0x0F:
+	case 0x10:
 		instructionString += "DFI";
 		DFI();
 		break;
-	case 0x10:
+	case 0x11:
 		instructionString += "OFI";
 		OFI();
 		break;
-	case 0x11:
+	case 0x12:
 		instructionString += "SFI";
 		SFI();
 		break;
-	case 0x12:
+	case 0x13:
 		instructionString += "EFI";
 		EFI();
 		break;
-	case 0x13:
+	case 0x14:
 		instructionString += "WFI";
 		WFI();
 		break;
-	case 0x14:
+	case 0x15:
 		instructionString += "PFI";
 		PFI();
 		break;
-	case 0x15:
+	case 0x16:
 		instructionString += "RFI";
 		RFI();
 		break;
-	case 0x16:
+	case 0x17:
 		instructionString += "AFI";
 		AFI();
 		break;
-	case 0x17:
+	case 0x18:
+		instructionString += "LFI";
+		LFI();
+		break;
+	case 0x19:
 		instructionString += "CPR";
 		CPR();
 		break;
@@ -149,36 +158,44 @@ void Interpreter::interpret() {
 }
 
 int8_t& Interpreter::loadArgAdrOrReg() {
-	int8_t& adr = memory->getMemoryContent(PC, PID).second;
+	uint8_t error = memory->getMemoryContent(PID, PC).first;
+	if (error != 0) throw error;
+
+	int8_t adr = memory->getMemoryContent(PID, PC).second;
 	PC++;
 
 	instructionHex.push_back(adr);
 
 	switch (adr) {
-	case 0xFF:
+	case -0x01:
 		instructionString += " AX";
 		return AX;
 		break;
-	case 0xFE:
+	case -0x02:
 		instructionString += " BX";
 		return BX;
 		break;
-	case 0xFD:
+	case -0x03:
 		instructionString += " CX";
 		return CX;
 		break;
-	case 0xFC:
+	case -0x04:
 		instructionString += " DX";
 		return DX;
 		break;
 	default:
 		instructionString += " [" + std::to_string(adr) + "]";
-		return adr;
+		error = memory->getMemoryContent(PID, adr).first;
+		if (error != 0) throw error;
+		return memory->getMemoryContent(PID, adr).second;
 		break;
 	}
 }
 
 int8_t Interpreter::loadArgNum() {
+	uint8_t error = memory->getMemoryContent(PID, PC).first;
+	if (error != 0) throw error;
+
 	int8_t num = memory->getMemoryContent(PID, PC).second;
 	PC++;
 
@@ -189,13 +206,16 @@ int8_t Interpreter::loadArgNum() {
 }
 
 std::string Interpreter::loadArgText(int n) {
+	uint8_t error = memory->getMemoryContent(PID, PC).first;
+	if (error != 0) throw error;
+
 	std::string text = "";
 	char t;
 
 	instructionString += " ";
 
 	for (int i = 0; i < n; i++) {
-		t = memory->getMemoryContent(PC, PID).second;
+		t = memory->getMemoryContent(PID, PC).second;
 		PC++;
 		text += t;
 
@@ -289,21 +309,28 @@ void Interpreter::JUM() {
 	PC = a;
 }
 
-void Interpreter::JUA() {
+void Interpreter::IFS() {
 	int8_t& a = loadArgAdrOrReg();
-	PC = a;
+	int8_t b = loadArgNum();
+	if (a < 0) PC = b;
 }
 
-void Interpreter::JIF() {
+void Interpreter::IFE() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
 	if (a == 0) PC = b;
 }
 
-void Interpreter::JIA() {
+void Interpreter::IFB() {
 	int8_t& a = loadArgAdrOrReg();
-	int8_t& b = loadArgAdrOrReg();
-	if (a == 0) PC = b;
+	int8_t b = loadArgAdrOrReg();
+	if (a > 0) PC = b;
+}
+
+void Interpreter::IFN() {
+	int8_t& a = loadArgAdrOrReg();
+	int8_t b = loadArgAdrOrReg();
+	if (a != 0) PC = b;
 }
 
 void Interpreter::CFI() {
@@ -326,9 +353,7 @@ void Interpreter::OFI() {
 }
 
 void Interpreter::SFI() {
-	std::string a = loadArgText(2);
-	uint8_t error = fileSystem->closeFile(a, PID);
-	if (error != 0) throw error;
+	fileSystem->closeProcessFiles(PID);
 }
 
 void Interpreter::EFI() {
@@ -365,6 +390,13 @@ void Interpreter::AFI() {
 	if (error != 0) throw error;
 }
 
+void Interpreter::LFI() {
+	int8_t& a = loadArgAdrOrReg();
+	uint8_t error = fileSystem->wc(PID).first;
+	if (error != 0) throw error;
+	a = fileSystem->wc(PID).second;
+}
+
 void Interpreter::CPR() {
 	std::string a = loadArgText(2);
 	std::string b = loadArgText(2);
@@ -378,16 +410,13 @@ void Interpreter::NOP() {}
 // ******************* GO *******************
 // ******************************************
 
-Interpreter::Interpreter(std::shared_ptr<Memory> memory, std::shared_ptr<FileMenager> filesystem, std::shared_ptr<ProcessManager> processManager) : memory(memory), fileSystem(filesystem), processManager(processManager)
-{
-}
-
 uint8_t Interpreter::go() {
 	try {
 		loadPCB();
 		loadCode();
 		interpret();
 		returnToPCB();
+		std::cout << instructionString << std::endl;
 		if (changeToTerminated) PCB->setStateTerminated();
 	}
 	catch (uint8_t e) {
@@ -401,9 +430,14 @@ uint8_t Interpreter::go() {
 // **************** KONWERSJA ****************
 // *******************************************
 
-std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
-	std::vector<uint8_t> machine;
+std::vector<int8_t> Interpreter::convertToMachine(std::string m) {
+	std::vector<int8_t> machine;
 	std::vector<std::string> arg;
+
+	if (m[0] >= 48 && m[0] <= 57) {
+		machine.push_back(std::stoi(m));
+		return machine;
+	}
 
 	std::string code = m.substr(0, 3);
 
@@ -451,27 +485,29 @@ std::vector<uint8_t> Interpreter::convertToMachine(std::string m) {
 	if (code == "INC") machine.push_back(0x08);
 	if (code == "DEC") machine.push_back(0x09);
 	if (code == "JUM") machine.push_back(0x0A);
-	if (code == "JUA") machine.push_back(0x0B);
-	if (code == "JIF") machine.push_back(0x0C);
-	if (code == "JIA") machine.push_back(0x0D);
-	if (code == "CFI") machine.push_back(0x0E);
-	if (code == "DFI") machine.push_back(0x0F);
-	if (code == "OFI") machine.push_back(0x10);
-	if (code == "SFI") machine.push_back(0x11);
-	if (code == "EFI") machine.push_back(0x12);
-	if (code == "WFI") machine.push_back(0x13);
-	if (code == "PFI") machine.push_back(0x14);
-	if (code == "RFI") machine.push_back(0x15);
-	if (code == "AFI") machine.push_back(0x16);
-	if (code == "CPR") machine.push_back(0x17);
+	if (code == "IFS") machine.push_back(0x0B);
+	if (code == "IFE") machine.push_back(0x0C);
+	if (code == "IFB") machine.push_back(0x0D);
+	if (code == "IFN") machine.push_back(0x0E);
+	if (code == "CFI") machine.push_back(0x0F);
+	if (code == "DFI") machine.push_back(0x10);
+	if (code == "OFI") machine.push_back(0x11);
+	if (code == "SFI") machine.push_back(0x12);
+	if (code == "EFI") machine.push_back(0x13);
+	if (code == "WFI") machine.push_back(0x14);
+	if (code == "PFI") machine.push_back(0x15);
+	if (code == "RFI") machine.push_back(0x16);
+	if (code == "AFI") machine.push_back(0x17);
+	if (code == "LFI") machine.push_back(0x18);
+	if (code == "CPR") machine.push_back(0x19);
 	if (code == "NOP") machine.push_back(0xFF);
 
 	if (arg.size() > 0) {
 		for (int i = 0; i < arg.size(); i++) {
-			if (arg[i] == "AX") machine.push_back(0xFF);
-			else if (arg[i] == "BX") machine.push_back(0xFE);
-			else if (arg[i] == "CX") machine.push_back(0xFD);
-			else if (arg[i] == "DX") machine.push_back(0xFC);
+			if (arg[i] == "AX") machine.push_back(-0x01);
+			else if (arg[i] == "BX") machine.push_back(-0x02);
+			else if (arg[i] == "CX") machine.push_back(-0x03);
+			else if (arg[i] == "DX") machine.push_back(-0x04);
 			else if (arg[i][0] >= 65 && arg[i][0] <= 90) {
 				machine.push_back(arg[i][0]);
 				machine.push_back(arg[i][1]);
