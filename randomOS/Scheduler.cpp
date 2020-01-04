@@ -13,19 +13,14 @@ Scheduler::~Scheduler()
 
 uint8_t Scheduler::schedule()
 {
+
+	//INCREMENT THE COUNTER
 	counter++;
-	if (counter > 1000000)
-	{
-		counter = 0;
-	}
+	if (counter > 1000000) { counter = 0; } //to avoid overflow
 
-	if  (RUNNING == nullptr || RUNNING->counter == this->counter )
+	if  (RUNNING == nullptr || RUNNING->counter <= this->counter )
 	{
-		this->result = nextProcess();
-		if (this->result != 0)
-			return result;
-
-		return 0;
+		return nextProcess();
 	}
 
 	return 0;
@@ -33,39 +28,37 @@ uint8_t Scheduler::schedule()
 
 uint8_t Scheduler::nextProcess()
 {
-	// missing 
-
-	if (RUNNING != nullptr)
-	{
-		this->addProcess(RUNNING, this->expired);
+	//move the currently running process into the expired queue and remove it from active
+	if (RUNNING != nullptr){ 
+		//if it was dummy don't put it back into expired (wastes processor time)
+		if(RUNNING!= DUMMY){this->addProcess(RUNNING, this->expired);}
+		this->active->erase(this->active->begin());
 	}
-
+	
+	//check if the queueues should be swapped
 	if (this->active->size() == 0)
 	{
 		if (this->expired->size() == 0)
 		{
-			//RUNNING = //dodaje dummy;
-				return 0;
+			RUNNING = DUMMY;
+			this->addProcess(DUMMY,NULL);
+			return 0;
 		}
-
-		this->active = this->expired;
+		for (int i = 0; i < expired->size(); i++) { active->push_back(expired->at(i)); }
 		this->expired->clear();
 	}
 
+	//set the process on top of teh active queue as running
 	RUNNING = (*this->active)[0];
-	this->active->erase(this->active->begin());
 
+	//if the now running porocess is under a semaphore, switch to next
 	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
 	{
-		result = this->nextProcess();
-		return 0;
+		return this->nextProcess();
 	}
-
-	this->result = normalProcessPriorityAndTimerChange(RUNNING);
-	if (this->result != 0)
-		return result;
-
-	return 27; // b³¹d: WTF?
+	//else set its state as running
+	RUNNING->setStateRunning();
+	return normalProcessPriorityAndTimerChange(RUNNING);
 }
 
 uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std::vector<std::shared_ptr<PCB>>> queue)
@@ -81,16 +74,17 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std:
 	/// iterate through the queue and put it just before an element with higher priority
 	for (int i = 0; i < queue->size(); i++)
 	{
-		if ((*queue)[i]->priority > process->priority)
+		if ((*queue)[i]->priority > process->priority && !(*queue)[i]->getIsRunning())
 		{
 			queue->insert(queue->begin() + i, process);
+			normalProcessPriorityAndTimerChange(process);
 			return 0;
 		}
 	}
 	///if the palce hasn't been found during iteration, either the queue is empty or it should be the last element, so just push it back
 	queue->push_back(process);
 
-	process->setStateReady();
+	normalProcessPriorityAndTimerChange(process);
 	return 0; 
 }
 
@@ -106,22 +100,22 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 
 	process->priority = process->basePriority + 5 - bonus;
 
-	if (process->priority > 139)
-	{
-		process->priority = 139;
-	}
-	if (process->priority < 100)
-	{
-		process->priority = 100;
-	}
+	//handling priority over and under flow
+	if (process->priority > 139){ process->priority = 139;}
+	if (process->priority < 100){ process->priority = 100;}
+
+	//ASSIGN COUNTER
+	//if it's dummy just assign 2 processor tics to it
+	if (process->getHasPID(0)) { process->counter = this->counter + DUMMY_TICS; return 0; }
+
 	if (previousPriority < 120)
 	{
 		process->counter = this->counter + ((140 - previousPriority) * 2);
+		return 0;
 	}
-	else
-	{
-		process->counter = this->counter + ((140 - previousPriority) * 0.5);
+	//else
+	process->counter = this->counter + ((140 - previousPriority) * 0.5);
+	return 0;
+	
 
-	}
-	return 27;
 }

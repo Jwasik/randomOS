@@ -131,7 +131,7 @@ void Shell::run()
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description", 5);
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
 
 				//var 1
 				///variable name and what it is
@@ -139,23 +139,32 @@ void Shell::run()
 				this->print("     <string>", 3);
 				this->print("   the name of the process.", 14);
 				///usefull information, exceptions, what cannot be used
-				this->print(" (cannot be longer then " + std::to_string(MAX_PROCESS_NAME_LENGHT) + " characters| cannot contain spaces| case insensitive)", 6);
+				this->print("                            no longer then " + std::to_string(MAX_PROCESS_NAME_LENGHT) + " chars, no spaces, at least one letter.", 6);
 		
 				//var 2
 				///variable name type and description
 				this->print("\n  pSource", 11);
 				this->print("   <string>", 3);
 				this->print("   name of the .txt file containing the source code.", 14);
+				this->print("   no file extension neccesarry, always assumed to be .txt.", 6);
 				///usefull information, exceptions, what cannot be used
-				this->print(" (no file extension neccesarry| must be located in program directory)", 6);
+				this->print("\n    \"filename\"", 11);
+				this->print("   for file in project directory.", 14);
+				this->print("\n    \"C:\\dir\\\"filename\"", 11);
+				this->print("   for specifing different path", 14);
+			
 
 
 				//example
-				this->printLine("\n\n  Example", 5);
+				this->printLine("\n\n  Examples", 5);
 				this->print("  >fork", 14);
 				this->print(" foo", 12);
 				this->print(" test", 11);
-				this->printLine("  (creates a new process \"foo\" from source code in test.txt)", 14);
+				this->printLine("  (creates a new process \"foo\" from source code in test.txt in default dir)", 14);
+				this->print("  >fork", 14);
+				this->print(" foo", 12);
+				this->print(" C:\\Bar\\test", 11);
+				this->printLine("  (creates a new process \"foo\" from source code in test.txt located in specified directory)", 14);
 			}
 			else if (helpFor == "kill") 
 			{
@@ -433,7 +442,7 @@ void Shell::run()
 			uint8_t code = fileManager->clearFile(filename);
 			this->printCode(code);
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ]+[a-z0-9]+[ ]+[a-z0-9]+$")))
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ]+[a-z0-9]+[ ]+.+$")))
 		{
 			command.erase(0, 5);
 			std::string filename = "";
@@ -642,33 +651,83 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p sch")))
 		{
-		this->print("ACTIVE",6);
-		this->print("              ",6);
-		this->print("EXPIRED",12);
-			for (unsigned int i = 0; i < 1000; i++)//color 6 i 12
-			{
-				
-				if (scheduler->active->size() < i && scheduler->expired->size() < i)break;
-				
-				unsigned int spaceDelay = 20;
-				if (scheduler->active->size() > i)
-				{
-					this->print((*scheduler->active)[i]->getName(), 6);
-					this->print(" ", 6);
-					this->print((*scheduler->active)[i]->getPID(), 6);
-					spaceDelay -= (*scheduler->active)[i]->getName().length();
-				}
+			this->print("SCHEDULER COUNTER: ", 13);
+			this->print(std::to_string(scheduler->counter), 11);
+			std::cout << std::endl;
 
+			this->print("CURRENTLY RUNNING: ", 13);
+			if(RUNNING != NULL)
+			{
+				this->print(RUNNING->getName(), 14);
+				this->print(" [PID= ", 14);
+				this->print(RUNNING->getPID(), 11);
+				this->print("]",14);
+				this->print(" (Until Counter= ", 14);
+				this->print(RUNNING->counter, 11);
+				this->print(")", 14);
+			}
+			else { this->print("<none>", 4); }
+			std::cout << std::endl;
+			std::cout << std::endl;
+			this->printLine("QUEUES ", 13);
+
+			this->print("No.  ", 11);
+			this->print("ACTIVE [PRIORITY]", 10);
+			this->print("    ", 10);
+			this->print("EXPIRED", 12);
+			std::cout << std::endl;
+
+			//check which has more elements
+			int maxSize = scheduler->active->size();
+			if (scheduler->expired->size() > maxSize) { maxSize = scheduler->expired->size(); }
+
+			for (int i = 0; i < maxSize; i++)
+			{
+
+				//print Number first
+				this->print(" " + std::to_string(i+1), 3);
+
+				unsigned int spaceDelay = 20;
+
+				//position the elements in second row
+				this->print("   ", 1);
+
+				//PRINT ACTIVE
+				if (i < scheduler->active->size())
+				{
+					this->print((*scheduler->active)[i]->getName(), 2);
+					this->print(" [", 2);
+					this->print(std::to_string((*scheduler->active)[i]->priority),10 );
+					this->print( "]", 2);
+					//prepare spaces between the seconds and third row
+					spaceDelay -= ((*scheduler->active)[i]->getName().length() + 5);
+				}
+				//if there are no elements in this collumn at all
+				if (i ==0 && scheduler->active->size() == 0) { this->print("<none>", 2); spaceDelay -= 6; }
+
+				//position the elements in third row
 				for (unsigned int j = 0; j < spaceDelay; j++)this->print(" ", 6);
 
-				if (scheduler->expired->size() > i)
+				//PRINT EXPIRED
+				if (i < scheduler->expired->size())
 				{
-					this->print((*scheduler->expired)[i]->getName(), 6);
-					this->print(" ", 6);
-					this->print((*scheduler->expired)[i]->getPID(), 6);
+					this->print((*scheduler->expired)[i]->getName(), 4);	
 				}
+				//if there are no elements in this collumn at all
+				if (i ==0 && scheduler->expired->size() == 0) { this->print("<none>", 4);}
+	
+				//go to next line
 				std::cout << std::endl;
 			}
+
+			if(maxSize ==0)
+			{ 
+				this->print("     <none>", 2); 
+				for (unsigned int j = 0; j < 14; j++)this->print(" ", 6);
+				this->print("<none>", 4);
+				std::cout << std::endl;
+			}
+
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^test ram$")))
 		{
