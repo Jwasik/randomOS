@@ -646,8 +646,10 @@ void Shell::run()
 				std::cout << "          ";
 				for (unsigned int j = 0; j < 16; j++)
 				{
-					this->print(std::to_string(memoryManager->ram[i + j]), 14);
-					this->print(" ", 14);
+					std::string temp = std::to_string(memoryManager->ram[i + j]);
+					this->print(temp, 14);
+					int spaceNumber = 4 - temp.length();
+					for (int z = 0; z < spaceNumber; z++) { print(" ", 1);}
 				}
 				std::cout << std::endl;
 			}
