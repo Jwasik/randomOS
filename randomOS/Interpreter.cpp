@@ -287,13 +287,14 @@ void Interpreter::DIV() {
 void Interpreter::MOD() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
+	if (b == 0) throw 203;
 	a = a % b;
 }
 
 void Interpreter::INC() {
 	int8_t& a = loadArgAdrOrReg();
 	if ((a + 1) > maxValue) throw 201;
-	if ((a + 1) < maxValue) throw 202;
+	if ((a + 1) < minValue) throw 202;
 	a = a + 1;
 }
 
@@ -323,13 +324,13 @@ void Interpreter::IFE() {
 
 void Interpreter::IFB() {
 	int8_t& a = loadArgAdrOrReg();
-	int8_t b = loadArgAdrOrReg();
+	int8_t b = loadArgNum();
 	if (a > 0) PC = b;
 }
 
 void Interpreter::IFN() {
 	int8_t& a = loadArgAdrOrReg();
-	int8_t b = loadArgAdrOrReg();
+	int8_t b = loadArgNum();
 	if (a != 0) PC = b;
 }
 
