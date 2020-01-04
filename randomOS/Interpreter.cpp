@@ -33,9 +33,9 @@ void Interpreter::loadPCB() {
 }
 
 void Interpreter::loadCode() {
-	uint8_t error = memory->getMemoryContent(PC, PID).first;
+	uint8_t error = memory->getMemoryContent(PID, PC).first;
 	if (error != 0) throw error;
-	code = memory->getMemoryContent(PC, PID).second;
+	code = memory->getMemoryContent(PID, PC).second;
 	PC++;
 	instructionHex.push_back(code);
 }
@@ -158,10 +158,10 @@ void Interpreter::interpret() {
 }
 
 int8_t& Interpreter::loadArgAdrOrReg() {
-	uint8_t error = memory->getMemoryContent(PC, PID).first;
+	uint8_t error = memory->getMemoryContent(PID, PC).first;
 	if (error != 0) throw error;
 
-	int8_t& adr = memory->getMemoryContent(PC, PID).second;
+	int8_t& adr = memory->getMemoryContent(PID, PC).second;
 	PC++;
 
 	instructionHex.push_back(adr);
@@ -191,10 +191,10 @@ int8_t& Interpreter::loadArgAdrOrReg() {
 }
 
 int8_t Interpreter::loadArgNum() {
-	uint8_t error = memory->getMemoryContent(PC, PID).first;
+	uint8_t error = memory->getMemoryContent(PID, PC).first;
 	if (error != 0) throw error;
 
-	int8_t num = memory->getMemoryContent(PC, PID).second;
+	int8_t num = memory->getMemoryContent(PID, PC).second;
 	PC++;
 
 	instructionHex.push_back(num);
@@ -204,7 +204,7 @@ int8_t Interpreter::loadArgNum() {
 }
 
 std::string Interpreter::loadArgText(int n) {
-	uint8_t error = memory->getMemoryContent(PC, PID).first;
+	uint8_t error = memory->getMemoryContent(PID, PC).first;
 	if (error != 0) throw error;
 
 	std::string text = "";
@@ -213,7 +213,7 @@ std::string Interpreter::loadArgText(int n) {
 	instructionString += " ";
 
 	for (int i = 0; i < n; i++) {
-		t = memory->getMemoryContent(PC, PID).second;
+		t = memory->getMemoryContent(PID, PC).second;
 		PC++;
 		text += t;
 
