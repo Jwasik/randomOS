@@ -1,4 +1,4 @@
-60
+4
 WRI CX 2
 MOV AX [58]
 MOV BX [60]
