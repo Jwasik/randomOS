@@ -8,7 +8,7 @@ class Page {
 public:
 	int8_t data[PAGE_SIZE]{ 0 }; // page data, initialized with zeroes
 	Page();
-	Page(std::vector<uint8_t> data);
+	Page(std::vector<int8_t> data);
 	explicit Page(const int8_t data[]);
 	void print() const;
 
