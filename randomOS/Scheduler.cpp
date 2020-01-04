@@ -20,7 +20,7 @@ uint8_t Scheduler::schedule()
 	if (counter > 1000000) { counter = 0; } //to avoid overflow
 
 	//if dummy is running and any other process is in the queue, switch to it
-	if (RUNNING->getHasPID(0)){ if(active->size()>0){ return nextProcess(); }}
+	if (RUNNING->getHasPID(0)){ if(active->size()>1){ return nextProcess(); }}
 
 	if  (RUNNING == nullptr || RUNNING->counter <= this->counter || RUNNING->getIsTerminated() )
 	{
@@ -49,7 +49,6 @@ uint8_t Scheduler::nextProcess()
 		if (this->expired->size() == 0)
 		{
 			RUNNING = DUMMY;
-			RUNNING->setInstructionCounter(0);
 			RUNNING->setStateRunning();
 			this->addProcess(RUNNING,NULL);
 			return 0;

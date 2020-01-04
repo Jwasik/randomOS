@@ -649,7 +649,7 @@ void Shell::run()
 				std::cout << "          ";
 				for (unsigned int j = 0; j < 16; j++)
 				{
-					std::string temp = std::to_string(memoryManager->ram[(PAGE_SIZE*i)+j]);
+					std::string temp = toHexString(memoryManager->ram[(PAGE_SIZE*i)+j]);
 					this->print(temp, 14);
 					int spaceNumber = 4 - temp.length();
 					for (int z = 0; z < spaceNumber; z++) { print(" ", 1);}
