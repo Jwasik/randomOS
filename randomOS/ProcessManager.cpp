@@ -25,9 +25,9 @@ int8_t ProcessManager::createInit()
 	//ads innit to scheduler
 	DUMMY = this->init;
 
-	
-	RUNNING = this->init;
 	addProcessToScheduler(this->init);
+	RUNNING = this->init;
+
 	return 0;
 }
 

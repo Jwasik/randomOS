@@ -80,7 +80,7 @@ void Shell::run()
 			std::cout << "LS         " << "- print directory content" << std::endl;
 			std::cout << "RM         " << "- delete file" << std::endl;
 			std::cout << "TOUCH      " << "- create file" << std::endl;
-			std::cout << "CAT        " << "- print file to console" << std::endl;
+			std::cout << "CAT -h     " << "- print file to console" << std::endl;
 			std::cout << "MV         " << "- rename file" << std::endl;
 			std::cout << "WC         " << "- print file character count" << std::endl;
 			std::cout << "APPEND     " << "- add text to the end of file" << std::endl;
@@ -93,8 +93,8 @@ void Shell::run()
 			printLine("INTERPRETER COMMANDS", 13);
 			std::cout << "GO         " << "- execute one ASSEMBLER command" << std::endl;
 			printLine("MODULE COMMANDS", 13);
-			std::cout << "P RAM      " << "- print RAM content" << std::endl;
-			std::cout << "P VM       " << "- print vMemory content" << std::endl;
+			std::cout << "P RAM -d -h" << "- print RAM content" << std::endl;
+			std::cout << "P VM  -d -h" << "- print vMemory content" << std::endl;
 			std::cout << "P SCH      " << "- print Scheduler state" << std::endl;
 			std::cout << std::endl;
 
@@ -327,12 +327,26 @@ void Shell::run()
 			uint8_t code = fileManager->createFile(command);
 			this->printCode(code);
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^cat[ ]+[0-9a-zA-z]+$")))
+		else if (std::regex_match(command, match, std::regex("^(cat[ ]+)([0-9a-zA-z]+)( -[ah])?$")))
 		{
-			command.erase(0, 4);
-			std::pair<uint8_t, std::string> code = fileManager->cat(command);
-			this->printCode(code.first);
-			if (code.first == 0)this->printLine(code.second, 14);
+			std::pair<uint8_t, std::string> code = fileManager->cat(match[2]);
+		
+			if (code.first == 0) 
+			{
+				//print in hexa
+				if (match[3] == " -h")
+				{
+					for (auto cha : code.second) 
+					{
+						if(cha!='\n'){ this->print(toHexString(cha), 14); }
+						else { std::cout << std::endl; }
+					}
+					std::cout <<std::endl;
+				}
+				//print as string
+				else { this->printLine(code.second, 14); }
+			}
+			else{ this->printCode(code.first); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^wc[ ]+[0-9a-zA-z]+$")))
 		{
@@ -597,51 +611,57 @@ void Shell::run()
 			std::cout << std::endl;
 
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^p vm$")))
+		else if (std::regex_match(command, match, std::regex("^(p vm)( -[dh])?$")))
 		{
-			this->printLine("DC QUEUE", 14);
-			this->print("FRAME NUMBER    ", 13);
-			this->printLine("REFERENCE BIT", 13);
-			for (auto& pair : virtualMemory->queue)
-			{
-				this->print("     ", 14);
-				this->print(int(pair.first), 14);
-				this->print("               ", 14);
-				this->printLine(int(pair.second), 14);
-			}
-			std::cout << std::endl;
-
-			this->printLine("VIRTUAL MEMORY CONTENT", 14);
-			this->print("PID   ", 13);
-			this->printLine("PAGE CONTENT", 13);
-
-			for (auto& pair : virtualMemory->swapFile)
-			{
-				for (auto& page : pair.second)
+				this->printLine("DC QUEUE", 14);
+				this->print("FRAME NUMBER    ", 13);
+				this->printLine("REFERENCE BIT", 13);
+				for (auto& pair : virtualMemory->queue)
 				{
-					std::cout << " ";
-					this->print(pair.first, 9);
+					this->print("     ", 14);
+					this->print(int(pair.first), 14);
+					this->print("               ", 14);
+					this->printLine(int(pair.second), 14);
+				}
+				std::cout << std::endl;
 
-					std::cout << "    ";
-					for (unsigned int i = 0; i < 16; i++)
+				this->printLine("VIRTUAL MEMORY CONTENT", 14);
+				this->print("PID   ", 13);
+				//print as decimal if specified
+				if (match[2] == " -d") { this->printLine("PAGE CONTENT [IN DECIMAL]", 13); }
+				//else print as hexa
+				else { this->printLine("PAGE CONTENT [IN HEXA]", 13); }
+	
+
+				for (auto& pair : virtualMemory->swapFile)
+				{
+					for (auto& page : pair.second)
 					{
-						//print as hexa
-						this->print(toHexString(page.data[i]), 14);
+						std::cout << " ";
+						this->print(pair.first, 9);
 
-						////print as decimal
-						//this->print(std::to_string(page.data[i]), 14);
-						this->print(" ", 14);
+						std::cout << "    ";
+						for (unsigned int i = 0; i < 16; i++)
+						{
+							//print as decimal if specified
+							if (match[2] == " -d") { this->print(std::to_string(page.data[i]), 14); }
+							//else print as hexa
+							else { this->print(toHexString(page.data[i]), 14); }
+							this->print(" ", 14);
+						}
+						std::cout << std::endl;
 					}
 					std::cout << std::endl;
 				}
-				std::cout << std::endl;
-			}
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^p ram$")))
+		else if (std::regex_match(command,match, std::regex("^(p ram)( -[dh])?$")))
 		{
 			this->printLine("RAM CONTENT", 14);
 			this->print("FRAME NUMBER    ", 13);
-			this->printLine("CONTENT", 13);
+			if (match[2] == " -d") { this->printLine("CONTENT [IN DECIMAL]", 13); }
+			//print in hexa
+			else { this->printLine("CONTENT [IN HEXA]", 13); }
+
 			for (unsigned int i = 0; i < 8; i++)
 			{
 				this->print("     ", 9);
@@ -649,14 +669,18 @@ void Shell::run()
 				std::cout << "          ";
 				for (unsigned int j = 0; j < 16; j++)
 				{
-					std::string temp = toHexString(memoryManager->ram[(PAGE_SIZE*i)+j]);
+					std::string temp = "";
+					//print in decimal
+					if (match[2] == " -d") { temp = std::to_string(memoryManager->ram[(PAGE_SIZE*i) + j]); }
+					//print in hexa
+					else { temp = toHexString(memoryManager->ram[(PAGE_SIZE*i) + j]); }
+
 					this->print(temp, 14);
 					int spaceNumber = 4 - temp.length();
-					for (int z = 0; z < spaceNumber; z++) { print(" ", 1);}
+					for (int z = 0; z < spaceNumber; z++) { print(" ", 1); }
 				}
 				std::cout << std::endl;
 			}
-
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p proc$")))
 		{
@@ -675,9 +699,19 @@ void Shell::run()
 				this->print(" [PID= ", 14);
 				this->print(RUNNING->getPID(), 11);
 				this->print("]",14);
-				this->print(" (Runs until Counter= ", 14);
-				this->print(RUNNING->counter, 11);
-				this->print(")", 14);
+				if (!RUNNING->getHasPID(0)) 
+				{
+					this->print(" (Runs until Counter= ", 14);
+					this->print(RUNNING->counter, 11);
+					this->print(")", 14);
+				}
+				else 
+				{
+					this->print(" (Runs until any", 14);
+					this->print("OTHER PROCESS", 11);
+					this->print("is added)", 14);
+				}
+			
 			}
 			else { this->print("<none>", 4); }
 			std::cout << std::endl;
