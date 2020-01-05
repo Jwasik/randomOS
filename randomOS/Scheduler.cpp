@@ -39,7 +39,8 @@ uint8_t Scheduler::nextProcess()
 		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) { this->addProcess(RUNNING, this->expired); }
 		//if it was terminated call processManager to deleteIt
 		if (RUNNING->getIsTerminated()) { ProcessManager::deleteProcess(RUNNING,this->fileManager, shared_from_this()); }
-		this->active->erase(this->active->begin());
+
+		if (active->size() > 0) { this->active->erase(this->active->begin()); }
 
 		RUNNING->setStateReady();
 	}
@@ -62,7 +63,6 @@ uint8_t Scheduler::nextProcess()
 	RUNNING = (*this->active)[0];
 	//to avoid null pointer exception (nulls in queue because of cascade deletion)
 	if (RUNNING == nullptr) { nextProcess(); }
-
 
 	//if the now running porocess is under a semaphore, switch to next
 	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
