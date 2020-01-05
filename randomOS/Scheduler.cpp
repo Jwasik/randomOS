@@ -153,9 +153,12 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 		process->counter = this->counter + ((140 - previousPriority) * 2);
 		return 0;
 	}
-	//else
-	process->counter = this->counter + ((140 - previousPriority) * 0.5);
-	return 0;
+	else
+	{
+		process->counter = this->counter + ((140 - previousPriority) * 0.5);
+		return 0;
+	}
+	
 	
 
 }
