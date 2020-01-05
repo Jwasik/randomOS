@@ -2,8 +2,9 @@
 #include "Interpreter.h"
 
 
-ProcessManager::ProcessManager(std::shared_ptr <Scheduler> scheduler, std::shared_ptr <VirtualMemory> virtualMemory):
-scheduler(scheduler), virtualMemory(virtualMemory)
+
+ProcessManager::ProcessManager(std::shared_ptr <Scheduler> scheduler, std::shared_ptr <VirtualMemory> virtualMemory, std::shared_ptr <FileMenager> fileManager):
+scheduler(scheduler), virtualMemory(virtualMemory), fileManager(fileManager)
 {
 	createInit();
 	freePID = 1;
@@ -81,7 +82,7 @@ int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 	if (found == nullptr){ return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND; }
 	
 	//call for reccurent deletion of the process and its children
-	deleteProcess(found);
+	deleteProcess(found,this->fileManager, this->scheduler);
 	return 0;
 }
 
@@ -91,33 +92,33 @@ int8_t ProcessManager::deleteProcess(const std::string & processName)
 	//try to find the process by PID
 	std::shared_ptr<PCB> found = getPCBByName(processName);
 
-	//If the process that is to be deleted is init, it cannot be done
-	if (found->getHasPID(0)) { return  ERROR_PM_INIT_CANNOT_BE_DELETED; }
-
 	///if the process couldn't be found
 	if (found == nullptr) { return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND; }
 
+	//If the process that is to be deleted is init, it cannot be done
+	if (found->getHasPID(0)) { return  ERROR_PM_INIT_CANNOT_BE_DELETED; }
+
 	//call for reccurent deletion of the process and its children
-	deleteProcess(found);
+	deleteProcess(found, this->fileManager, this->scheduler);
 	return 0;
 }
 
 
-bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process)
+bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler)
 {
 		//check if the process has any children
 		if (process->getHasChildren())
 		{
 			std::shared_ptr<PCB> child = process->getChildren()[0];
-			deleteProcess(child);
-			deleteProcess(process);
+			deleteProcess(child, fileManager,scheduler);
+			deleteProcess(process, fileManager,scheduler);
 		}
 		//if the process doesn't have children it can simply be deleted
 		else
 		{
 			//freeMemoryFromProcess(process)
-			//deleteProcessFromScheduler(process)
-			//freeUpAnySemaphores(process)
+			fileManager->closeProcessFiles(process->getPID());
+			scheduler->deleteProcess(process->getPID());
 			process->getParentPCB()->removeChild(process);
 			return true;
 		}
