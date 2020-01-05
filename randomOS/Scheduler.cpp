@@ -15,7 +15,6 @@ Scheduler::~Scheduler()
 
 uint8_t Scheduler::schedule()
 {
-
 	//INCREMENT THE COUNTER
 	counter++;
 	if (counter > 1000000) { counter = 0; } //to avoid overflow
@@ -73,6 +72,7 @@ uint8_t Scheduler::nextProcess()
 	RUNNING->setStateRunning();
 	return normalProcessPriorityAndTimerChange(RUNNING);
 }
+
 uint8_t Scheduler::deleteProcess(const unsigned int& PID) 
 {
 	for (auto it=active->begin();it!=active->end();it++)
@@ -104,7 +104,15 @@ uint8_t Scheduler::deleteProcess(const unsigned int& PID)
 uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std::vector<std::shared_ptr<PCB>>> queue)
 {
 	//if the queue is not specified (passed as null) the active queue is assumed
-	if (queue == NULL) { queue = this->active; }
+	if (queue == NULL) 
+	{ 
+		if (process == NULL) { return ERROR_SH_ADDED_PROCESS_DOES_NOT_EXIST; } //process does not exist
+		queue = this->active; 
+		process->priority = 120;
+		process->counter = this->counter;
+		queue->push_back(process);
+		return 0;
+	}
 	
 	//error checks
 	if (process->priority > 139 || process->priority < 100) { return ERROR_SH_PRIORITY_OUT_OF_RANGE; } //priority out of range <100, 139>
@@ -117,25 +125,28 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std:
 		if ((*queue)[i]->priority > process->priority && !(*queue)[i]->getIsRunning())
 		{
 			queue->insert(queue->begin() + i, process);
-			normalProcessPriorityAndTimerChange(process);
+			//normalProcessPriorityAndTimerChange(process);
 			return 0;
 		}
 	}
 	///if the palce hasn't been found during iteration, either the queue is empty or it should be the last element, so just push it back
 	queue->push_back(process);
 
-	normalProcessPriorityAndTimerChange(process);
+	//normalProcessPriorityAndTimerChange(process);
 	return 0; 
 }
 
 uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process)
 {
+	
 	int waitingTime = this->counter - process->counter;
 	if (waitingTime < 0)
 		waitingTime += 1000000;
 
 	
 	int bonus = 0.1 * waitingTime;
+	if (bonus > 10)
+		bonus = 10;
 	int previousPriority = process->priority;
 
 	process->priority = process->basePriority + 5 - bonus;
@@ -151,14 +162,15 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 	if (previousPriority < 120)
 	{
 		process->counter = this->counter + ((140 - previousPriority) * 2);
-		return 0;
+
 	}
 	else
 	{
 		process->counter = this->counter + ((140 - previousPriority) * 0.5);
-		return 0;
+		
 	}
-	
-	
 
+	//std::cout << "TEST Set priority of " << process->getName() << " to " << (int)process->priority << " counter " << process->counter - this->counter <<   std::endl;
+
+	return 0;
 }
