@@ -509,7 +509,7 @@ std::vector<int8_t> Interpreter::convertToMachine(std::string m) {
 			else if (arg[i] == "BX") machine.push_back(-0x02);
 			else if (arg[i] == "CX") machine.push_back(-0x03);
 			else if (arg[i] == "DX") machine.push_back(-0x04);
-			else if (arg[i][0] >= 65 && arg[i][0] <= 90) {
+			else if ((arg[i][0] >= 65 && arg[i][0] <= 90) || (arg[i][0] >= 97 && arg[i][0] <= 122)) {
 				machine.push_back(arg[i][0]);
 				machine.push_back(arg[i][1]);
 			}
