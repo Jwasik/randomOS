@@ -1,7 +1,8 @@
 #include "Scheduler.h"
 #include "ProcessManager.h"
 
-Scheduler::Scheduler()
+Scheduler::Scheduler(std::shared_ptr<FileMenager> fileManager):
+fileManager(fileManager)
 { 
 	this->active = std::make_shared<std::vector<std::shared_ptr<PCB>>>();
 	this->expired = std::make_shared<std::vector<std::shared_ptr<PCB>>>();
@@ -37,13 +38,10 @@ uint8_t Scheduler::nextProcess()
 		//if it wasn't dummy or terminated put it into expired 
 		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) { this->addProcess(RUNNING, this->expired); }
 		//if it was terminated call processManager to deleteIt
-		if (RUNNING->getIsTerminated()) { ProcessManager::deleteProcess(RUNNING); }
+		if (RUNNING->getIsTerminated()) { ProcessManager::deleteProcess(RUNNING,this->fileManager, shared_from_this()); }
 		this->active->erase(this->active->begin());
 
 		RUNNING->setStateReady();
-		//if it was dummy don't put it back into expired (wastes processor time)
-		if(RUNNING!= DUMMY){this->addProcess(RUNNING, this->expired);}
-		this->active->erase(this->active->begin());
 	}
 	
 	//check if the queueues should be swapped
@@ -60,10 +58,10 @@ uint8_t Scheduler::nextProcess()
 		this->expired->clear();
 	}
 
-	//set the process on top of teh active queue as running
+	//set the process on top of the active queue as running
 	RUNNING = (*this->active)[0];
-	if (RUNNING == nullptr) nextProcess();
-
+	//to avoid null pointer exception (nulls in queue because of cascade deletion)
+	if (RUNNING == nullptr) { nextProcess(); }
 
 
 	//if the now running porocess is under a semaphore, switch to next
@@ -74,6 +72,33 @@ uint8_t Scheduler::nextProcess()
 	//else set its state as running
 	RUNNING->setStateRunning();
 	return normalProcessPriorityAndTimerChange(RUNNING);
+}
+uint8_t Scheduler::deleteProcess(const unsigned int& PID) 
+{
+	for (auto it=active->begin();it!=active->end();it++)
+	{
+		if ((*it)->getHasPID(PID))
+		{
+			if ((*it)->getIsRunning()) 
+			{ 
+				RUNNING = NULL;
+				active->erase(it);
+				nextProcess(); 
+				return 0; 
+			}
+			active->erase(it);
+			return 0;
+		}
+	}
+	for (auto it = expired->begin(); it != expired->end(); it++)
+	{
+		if ((*it)->getHasPID(PID))
+		{
+			expired->erase(it);
+			return 0;
+		}
+	}
+	return ERROR_SH_PROCESS_NOT_FOUND;
 }
 
 uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std::vector<std::shared_ptr<PCB>>> queue)
@@ -120,7 +145,7 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 	if (process->priority < 100){ process->priority = 100;}
 
 	//ASSIGN COUNTER
-	//if it's dummy just assign 2 processor tics to it
+	//if it's dummy assign a long counter to it, so that it doesn't have to be reinserted a lot
 	if (process->getHasPID(0)) { process->counter = this->counter + DUMMY_TICS; return 0; }
 
 	if (previousPriority < 120)
