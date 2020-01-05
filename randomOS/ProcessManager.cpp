@@ -82,7 +82,7 @@ int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 	if (found == nullptr){ return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND; }
 	
 	//call for reccurent deletion of the process and its children
-	deleteProcess(found,this->fileManager, this->scheduler);
+	deleteProcess(found,this->fileManager, this->scheduler,  this->virtualMemory);
 	return 0;
 }
 
@@ -99,19 +99,19 @@ int8_t ProcessManager::deleteProcess(const std::string & processName)
 	if (found->getHasPID(0)) { return  ERROR_PM_INIT_CANNOT_BE_DELETED; }
 
 	//call for reccurent deletion of the process and its children
-	deleteProcess(found, this->fileManager, this->scheduler);
+	deleteProcess(found, this->fileManager, this->scheduler, this->virtualMemory);
 	return 0;
 }
 
 
-bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler)
+bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler, const std::shared_ptr<VirtualMemory>& virtualMemory)
 {
-		//check if the process has any children
+		//check if the process has any children and call for recursive deletion of all of them
 		if (process->getHasChildren())
 		{
 			std::shared_ptr<PCB> child = process->getChildren()[0];
-			deleteProcess(child, fileManager,scheduler);
-			deleteProcess(process, fileManager,scheduler);
+			deleteProcess(child, fileManager,scheduler, virtualMemory);
+			deleteProcess(process, fileManager,scheduler, virtualMemory);
 		}
 		//if the process doesn't have children it can simply be deleted
 		else
@@ -120,6 +120,7 @@ bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shar
 			fileManager->closeProcessFiles(process->getPID());
 			scheduler->deleteProcess(process->getPID());
 			process->getParentPCB()->removeChild(process);
+			virtualMemory->removeProgram(process->getPID());
 			return true;
 		}
 	

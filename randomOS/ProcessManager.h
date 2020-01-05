@@ -55,7 +55,7 @@ public:
 	std::shared_ptr<PCB> getInit();
 
 	//used in scheduler
-	static bool deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler);
+	static bool deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler, const std::shared_ptr<VirtualMemory>& virtualMemory);
 
 private:
 	//pointers to other modules

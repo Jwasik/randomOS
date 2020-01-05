@@ -20,6 +20,10 @@ public:
 	// called every time a program is read from a file
 	void insertProgram(std::pair<int, std::vector<Page>> program);
 
+	// remove program  code form virtual memory
+	// called whenever a process is deleted
+	void removeProgram(const unsigned int& PID);
+
 	// updates queue; the argument is index of a frame, that holds referenced page
 	// called every time a page is referenced
 	void updateQueue(int frameNumber);
