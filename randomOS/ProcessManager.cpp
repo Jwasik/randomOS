@@ -104,7 +104,7 @@ int8_t ProcessManager::deleteProcess(const std::string & processName)
 }
 
 
-bool ProcessManager::deleteProcess(const std::shared_ptr<PCB>& process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler)
+bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler)
 {
 		//check if the process has any children
 		if (process->getHasChildren())
