@@ -3,7 +3,6 @@
 #include "PCB.h"
 #include "VirtualMemory.h"
 #include "Scheduler.h"
-#include "RUNNING.h"
 
 //POSSIBLE ERRORS (in range[32 - 64])
 #define ERROR_PM_PROCESS_NAME_TAKEN  32 //a process with such name already exists (when trying to fork a new process)
@@ -26,7 +25,7 @@
 class ProcessManager
 {
 public:
-	ProcessManager(std::shared_ptr <Scheduler> scheduler,std::shared_ptr <VirtualMemory> virtualMemory);
+	ProcessManager(std::shared_ptr <Scheduler> scheduler,std::shared_ptr <VirtualMemory> virtualMemory, std::shared_ptr <FileMenager> fileManager);
 	~ProcessManager();
 
 	/********************************
@@ -56,12 +55,13 @@ public:
 	std::shared_ptr<PCB> getInit();
 
 	//used in scheduler
-	static bool deleteProcess(const std::shared_ptr<PCB>& process);
+	static bool deleteProcess(const std::shared_ptr<PCB>& process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler);
 
 private:
 	//pointers to other modules
-	std::shared_ptr <Scheduler> scheduler = NULL;
-	std::shared_ptr <VirtualMemory> virtualMemory = NULL;
+	std::shared_ptr <Scheduler> scheduler;
+	std::shared_ptr <VirtualMemory> virtualMemory;
+	std::shared_ptr <FileMenager> fileManager;
 
 	std::shared_ptr<PCB> init;
 	unsigned int freePID;

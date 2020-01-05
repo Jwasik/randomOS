@@ -93,9 +93,9 @@ void Shell::run()
 			printLine("INTERPRETER COMMANDS", 13);
 			std::cout << "GO         " << "- execute one ASSEMBLER command" << std::endl;
 			printLine("MODULE COMMANDS", 13);
-			std::cout << "P RAM " << "- print RAM content" << std::endl;
-			std::cout << "P VM " << "- print vMemory content" << std::endl;
-			std::cout << "P SCH " << "- print Scheduler state" << std::endl;
+			std::cout << "P RAM      " << "- print RAM content" << std::endl;
+			std::cout << "P VM       " << "- print vMemory content" << std::endl;
+			std::cout << "P SCH      " << "- print Scheduler state" << std::endl;
 			std::cout << std::endl;
 
 			restoreDefaultColor();
@@ -675,7 +675,7 @@ void Shell::run()
 				this->print(" [PID= ", 14);
 				this->print(RUNNING->getPID(), 11);
 				this->print("]",14);
-				this->print(" (Until Counter= ", 14);
+				this->print(" (Runs until Counter= ", 14);
 				this->print(RUNNING->counter, 11);
 				this->print(")", 14);
 			}
@@ -886,6 +886,9 @@ void Shell::printCode(uint8_t code)
 		break;
 	case 17:
 		std::cout << "CODE 17 : ERROR_SH_ADDED_PROCESS_DOES_NOT_EXIST" << std::endl;
+		break;
+	case 18:
+		std::cout << "CODE 18 : ERROR_SH_PROCESS_NOT_FOUND" << std::endl;
 		break;
 	case 32:
 		std::cout << "CODE 32 : ERROR_PM_PROCESS_NAME_TAKEN" << std::endl;
