@@ -152,7 +152,7 @@ void Interpreter::interpret() {
 		break;
 	default:
 		instructionString += "ERR";
-		throw 200;
+		throw (uint8_t)200;
 		break;
 	}
 }
@@ -256,52 +256,52 @@ void Interpreter::WRI() {
 void Interpreter::ADD() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
-	if ((a + b) > maxValue) throw 201;
-	if ((a + b) < minValue) throw 202;
+	if ((a + b) > maxValue) throw (uint8_t)201;
+	if ((a + b) < minValue) throw (uint8_t)202;
 	a = a + b;
 }
 
 void Interpreter::SUB() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
-	if ((a - b) > maxValue) throw 201;
-	if ((a - b) < minValue) throw 202;
+	if ((a - b) > maxValue) throw (uint8_t)201;
+	if ((a - b) < minValue) throw (uint8_t)202;
 	a = a - b;
 }
 
 void Interpreter::MUL() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
-	if ((a * b) > maxValue) throw 201;
-	if ((a * b) < minValue) throw 202;
+	if ((a * b) > maxValue) throw (uint8_t)201;
+	if ((a * b) < minValue) throw (uint8_t)202;
 	a = a * b;
 }
 
 void Interpreter::DIV() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
-	if (b == 0) throw 203;
+	if (b == 0) throw (uint8_t)203;
 	a = a / b;
 }
 
 void Interpreter::MOD() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
-	if (b == 0) throw 203;
+	if (b == 0) throw (uint8_t)203;
 	a = a % b;
 }
 
 void Interpreter::INC() {
 	int8_t& a = loadArgAdrOrReg();
-	if ((a + 1) > maxValue) throw 201;
-	if ((a + 1) < minValue) throw 202;
+	if ((a + 1) > maxValue) throw (uint8_t)201;
+	if ((a + 1) < minValue) throw (uint8_t)202;
 	a = a + 1;
 }
 
 void Interpreter::DEC() {
 	int8_t& a = loadArgAdrOrReg();
-	if ((a - 1) > maxValue) throw 201;
-	if ((a - 1) < maxValue) throw 202;
+	if ((a - 1) > maxValue) throw (uint8_t)201;
+	if ((a - 1) < maxValue) throw (uint8_t)202;
 	a = a - 1;
 }
 
@@ -349,7 +349,7 @@ void Interpreter::DFI() {
 void Interpreter::OFI() {
 	std::string a = loadArgText(2);
 	uint8_t error = fileSystem->openFile(a, PID);
-	if (error == 67) PC--;
+	if (error == 67) PC -= 3;
 	else if (error != 0) throw error;
 }
 
