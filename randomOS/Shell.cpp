@@ -645,21 +645,31 @@ void Shell::run()
 		else if (std::regex_match(command, match, std::regex("^(cat[ ]+)([0-9a-zA-z]+)( -[ah])?$")))
 		{
 			std::pair<uint8_t, std::string> code = fileManager->cat(match[2]);
+			
 
 			if (code.first == 0)
 			{
-				//print in hexa
-				if (match[3] == " -h")
+				this->print("FILENAME: ", 13);
+				this->printLine(match[2], 14);
+				this->printLine("CONTENTS ", 13);
+				//check if it's an empty file
+				if (code.second == "") { this->printLine("<the file is empty>", 11); }
+				else 
 				{
-					for (auto cha : code.second)
+					//print in hexa
+					if (match[3] == " -h")
 					{
-						if (cha != '\n') { this->print(toHexString(cha), 14); }
-						else { std::cout << std::endl; }
+						for (auto cha : code.second)
+						{
+							if (cha != '\n') { this->print(toHexString(cha), 14); }
+							else { std::cout << std::endl; }
+						}
+						std::cout << std::endl;
 					}
-					std::cout << std::endl;
+					//print as string
+					else { this->printLine(code.second, 14); }
 				}
-				//print as string
-				else { this->printLine(code.second, 14); }
+					
 			}
 			else { this->printCode(code.first); }
 		}
