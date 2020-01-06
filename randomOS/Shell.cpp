@@ -65,6 +65,9 @@ void Shell::run()
 		std::getline(std::cin, command);
 		this->toLower(command);
 
+		//remove trailing spaces
+		command = std::regex_replace(command, std::regex(" +$"), "");
+
 		//initialize variable used to store regex matches for further parsing
 		std::smatch match;
 
