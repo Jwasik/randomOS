@@ -66,6 +66,8 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 	// if all else went well, increment the free PID field, because the current one is now taken and linkt the process to a parent
 	parentPCB->addChild(newProcess);
 	freePID++;
+	//call scheduler to update queues
+	scheduler->schedule();
 	return std::make_pair(0,PIDOfTheCreatedProcess);
 }
 

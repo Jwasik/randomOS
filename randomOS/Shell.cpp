@@ -890,11 +890,14 @@ void Shell::run()
 			uint8_t errorCode = this->scheduler->schedule();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
 
-			errorCode = this->interpreter->go();
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			std::pair < uint8_t, std::string> errorC= this->interpreter->go();
+			if (errorC.first != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorC.first); }
 			else
 			{
-				this->printLine("One instruction completed.", 14);
+				this->print("Currently running: ", 14);
+				this->printLine(RUNNING->getName(), 12);
+				this->print("Completed instruction: ", 14);
+				this->printLine(errorC.second,11);
 			}
 
 		}

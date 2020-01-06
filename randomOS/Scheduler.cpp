@@ -38,8 +38,7 @@ uint8_t Scheduler::nextProcess()
 		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) { this->addProcess(RUNNING, this->expired); }
 		//if it was terminated call processManager to deleteIt
 		if (RUNNING->getIsTerminated()) { ProcessManager::deleteProcess(RUNNING,this->fileManager, shared_from_this(),virtualMemory); }
-
-		if (active->size() > 0) { this->active->erase(this->active->begin()); }
+		else if (active->size() > 0) { this->active->erase(this->active->begin()); }
 
 		RUNNING->setStateReady();
 	}
