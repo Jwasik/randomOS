@@ -899,6 +899,7 @@ void Shell::toLower(std::string& str)
 {
 	for (auto& letter : str)
 	{
+		if (letter == ' ')break;
 		if (letter >= 65 && letter <= 90)
 		{
 			letter += 32;
