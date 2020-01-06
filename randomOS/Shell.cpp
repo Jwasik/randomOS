@@ -71,34 +71,33 @@ void Shell::run()
 		//GENERAL COMMANDS
 		if (std::regex_match(command.begin(), command.end(), std::regex("^man$")))
 		{
-			printLine("\nFOR MORE INFO TYPE: COMMAND --HELP", 14);
+			print("FOR MORE INFO TYPE: \"", 14);
+			print("<COMMAND>", 9);
+			printLine(" --HELP\"", 14);
 			printLine("GENERAL COMMANDS", 13);
-			std::cout << "POWEROFF   " << "- shutdown" << std::endl;
-			std::cout << "CLEAN      " << "- clear console window" << std::endl;
-			std::cout << "MAN        " << "- print commands list" << std::endl;
+			print("  POWEROFF    ", 9);printLine("- shutdown",14);
+			print("  CLEAN       ", 9);printLine("- clear console window", 14);
+			print("  MAN         ", 9); printLine("- print a list of commands", 14);
 			printLine("FILE SYSTEM COMMANDS", 13);
-			std::cout << "LS         " << "- print directory content" << std::endl;
-			std::cout << "RM         " << "- delete file" << std::endl;
-			std::cout << "TOUCH      " << "- create file" << std::endl;
-			std::cout << "CAT -h     " << "- print file to console" << std::endl;
-			std::cout << "MV         " << "- rename file" << std::endl;
-			std::cout << "WC         " << "- print file character count" << std::endl;
-			std::cout << "APPEND     " << "- add text to the end of file" << std::endl;
-			std::cout << "CLEAR      " << "- delete file`s content" << std::endl;
+			print("  LS          ", 9); printLine("- print directory content", 14);
+			print("  RM          ", 9); printLine("- delete a file", 14);
+			print("  TOUCH       ", 9); printLine("- create a file", 14);
+			print("  CAT ", 9); print("-h      ", 11); printLine("- print a file to console", 14);
+			print("  MV          ", 9); printLine("- rename a file", 14);
+			print("  WC          ", 9); printLine("- print a file character count", 14);
+			print("  APPEND      ", 9); printLine("- add text to the end of a file", 14);
+			print("  CLEAR       ", 9); printLine("- delete file's content", 14);
 			printLine("PROCESSES COMMANDS", 13);
-			std::cout << "FORK       " << "- create new process" << std::endl;
-			std::cout << "KILL       " << "- kill process" << std::endl;
-			std::cout << "PS -w -r -a" << "- print process list" << std::endl;
-			std::cout << "PROC       " << "- print process' information" << std::endl;
+			print("  FORK        ", 9); printLine("- create a new process", 14);
+			print("  KILL        ", 9); printLine("- delete a process", 14);
+			print("  PS", 9); print(" -w -r -a ", 11); printLine("- print a list of processes", 14);
+			print("  PROC        ", 9); printLine("- print process' details", 14);
 			printLine("INTERPRETER COMMANDS", 13);
-			std::cout << "GO         " << "- execute one ASSEMBLER command" << std::endl;
+			print("  GO          ", 9); printLine("- execute one ASSEMBLER command", 14);
 			printLine("MODULE COMMANDS", 13);
-			std::cout << "P RAM -d -h" << "- print RAM content" << std::endl;
-			std::cout << "P VM  -d -h" << "- print vMemory content" << std::endl;
-			std::cout << "P SCH      " << "- print Scheduler state" << std::endl;
-			std::cout << std::endl;
-
-			restoreDefaultColor();
+			print("  P RAM", 9); print(" -d -h ", 11); printLine("- print RAM content", 14);
+			print("  P VM", 9); print("  -d -h ", 11); printLine("- print vMemory content", 14);
+			print("  P SCH       ", 9); printLine("- print Scheduler state", 14);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^poweroff$")))
 		{
