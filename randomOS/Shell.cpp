@@ -903,32 +903,40 @@ void Shell::run()
 			this->print("PROCESSES TREE", 13);
 
 			this->printWithPadding("\n"+processManager->displayTree(), 14,2);
-
-			this->printWithPadding("\n" + processManager->displayTree(), 14, 2);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps[ ]-[wra]$")))
 		{
-			std::string temp = "";
+			std::vector<std::shared_ptr<PCB>> temp;
 			if (command.at(command.length() - 1) == 'w')
 			{
-				this->print("WAITING PROCESSES", 13);
-				temp = this->processManager->displayWithState(PCB::ProcessState::WAITING);
-				this->printLine(temp, 14);
-				if (temp == "") { this->printLine("<No processes found>", 4); }
+				this->printLine("WAITING PROCESSES", 13);
+				temp = this->processManager->getAllWithState(PCB::ProcessState::WAITING);
+				for (auto p : temp) 
+				{
+					this->print("  -"+p->getName() +" [PID ", 14);
+					this->print(p->getPID(), 11);
+					this->printLine("]",14);
+				}
+				if (temp.size()==0) { this->printLine("<No processes found>", 4); }
 			}
 			else if (command.at(command.length() - 1) == 'r')
 			{
 				this->print("RUNNING PROCESS", 13);
-				temp = this->processManager->displayWithState(PCB::ProcessState::RUNNING);
-				this->printLine(temp, 14);
-				if (temp == "") { this->printLine("<No processes found>", 4); }
+				temp = this->processManager->getAllWithState(PCB::ProcessState::RUNNING);
+				for (auto p : temp) { this->printProcessInformation(p); }
+				if (temp.size() == 0) { this->printLine("<No processes found>", 4); }
 			}
 			else if (command.at(command.length() - 1) == 'a')
 			{
-				this->print("READY PROCESSES", 13);
-				temp = this->processManager->displayWithState(PCB::ProcessState::READY);
-				this->printLine(temp, 14);
-				if (temp == "") { this->printLine("<No processes found>", 4); }
+				this->printLine("READY PROCESSES", 13);
+				temp = this->processManager->getAllWithState(PCB::ProcessState::READY);
+				for (auto p : temp)
+				{
+					this->print("  -" + p->getName() + " [PID ", 14);
+					this->print(p->getPID(), 11);
+					this->printLine("]", 14);
+				}
+				if (temp.size() == 0) { this->printLine("<No processes found>", 4); }
 			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
@@ -1041,10 +1049,6 @@ void Shell::run()
 				}
 				std::cout << std::endl;
 			}
-		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^p proc$")))
-		{
-			this->printLine(processManager->displayTree(), 14);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p sch")))
 		{

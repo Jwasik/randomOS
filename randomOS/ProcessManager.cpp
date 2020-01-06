@@ -293,9 +293,9 @@ std::string ProcessManager::displayProcesses()
 	return result;
 }
 
-std::string ProcessManager::displayWithState(PCB::ProcessState state)
+std::vector<std::shared_ptr<PCB>> ProcessManager::getAllWithState(PCB::ProcessState state)
 {
-	std::string result{ "" };
+	std::vector<std::shared_ptr<PCB>> result;
 
 	std::stack<std::shared_ptr<PCB>> allProcesses;
 	allProcesses.push(init);
@@ -307,8 +307,7 @@ std::string ProcessManager::displayWithState(PCB::ProcessState state)
 		allProcesses.pop();
 		if (currentProcess->getHasState(state))
 		{
-			if(state == PCB::ProcessState::RUNNING){ result += currentProcess->getInformation(); }
-			else{ result += "\n-" + currentProcess->getNameAndPIDString(); }
+			result.push_back(currentProcess);
 		}
 
 		//add all of its children to the queue
