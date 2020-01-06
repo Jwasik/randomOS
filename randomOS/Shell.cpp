@@ -31,7 +31,7 @@ Shell::Shell() :defaultColor(10)
 	this->printLine(this->osName, 11);
 }
 
-Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm, std::shared_ptr<ProcessManager> pm, std::shared_ptr<Scheduler> sch,std::shared_ptr<Interpreter> inte)
+Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm, std::shared_ptr<ProcessManager> pm, std::shared_ptr<Scheduler> sch, std::shared_ptr<Interpreter> inte)
 	:defaultColor(10), fileManager(fm), memoryManager(mm), virtualMemory(vm), processManager(pm), scheduler(sch), interpreter(inte)
 {
 	system("color 0A");
@@ -114,11 +114,253 @@ void Shell::run()
 		{
 			std::string helpFor = match[1];
 
-			if (helpFor == "ls") 
+			if (helpFor == "ls")
 			{
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  lists all files in main catalog.\n", 14);
 
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >ls\n", 14);
 			}
-			else if(helpFor =="fork")
+			else if (helpFor == "rm")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  deletes file.\n", 14);
+
+				//USAGE
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >rm", 14);
+				this->print(" [fName]", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  fName", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the file.", 14);
+				///usefull information, exceptions, what cannot be used
+
+
+
+
+				//example
+				this->printLine("\n\n  Examples", 5);
+				this->print("  >rm", 14);
+				this->print(" foo", 12);
+				this->printLine("  (deletes file \"foo\")", 14);
+			}
+			else if (helpFor == "touch")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  creates file.\n", 14);
+
+				//USAGE
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >touch", 14);
+				this->print(" [fName]", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  fName", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the file.", 14);
+				///usefull information, exceptions, what cannot be used
+
+
+
+
+				//example
+				this->printLine("\n\n  Examples", 5);
+				this->print("  >touch", 14);
+				this->print(" foo", 12);
+				this->printLine("  (creates file \"foo\")", 14);
+			}
+			else if (helpFor == "cat")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  prints file to console.\n", 14);
+
+				//USAGE
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >cat", 14);
+				this->print(" [fName]", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  fName", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the file.\n", 14);
+				//var 2
+				///variable name and what it is
+				this->print("  fState", 12);
+				this->print("     <param>", 3);
+				this->print("   specifies output type.", 14);
+				this->print("\n    -h", 12);
+				this->print(" printout character hex codes.", 14);
+				///usefull information, exceptions, what cannot be used
+
+				//example
+				this->printLine("\n\n  Examples", 5);
+				this->print("  >cat", 14);
+				this->print(" foo", 12);
+				this->printLine("  (prints file \"foo\")", 14);
+
+				this->print("  >cat", 14);
+				this->print(" foo", 12);
+				this->print(" -h", 12);
+				this->printLine("  (prints file \"foo\" as hex numbers)", 14);
+			}
+			else if (helpFor == "mv")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  renames file.\n", 14);
+
+				//USAGE
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >mv", 14);
+				this->print(" [fName]", 12);
+				this->print(" [fName2]", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  fName", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the file before renaming.\n", 14);
+				//var 2
+				///variable name and what it is
+				this->print("  fName2", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the file after renaming.\n", 14);
+				///usefull information, exceptions, what cannot be used
+
+				//example
+				this->printLine("\n\n  Examples", 5);
+				this->print("  >mv", 14);
+				this->print(" foo", 12);
+				this->print(" example", 12);
+				this->printLine("  (renames file \"foo\" to \"example\")", 14);
+			}
+			else if (helpFor == "wc")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  counts characters in file.\n", 14);
+
+				//USAGE
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >wc", 14);
+				this->print(" [fName]", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  fName", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the file.", 14);
+				///usefull information, exceptions, what cannot be used
+
+				//example
+				this->printLine("\n\n  Examples", 5);
+				this->print("  >cat", 14);
+				this->print(" foo", 12);
+				this->printLine("  (counts characters in file \"foo\")", 14);
+			}
+			else if (helpFor == "append")
+			{
+			//DESCRIPTION
+			this->printLine("DESCRIPTION: ", 13);
+			this->print("  appends text to end of file.\n", 14);
+
+			//USAGE
+			this->printLine("USAGE: ", 13);
+			//general form of the command
+			this->print("  >append", 14);
+			this->print(" [fName]", 12);
+			this->print(" [text]", 12);
+			this->print("\n", 14);
+			//variables explained
+			//table header
+			this->printLine("\n  Name      Type       Description                                         Details", 5);
+
+			//var 1
+			///variable name and what it is
+			this->print("  fName", 12);
+			this->print("     <string>", 3);
+			this->print("   the name of the file.\n", 14);
+			//var 2
+			///variable name and what it is
+			this->print("  text", 12);
+			this->print("     <string>", 3);
+			this->print("   the name of the file after renaming.", 14);
+			this->print("                 can contain only letters and digits", 6);
+
+			///usefull information, exceptions, what cannot be used
+
+			//example
+			this->printLine("\n\n  Examples", 5);
+			this->print("  >append", 14);
+			this->print(" foo", 12);
+			this->print(" abcd", 12);
+			this->printLine("  (appends \"abcd\" to file \"foo\")", 14);
+			}
+			else if (helpFor == "clear")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  deletes content of file.\n", 14);
+
+				//USAGE
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >clear", 14);
+				this->print(" [fName]", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  fName", 12);
+				this->print("     <string>", 3);
+				this->print("   the name of the file.", 14);
+				///usefull information, exceptions, what cannot be used
+
+				//example
+				this->printLine("\n\n  Examples", 5);
+				this->print("  >clear", 14);
+				this->print(" foo", 12);
+				this->printLine("  (deletes content of file \"foo\")", 14);
+			}
+			else if (helpFor == "fork")
 			{
 				//DESCRIPTION
 				this->printLine("DESCRIPTION: ", 13);
@@ -128,8 +370,8 @@ void Shell::run()
 				this->printLine("USAGE: ", 13);
 				//general form of the command
 				this->print("  >fork", 14);
-				this->print(" [pName]",12);
-				this->print(" [pSource]",11);
+				this->print(" [pName]", 12);
+				this->print(" [pSource]", 11);
 				this->print("\n", 14);
 				//variables explained
 				//table header
@@ -142,7 +384,7 @@ void Shell::run()
 				this->print("   the name of the process.", 14);
 				///usefull information, exceptions, what cannot be used
 				this->print("                            no longer then " + std::to_string(MAX_PROCESS_NAME_LENGHT) + " chars, no spaces, at least one letter.", 6);
-		
+
 				//var 2
 				///variable name type and description
 				this->print("\n  pSource", 11);
@@ -154,7 +396,7 @@ void Shell::run()
 				this->print("   for file in project directory.", 14);
 				this->print("\n    \"C:\\dir\\\"filename\"", 11);
 				this->print("   for specifing different path", 14);
-			
+
 
 
 				//example
@@ -168,7 +410,7 @@ void Shell::run()
 				this->print(" C:\\Bar\\test", 11);
 				this->printLine("  (creates a new process \"foo\" from source code in test.txt located in specified directory)", 14);
 			}
-			else if (helpFor == "kill") 
+			else if (helpFor == "kill")
 			{
 				//DESCRIPTION
 				this->printLine("DESCRIPTION: ", 13);
@@ -269,7 +511,7 @@ void Shell::run()
 				this->printLine("  (prints only the running process)", 14);
 			}
 			//unrecognized help command
-			else 
+			else
 			{
 				this->printLine("Help for this command does not exist.", 4);
 			}
@@ -278,14 +520,14 @@ void Shell::run()
 		else if (std::regex_match(command, match, std::regex("^(proc)([ ])([0-9]+)$")))
 		{
 			//print info with pid
-			std::shared_ptr<PCB> temp= processManager->getPCBByPID(std::stoi(match[3]));
+			std::shared_ptr<PCB> temp = processManager->getPCBByPID(std::stoi(match[3]));
 			if (temp == nullptr) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(38); }
 			else
 			{
 				this->print("PROCESS INFORMATION ", 13);
 				printProcessInformation(temp);
 			}
-			}
+		}
 		else if (std::regex_match(command, match, std::regex("^(proc)([ ])([a-z0-9]+)$")))
 		{
 			//print info with name
@@ -330,23 +572,23 @@ void Shell::run()
 		else if (std::regex_match(command, match, std::regex("^(cat[ ]+)([0-9a-zA-z]+)( -[ah])?$")))
 		{
 			std::pair<uint8_t, std::string> code = fileManager->cat(match[2]);
-		
-			if (code.first == 0) 
+
+			if (code.first == 0)
 			{
 				//print in hexa
 				if (match[3] == " -h")
 				{
-					for (auto cha : code.second) 
+					for (auto cha : code.second)
 					{
-						if(cha!='\n'){ this->print(toHexString(cha), 14); }
+						if (cha != '\n') { this->print(toHexString(cha), 14); }
 						else { std::cout << std::endl; }
 					}
-					std::cout <<std::endl;
+					std::cout << std::endl;
 				}
 				//print as string
 				else { this->printLine(code.second, 14); }
 			}
-			else{ this->printCode(code.first); }
+			else { this->printCode(code.first); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^wc[ ]+[0-9a-zA-z]+$")))
 		{
@@ -486,26 +728,26 @@ void Shell::run()
 				if (command[0] == ' ')command.erase(0, 1);
 				else break;
 			}
-			argument = command+".txt";
+			argument = command + ".txt";
 
 			std::pair<uint8_t, unsigned int> errorCode = this->processManager->fork(filename, 0, argument);
 
-			if (errorCode.first != 0){ this->printLine("AN ERROR OCCURED!",4); this->printCode(errorCode.first);}
+			if (errorCode.first != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode.first); }
 			else
 			{
 				this->print("New process created with PID = ", 14);
 				this->printLine(errorCode.second, 3);
 			}
 		}
-		else if (std::regex_match(command,match, std::regex("^(kill)([ ])([0-9]+)$")))
+		else if (std::regex_match(command, match, std::regex("^(kill)([ ])([0-9]+)$")))
 		{
 			//delete with pid
-			uint8_t errorCode= processManager->deleteProcess(std::stoi(match[3]));
-			if(errorCode!=0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			uint8_t errorCode = processManager->deleteProcess(std::stoi(match[3]));
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
 			else
 			{
 				this->print("Process ", 14);
-				this->print("[PID: "+match[3].str()+"]", 11);
+				this->print("[PID: " + match[3].str() + "]", 11);
 				this->printLine(" has been deleted,", 14);
 			}
 		}
@@ -525,19 +767,19 @@ void Shell::run()
 		{
 			uint8_t errorCode = this->scheduler->schedule();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
-			
+
 			errorCode = this->interpreter->go();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
 			else
 			{
-			this->printLine("One instruction completed.", 14);
+				this->printLine("One instruction completed.", 14);
 			}
 
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
 			this->print("PROCESSES TREE", 13);
-			this->printWithPadding("\n"+processManager->displayTree(), 14,2);
+			this->printWithPadding("\n" + processManager->displayTree(), 14, 2);
 			//stare kolorki nie wiem co to xD
 		/*	std::cout << "ps" << std::endl;
 			for (unsigned int i = 0; i < 255; i++)
@@ -549,21 +791,21 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps[ ]-[wra]$")))
 		{
 			std::string temp = "";
-			if(command.at(command.length()-1)=='w')
-			{ 
+			if (command.at(command.length() - 1) == 'w')
+			{
 				this->print("WAITING PROCESSES", 13);
 				temp = this->processManager->displayWithState(PCB::ProcessState::WAITING);
 				this->printLine(temp, 14);
 				if (temp == "") { this->printLine("<No processes found>", 4); }
 			}
-			else if (command.at(command.length() - 1) == 'r') 
-			{ 
+			else if (command.at(command.length() - 1) == 'r')
+			{
 				this->print("RUNNING PROCESS", 13);
 				temp = this->processManager->displayWithState(PCB::ProcessState::RUNNING);
 				this->printLine(temp, 14);
-				if(temp==""){ this->printLine("<No processes found>", 4); }
+				if (temp == "") { this->printLine("<No processes found>", 4); }
 			}
-			else if (command.at(command.length() - 1) == 'a') 
+			else if (command.at(command.length() - 1) == 'a')
 			{
 				this->print("READY PROCESSES", 13);
 				temp = this->processManager->displayWithState(PCB::ProcessState::READY);
@@ -613,48 +855,48 @@ void Shell::run()
 		}
 		else if (std::regex_match(command, match, std::regex("^(p vm)( -[dh])?$")))
 		{
-				this->printLine("DC QUEUE", 14);
-				this->print("FRAME NUMBER    ", 13);
-				this->printLine("REFERENCE BIT", 13);
-				for (auto& pair : virtualMemory->queue)
-				{
-					this->print("     ", 14);
-					this->print(int(pair.first), 14);
-					this->print("               ", 14);
-					this->printLine(int(pair.second), 14);
-				}
-				std::cout << std::endl;
+			this->printLine("DC QUEUE", 14);
+			this->print("FRAME NUMBER    ", 13);
+			this->printLine("REFERENCE BIT", 13);
+			for (auto& pair : virtualMemory->queue)
+			{
+				this->print("     ", 14);
+				this->print(int(pair.first), 14);
+				this->print("               ", 14);
+				this->printLine(int(pair.second), 14);
+			}
+			std::cout << std::endl;
 
-				this->printLine("VIRTUAL MEMORY CONTENT", 14);
-				this->print("PID   ", 13);
-				//print as decimal if specified
-				if (match[2] == " -d") { this->printLine("PAGE CONTENT [IN DECIMAL]", 13); }
-				//else print as hexa
-				else { this->printLine("PAGE CONTENT [IN HEXA]", 13); }
-	
+			this->printLine("VIRTUAL MEMORY CONTENT", 14);
+			this->print("PID   ", 13);
+			//print as decimal if specified
+			if (match[2] == " -d") { this->printLine("PAGE CONTENT [IN DECIMAL]", 13); }
+			//else print as hexa
+			else { this->printLine("PAGE CONTENT [IN HEXA]", 13); }
 
-				for (auto& pair : virtualMemory->swapFile)
+
+			for (auto& pair : virtualMemory->swapFile)
+			{
+				for (auto& page : pair.second)
 				{
-					for (auto& page : pair.second)
+					std::cout << " ";
+					this->print(pair.first, 9);
+
+					std::cout << "    ";
+					for (unsigned int i = 0; i < 16; i++)
 					{
-						std::cout << " ";
-						this->print(pair.first, 9);
-
-						std::cout << "    ";
-						for (unsigned int i = 0; i < 16; i++)
-						{
-							//print as decimal if specified
-							if (match[2] == " -d") { this->print(std::to_string(page.data[i]), 14); }
-							//else print as hexa
-							else { this->print(toHexString(page.data[i]), 14); }
-							this->print(" ", 14);
-						}
-						std::cout << std::endl;
+						//print as decimal if specified
+						if (match[2] == " -d") { this->print(std::to_string(page.data[i]), 14); }
+						//else print as hexa
+						else { this->print(toHexString(page.data[i]), 14); }
+						this->print(" ", 14);
 					}
 					std::cout << std::endl;
 				}
+				std::cout << std::endl;
+			}
 		}
-		else if (std::regex_match(command,match, std::regex("^(p ram)( -[dh])?$")))
+		else if (std::regex_match(command, match, std::regex("^(p ram)( -[dh])?$")))
 		{
 			this->printLine("RAM CONTENT", 14);
 			this->print("FRAME NUMBER    ", 13);
@@ -671,9 +913,9 @@ void Shell::run()
 				{
 					std::string temp = "";
 					//print in decimal
-					if (match[2] == " -d") { temp = std::to_string(memoryManager->ram[(PAGE_SIZE*i) + j]); }
+					if (match[2] == " -d") { temp = std::to_string(memoryManager->ram[(PAGE_SIZE * i) + j]); }
 					//print in hexa
-					else { temp = toHexString(memoryManager->ram[(PAGE_SIZE*i) + j]); }
+					else { temp = toHexString(memoryManager->ram[(PAGE_SIZE * i) + j]); }
 
 					this->print(temp, 14);
 					int spaceNumber = 4 - temp.length();
@@ -693,25 +935,25 @@ void Shell::run()
 			std::cout << std::endl;
 
 			this->print("CURRENTLY RUNNING: ", 13);
-			if(RUNNING != NULL)
+			if (RUNNING != NULL)
 			{
 				this->print(RUNNING->getName(), 14);
 				this->print(" [PID= ", 14);
 				this->print(RUNNING->getPID(), 11);
-				this->print("]",14);
-				if (!RUNNING->getHasPID(0)) 
+				this->print("]", 14);
+				if (!RUNNING->getHasPID(0))
 				{
 					this->print(" (Runs until Counter= ", 14);
 					this->print(RUNNING->counter, 11);
 					this->print(")", 14);
 				}
-				else 
+				else
 				{
 					this->print(" (Runs until any", 14);
 					this->print("OTHER PROCESS", 11);
 					this->print("is added)", 14);
 				}
-			
+
 			}
 			else { this->print("<none>", 4); }
 			std::cout << std::endl;
@@ -732,7 +974,7 @@ void Shell::run()
 			{
 
 				//print Number first
-				this->print(" " + std::to_string(i+1), 3);
+				this->print(" " + std::to_string(i + 1), 3);
 
 				unsigned int spaceDelay = 20;
 
@@ -744,13 +986,13 @@ void Shell::run()
 				{
 					this->print((*scheduler->active)[i]->getName(), 2);
 					this->print(" [", 2);
-					this->print(std::to_string((*scheduler->active)[i]->priority),10 );
-					this->print( "]", 2);
+					this->print(std::to_string((*scheduler->active)[i]->priority), 10);
+					this->print("]", 2);
 					//prepare spaces between the seconds and third row
 					spaceDelay -= ((*scheduler->active)[i]->getName().length() + 5);
 				}
 				//if there are no elements in this collumn at all
-				if (i ==0 && scheduler->active->size() == 0) { this->print("<none>", 2); spaceDelay -= 6; }
+				if (i == 0 && scheduler->active->size() == 0) { this->print("<none>", 2); spaceDelay -= 6; }
 
 				//position the elements in third row
 				for (unsigned int j = 0; j < spaceDelay; j++)this->print(" ", 6);
@@ -758,18 +1000,18 @@ void Shell::run()
 				//PRINT EXPIRED
 				if (i < scheduler->expired->size())
 				{
-					this->print((*scheduler->expired)[i]->getName(), 4);	
+					this->print((*scheduler->expired)[i]->getName(), 4);
 				}
 				//if there are no elements in this collumn at all
-				if (i ==0 && scheduler->expired->size() == 0) { this->print("<none>", 4);}
-	
+				if (i == 0 && scheduler->expired->size() == 0) { this->print("<none>", 4); }
+
 				//go to next line
 				std::cout << std::endl;
 			}
 
-			if(maxSize ==0)
-			{ 
-				this->print("     <none>", 2); 
+			if (maxSize == 0)
+			{
+				this->print("     <none>", 2);
 				for (unsigned int j = 0; j < 14; j++)this->print(" ", 6);
 				this->print("<none>", 4);
 				std::cout << std::endl;
@@ -799,7 +1041,7 @@ void Shell::run()
 		}
 		else
 		{
-		this->printLine("UNRECOGNISED COMMAND",4);
+			this->printLine("UNRECOGNISED COMMAND", 4);
 		}
 	}
 }
@@ -833,7 +1075,7 @@ void Shell::printWithPadding(T str, unsigned int color, unsigned int spaces)
 	for (int i = 0; i < spaces; i++) { padding.append(" "); }
 
 	//output with padding added to each line
-	for (auto s : strings) 
+	for (auto s : strings)
 	{
 		std::cout << padding + s << std::endl;
 	}
@@ -869,8 +1111,8 @@ void Shell::printProcessInformation(std::shared_ptr<PCB> PCB)
 	print("  IC: ", 14);
 	printLine(PCB->getInstructionCounter(), 3);
 
-	print("  Registers: ", 14); 
-	print("[",14);
+	print("  Registers: ", 14);
+	print("[", 14);
 	print(std::to_string(PCB->getRegisterA()), 3);
 	print("]", 14);
 	print("[", 14);
@@ -950,7 +1192,7 @@ void Shell::printCode(uint8_t code)
 		std::cout << "CODE 40 : ERROR_PM_CANNOT_OPEN_SOURCE_CODE_FILE" << std::endl;
 		break;
 	case 41:
-		std::cout<< "CODE 41 : ERROR_PM_CODE_DOESNT_FIT_INTO_NUMBER_OF_DECLARED_PAGES" << std::endl;
+		std::cout << "CODE 41 : ERROR_PM_CODE_DOESNT_FIT_INTO_NUMBER_OF_DECLARED_PAGES" << std::endl;
 		break;
 	case 42:
 		std::cout << "CODE 41 : ERROR_PM_PROCESS_NAME_HAS_TO_CONTAIN_AT_LEAST_ONE_LETTER" << std::endl;
@@ -1008,5 +1250,5 @@ template <typename I> std::string Shell::toHexString(I w) {
 		rc[i] = digits[(temp >> j) & 0x0f];
 
 	if (w < 0) { return "-" + rc; }
-	return " "+rc;
+	return " " + rc;
 }
