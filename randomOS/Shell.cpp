@@ -127,7 +127,7 @@ void Shell::run()
 			{
 				//DESCRIPTION
 				this->printLine("DESCRIPTION: ", 13);
-				this->print("  deletes file.\n", 14);
+				this->print("  deletes a specified file.\n", 14);
 
 				//USAGE
 				this->printLine("USAGE: ", 13);
@@ -137,7 +137,7 @@ void Shell::run()
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description                                         Details", 5);
+				this->printLine("\n  Name      Type       Description", 5);
 
 				//var 1
 				///variable name and what it is
@@ -145,8 +145,6 @@ void Shell::run()
 				this->print("     <string>", 3);
 				this->print("   the name of the file.", 14);
 				///usefull information, exceptions, what cannot be used
-
-
 
 
 				//example
@@ -159,7 +157,7 @@ void Shell::run()
 			{
 				//DESCRIPTION
 				this->printLine("DESCRIPTION: ", 13);
-				this->print("  creates file.\n", 14);
+				this->print("  creates an empty file.\n", 14);
 
 				//USAGE
 				this->printLine("USAGE: ", 13);
@@ -169,7 +167,7 @@ void Shell::run()
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description                                         Details", 5);
+				this->printLine("\n  Name      Type       Description", 5);
 
 				//var 1
 				///variable name and what it is
@@ -177,9 +175,6 @@ void Shell::run()
 				this->print("     <string>", 3);
 				this->print("   the name of the file.", 14);
 				///usefull information, exceptions, what cannot be used
-
-
-
 
 				//example
 				this->printLine("\n\n  Examples", 5);
@@ -191,17 +186,18 @@ void Shell::run()
 			{
 				//DESCRIPTION
 				this->printLine("DESCRIPTION: ", 13);
-				this->print("  prints file to console.\n", 14);
+				this->print("  prints file to the console.\n", 14);
 
 				//USAGE
 				this->printLine("USAGE: ", 13);
 				//general form of the command
 				this->print("  >cat", 14);
 				this->print(" [fName]", 12);
+				this->print(" <fState>", 11);
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description                                         Details", 5);
+				this->printLine("\n  Name      Type       Description", 5);
 
 				//var 1
 				///variable name and what it is
@@ -210,10 +206,10 @@ void Shell::run()
 				this->print("   the name of the file.\n", 14);
 				//var 2
 				///variable name and what it is
-				this->print("  fState", 12);
-				this->print("     <param>", 3);
-				this->print("   specifies output type.", 14);
-				this->print("\n    -h", 12);
+				this->print("  fState", 11);
+				this->print("    <param>", 3);
+				this->print("    specifies output type.", 14);
+				this->print("\n    -h", 11);
 				this->print(" printout character hex codes.", 14);
 				///usefull information, exceptions, what cannot be used
 
@@ -225,7 +221,7 @@ void Shell::run()
 
 				this->print("  >cat", 14);
 				this->print(" foo", 12);
-				this->print(" -h", 12);
+				this->print(" -h", 11);
 				this->printLine("  (prints file \"foo\" as hex numbers)", 14);
 			}
 			else if (helpFor == "mv")
@@ -239,11 +235,11 @@ void Shell::run()
 				//general form of the command
 				this->print("  >mv", 14);
 				this->print(" [fName]", 12);
-				this->print(" [fName2]", 12);
+				this->print(" [fName2]", 11);
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description                                         Details", 5);
+				this->printLine("\n  Name      Type       Description", 5);
 
 				//var 1
 				///variable name and what it is
@@ -252,8 +248,8 @@ void Shell::run()
 				this->print("   the name of the file before renaming.\n", 14);
 				//var 2
 				///variable name and what it is
-				this->print("  fName2", 12);
-				this->print("     <string>", 3);
+				this->print("  fName2", 11);
+				this->print("    <string>", 3);
 				this->print("   the name of the file after renaming.\n", 14);
 				///usefull information, exceptions, what cannot be used
 
@@ -261,7 +257,7 @@ void Shell::run()
 				this->printLine("\n\n  Examples", 5);
 				this->print("  >mv", 14);
 				this->print(" foo", 12);
-				this->print(" example", 12);
+				this->print(" example", 11);
 				this->printLine("  (renames file \"foo\" to \"example\")", 14);
 			}
 			else if (helpFor == "wc")
@@ -278,7 +274,7 @@ void Shell::run()
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description                                         Details", 5);
+				this->printLine("\n  Name      Type       Description", 5);
 
 				//var 1
 				///variable name and what it is
@@ -304,7 +300,7 @@ void Shell::run()
 			//general form of the command
 			this->print("  >append", 14);
 			this->print(" [fName]", 12);
-			this->print(" [text]", 12);
+			this->print(" [text]", 11);
 			this->print("\n", 14);
 			//variables explained
 			//table header
@@ -313,14 +309,14 @@ void Shell::run()
 			//var 1
 			///variable name and what it is
 			this->print("  fName", 12);
-			this->print("     <string>", 3);
+			this->print("    <string>", 3);
 			this->print("   the name of the file.\n", 14);
 			//var 2
 			///variable name and what it is
-			this->print("  text", 12);
+			this->print("  text", 11);
 			this->print("     <string>", 3);
-			this->print("   the name of the file after renaming.", 14);
-			this->print("                 can contain only letters and digits", 6);
+			this->print("    the name of the file after renaming.", 14);
+			this->print("                can contain only letters and digits", 6);
 
 			///usefull information, exceptions, what cannot be used
 
@@ -328,7 +324,7 @@ void Shell::run()
 			this->printLine("\n\n  Examples", 5);
 			this->print("  >append", 14);
 			this->print(" foo", 12);
-			this->print(" abcd", 12);
+			this->print(" abcd", 11);
 			this->printLine("  (appends \"abcd\" to file \"foo\")", 14);
 			}
 			else if (helpFor == "clear")
@@ -345,7 +341,7 @@ void Shell::run()
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description                                         Details", 5);
+				this->printLine("\n  Name      Type       Description", 5);
 
 				//var 1
 				///variable name and what it is
@@ -450,7 +446,7 @@ void Shell::run()
 				this->printLine("\nUSAGE: ", 13);
 				//general form of the command
 				this->print("  >proc", 14);
-				this->print(" [pName]", 12);
+				this->print(" [pQual]", 12);
 				this->print("\n", 14);
 				//variables explained
 				//table header
@@ -458,7 +454,7 @@ void Shell::run()
 
 				//var 1
 				///variable name and what it is
-				this->print("  pName", 12);
+				this->print("  pQual", 12);
 				this->print("     <string>", 3);
 				this->print("   the name of the process that is to be displayed.", 14);
 				this->print("\n            <int>", 3);
@@ -509,6 +505,83 @@ void Shell::run()
 				this->print("  >ps", 14);
 				this->print(" -r", 12);
 				this->printLine("  (prints only the running process)", 14);
+			}
+			else if (helpFor == "p ram")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  prints the contents of RAM memory. In HEXa by default, but can be modified using the parameter.", 14);
+	
+				//USAGE
+				this->printLine("\nUSAGE: ", 13);
+				//general form of the command
+				this->print("  >p ram", 14);
+				this->print(" <oType>", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  oType", 12);
+				this->print("     <param>", 3);
+				this->print("    determines the type of output.", 14);
+				this->print("\n    -d", 12);
+				this->print(" output in decimal.", 14);
+				this->print("\n    -h", 12);
+				this->print(" output in hexa.", 14);
+
+				//example
+				this->printLine("\n\n  Example", 5);
+				this->print("  >p ram", 14);
+				this->printLine("  (prints RAM in default (HEX) format)", 14);
+				this->print("  >p ram", 14);
+				this->print(" -d", 12);
+				this->printLine("  (prints RAM in decimal format)", 14);
+			}
+			else if (helpFor == "p vm")
+			{
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  prints the contents of virtual memory. In HEXa by default, but can be modified using the parameter.", 14);
+
+				//USAGE
+				this->printLine("\nUSAGE: ", 13);
+				//general form of the command
+				this->print("  >p vm", 14);
+				this->print(" <oType>", 12);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description", 5);
+
+				//var 1
+				///variable name and what it is
+				this->print("  oType", 12);
+				this->print("     <param>", 3);
+				this->print("    determines the type of output.", 14);
+				this->print("\n    -d", 12);
+				this->print(" output in decimal.", 14);
+				this->print("\n    -h", 12);
+				this->print(" output in hexa.", 14);
+
+				//example
+				this->printLine("\n\n  Example", 5);
+				this->print("  >p vm", 14);
+				this->printLine("  (prints vMemory in default (HEX) format)", 14);
+				this->print("  >p ram", 14);
+				this->print(" -d", 12);
+				this->printLine("  (prints vMemory in decimal format)", 14);
+			}
+			else if (helpFor == "p sch")
+			{
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  print scheduler contents. Shows the currently running process and both of the scheduler queues.\n", 14);
+
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >p sch\n", 14);
 			}
 			//unrecognized help command
 			else
@@ -783,14 +856,6 @@ void Shell::run()
 			this->printWithPadding("\n"+processManager->displayTree(), 14,2);
 
 			this->printWithPadding("\n" + processManager->displayTree(), 14, 2);
-			//stare kolorki nie wiem co to xD
-		/*	std::cout << "ps" << std::endl;
-			for (unsigned int i = 0; i < 255; i++)
-			{
-				std::cout << i;
-				this->printLine("------------", i);
-			}*/
-
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps[ ]-[wra]$")))
 		{
