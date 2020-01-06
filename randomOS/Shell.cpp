@@ -538,13 +538,6 @@ void Shell::run()
 		{
 			this->print("PROCESSES TREE", 13);
 			this->printWithPadding("\n"+processManager->displayTree(), 14,2);
-			//stare kolorki nie wiem co to xD
-		/*	std::cout << "ps" << std::endl;
-			for (unsigned int i = 0; i < 255; i++)
-			{
-				std::cout << i;
-				this->printLine("------------", i);
-			}*/
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps[ ]-[wra]$")))
 		{
@@ -708,7 +701,7 @@ void Shell::run()
 				else 
 				{
 					this->print(" (Runs until any", 14);
-					this->print("OTHER PROCESS", 11);
+					this->print(" OTHER PROCESS ", 11);
 					this->print("is added)", 14);
 				}
 			
@@ -982,10 +975,10 @@ void Shell::printCode(uint8_t code)
 		std::cout << "CODE 200 : ERROR_UNKNOWN_INSTRUCTION" << std::endl;
 		break;
 	case 201:
-		std::cout << "CODE 201 : ERROR_NUMBER_TO_LARGE" << std::endl;
+		std::cout << "CODE 201 : ERROR_NUMBER_TOO_LARGE" << std::endl;
 		break;
 	case 202:
-		std::cout << "CODE 202 : ERROR_NUMBER_TO_SMALL" << std::endl;
+		std::cout << "CODE 202 : ERROR_NUMBER_TOO_SMALL" << std::endl;
 		break;
 	case 203:
 		std::cout << "CODE 203 : ERROR_DIVIDING_BY_ZERO" << std::endl;
