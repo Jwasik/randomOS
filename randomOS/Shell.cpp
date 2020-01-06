@@ -616,17 +616,21 @@ void Shell::run()
 		{
 			auto files = fileManager->ls();
 
-			this->printLine(" DIRECTORY: \\HOME>\n", 14);
-
-			this->printLine(" TYPE: FILENAME:             SIZE:", 14);
-			for (const auto& filename : files)
+			this->printLine(" DIRECTORY: \\HOME>", 14);
+			if (files.size() == 0) { this->printLine("  <the directory is empty>", 4); }
+			else 
 			{
-				this->print(" <TXT> ", 14);
-				this->print(char(175), 14);
-				this->print(" " + filename, 14);
+				this->printLine("",0);
+				this->printLine(" TYPE: FILENAME:             SIZE:", 14);
+				for (const auto& filename : files)
+				{
+					this->print(" <TXT> ", 14);
+					this->print(char(175), 14);
+					this->print(" " + filename, 14);
 
-				for (unsigned int i = filename.length(); i < 20; i++)std::cout << " ";
-				this->printLine(fileManager->wc(filename).second, 14);
+					for (unsigned int i = filename.length(); i < 20; i++)std::cout << " ";
+					this->printLine(fileManager->wc(filename).second, 14);
+				}
 			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^rm[ ]+[0-9a-zA-z]+$")))
@@ -634,26 +638,37 @@ void Shell::run()
 			command.erase(0, 3);
 			fileManager->closeFile(command, 0);
 			uint8_t code = fileManager->deleteFile(command);
-			this->printCode(code);
+			if (code == 0)
+			{
+				this->print("File ", 14);
+				this->print(command, 12);
+				this->printLine(" has been removed.", 14);
+			}
+			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^touch[ ]+[0-9a-zA-z]+$")))
 		{
 			command.erase(0, 6);
 			uint8_t code = fileManager->createFile(command);
-			this->printCode(code);
+			if (code == 0)
+			{
+				this->print("File ", 14);
+				this->print(command, 12);
+				this->printLine(" has been created.", 14);
+			}
+			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); }
 		}
 		else if (std::regex_match(command, match, std::regex("^(cat[ ]+)([0-9a-zA-z]+)( -[ah])?$")))
 		{
 			std::pair<uint8_t, std::string> code = fileManager->cat(match[2]);
 			
-
 			if (code.first == 0)
 			{
 				this->print("FILENAME: ", 13);
 				this->printLine(match[2], 14);
 				this->printLine("CONTENTS ", 13);
 				//check if it's an empty file
-				if (code.second == "") { this->printLine("<the file is empty>", 11); }
+				if (code.second == "") { this->printLine("<the file is empty>", 4); }
 				else 
 				{
 					//print in hexa
@@ -671,7 +686,7 @@ void Shell::run()
 				}
 					
 			}
-			else { this->printCode(code.first); }
+			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code.first); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^wc[ ]+[0-9a-zA-z]+$")))
 		{
@@ -687,8 +702,15 @@ void Shell::run()
 			filename = command;
 
 			std::pair<uint8_t, unsigned int> code = fileManager->wc(filename);
-			if (code.first == 0)this->printLine(code.second, 14);
-			else this->printCode(code.first);
+			if (code.first == 0) 
+			{ 
+				this->print("File ", 14);
+				this->print(filename, 12);
+				this->print(" has ", 14);
+				this->print(code.second, 11); 
+				this->printLine(" characters. ", 14);
+			}
+			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code.first); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^mv[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-Z]+$")))
 		{
@@ -719,7 +741,15 @@ void Shell::run()
 			argument = command;
 
 			uint8_t code = fileManager->rename(filename, argument);
-			this->printCode(code);
+			if (code == 0)
+			{
+				this->print("The file ", 14);
+				this->print(filename, 12);
+				this->print(" has been renamed to ", 14);
+				this->print(argument, 11);
+				this->printLine(".", 14);
+			}
+			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^append[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-z]+$")))
 		{
@@ -749,17 +779,20 @@ void Shell::run()
 			}
 			argument = command;
 
+			uint8_t code = 0;
 			for (auto& letter : argument)
 			{
-				uint8_t code = fileManager->append(filename, letter);
-				if (code != 0)
-				{
-					this->printCode(code);
-					break;
-				}
+				code = fileManager->append(filename, letter);
 			}
-			this->printCode(0);
-
+			if (code == 0)
+			{
+				this->print("The string \"", 14);
+				this->print(argument, 11);
+				this->print("\" has been added to ", 14);
+				this->print(filename, 12);
+				this->printLine(".", 14);
+			}
+			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^test$")))
 		{
@@ -781,7 +814,13 @@ void Shell::run()
 			filename = command;
 
 			uint8_t code = fileManager->clearFile(filename);
-			this->printCode(code);
+			if (code == 0)
+			{
+				this->print("File ", 14);
+				this->print(filename, 12);
+				this->printLine(" has been cleared.", 14);
+			}
+			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); };
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ]+[a-z0-9]+[ ]+.+$")))
 		{
