@@ -920,12 +920,12 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
 			uint8_t errorCode = this->scheduler->schedule();
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); this->printCode(errorCode); }
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
 
 			std::pair < uint8_t, std::string> errorC = this->interpreter->go();
 			if (errorC.first != 0) {
-				this->printLine("AN ERROR OCCURED!", 12);
-				if (errorC.second != "")
+				this->printLine("AN ERROR OCCURED IN INTERPRETER!", 12);
+				if (errorC.second != "" || errorC.second != "ERR")
 				{
 					this->print("(When trying to execute ", 14);
 					this->print(errorC.second, 11);
@@ -954,26 +954,41 @@ void Shell::run()
 				count += (command[i] - '0');
 			}
 			this->print("EXECUTING ", 13);
-			this->print(count, 12);
+			this->print(count, 9);
 			this->printLine(" INSTRUCTIONS ", 13);
 			for (unsigned int i = 0; i < count; i++)
 			{
 				uint8_t errorCode = this->scheduler->schedule();
-				if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 4); this->printCode(errorCode); }
+				if (errorCode != 0) 
+				{ 
+					this->print("  " + std::to_string(i+1), 12);
+					this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); 
+					this->print("    ", 0);
+					this->printCode(errorCode); 
+				}
 
 				std::pair < uint8_t, std::string> errorC = this->interpreter->go();
 				if (errorC.first != 0)
 				{
-					this->printLine("AN ERROR OCCURED IN INTERPRETER!", 4);
+					this->print("  " + std::to_string(i+1), 12);
+					this->printLine(" AN ERROR OCCURED IN INTERPRETER!", 12);
+					if (errorC.second != "" || errorC.second != "ERR")
+					{
+						this->print("    (When trying to execute ", 14);
+						this->print(errorC.second, 11);
+						this->print(" in  ", 14);
+						this->print(RUNNING->getName(), 12);
+						this->printLine(")", 14);
+					}
+					this->print("    ",0);
 					this->printCode(errorC.first);
-					this->print("Tried to execute instruction: ", 14);
-					this->printLine(errorC.second, 11);
 				}
 				else
 				{
-					this->print("Currently running: ", 14);
+					this->print("  "+std::to_string(i+1), 9);
+					this->print(" Currently running: ", 14);
 					this->printLine(RUNNING->getName(), 12);
-					this->print("Completed instruction: ", 14);
+					this->print("    Completed instruction: ", 14);
 					this->printLine(errorC.second, 11);
 				}
 			}
