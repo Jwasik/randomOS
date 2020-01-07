@@ -1242,7 +1242,7 @@ void Shell::run()
 			this->print("  No.  ", 11);
 			this->print("ACTIVE [PRIORITY]", 10);
 			this->print("    ", 10);
-			this->print("EXPIRED", 12);
+			this->print("EXPIRED [PRIORITY]", 12);
 			std::cout << std::endl;
 
 			//check which has more elements
@@ -1280,9 +1280,9 @@ void Shell::run()
 				if (i < scheduler->expired->size())
 				{
 					this->print((*scheduler->expired)[i]->getName(), 4);
-					this->print(" [", 2);
-					this->print(std::to_string((*scheduler->expired)[i]->priority), 10);
-					this->print("]", 2);
+					this->print(" [", 4);
+					this->print(std::to_string((*scheduler->expired)[i]->priority), 12);
+					this->print("]", 4);
 				}
 				//if there are no elements in this collumn at all
 				if (i == 0 && scheduler->expired->size() == 0) { this->print("<none>", 4); }
