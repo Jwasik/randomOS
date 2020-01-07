@@ -354,54 +354,61 @@ void Interpreter::OFI() {
 }
 
 void Interpreter::SFI() {
-	fileSystem->closeProcessFiles(PID);
+	std::string a = loadArgText(2);
+	fileSystem->closeFile(a, PID);
 }
 
 void Interpreter::EFI() {
-	int8_t& a = loadArgAdrOrReg();
-	//uint8_t error = fileSystem->writeToEndFile(a, PID);
-	//if (error != 0) throw error;
+	std::string a = loadArgText(2);
+	int8_t& b = loadArgAdrOrReg();
+	uint8_t error = fileSystem->writeToEndFile(b, PID, a);
+	if (error != 0) throw error;
 }
 
 void Interpreter::WFI() {
-	int8_t& a = loadArgAdrOrReg();
-	int8_t b = loadArgNum();
-	//uint8_t error = fileSystem->writeToFile(a, b, PID);
-	//if (error != 0) throw error;
+	std::string a = loadArgText(2);
+	int8_t& b = loadArgAdrOrReg();
+	int8_t c = loadArgNum();
+	uint8_t error = fileSystem->writeToFile(b, c, PID, a);
+	if (error != 0) throw error;
 }
 
 void Interpreter::PFI() {
-	int8_t& a = loadArgAdrOrReg();
+	std::string a = loadArgText(2);
 	int8_t& b = loadArgAdrOrReg();
-	//uint8_t error = fileSystem->writeToFile(a, b, PID);
-	//if (error != 0) throw error;
+	int8_t& c = loadArgAdrOrReg();
+	uint8_t error = fileSystem->writeToFile(b, c, PID, a);
+	if (error != 0) throw error;
 }
 
 void Interpreter::RFI() {
-	int8_t& a = loadArgAdrOrReg();
-	int8_t b = loadArgNum();
-	uint8_t error = fileSystem->readFile(a, b, 1, PID);
+	std::string a = loadArgText(2);
+	int8_t& b = loadArgAdrOrReg();
+	int8_t c = loadArgNum();
+	uint8_t error = fileSystem->readFile(b, c, 1, PID, a);
 	if (error != 0) throw error;
 }
 
 void Interpreter::AFI() {
-	int8_t& a = loadArgAdrOrReg();
+	std::string a = loadArgText(2);
 	int8_t& b = loadArgAdrOrReg();
-	uint8_t error = fileSystem->readFile(a, b, 1, PID);
+	int8_t& c = loadArgAdrOrReg();
+	uint8_t error = fileSystem->readFile(b, c, 1, PID, a);
 	if (error != 0) throw error;
 }
 
 void Interpreter::LFI() {
-	int8_t& a = loadArgAdrOrReg();
-	uint8_t error = fileSystem->wc(PID).first;
+	std::string a = loadArgText(2);
+	int8_t& b = loadArgAdrOrReg();
+	uint8_t error = fileSystem->wc(a).first;
 	if (error != 0) throw error;
-	a = fileSystem->wc(PID).second;
+	b = fileSystem->wc(PID).second;
 }
 
 void Interpreter::CPR() {
 	std::string a = loadArgText(2);
 	std::string b = loadArgText(2);
-	uint8_t error = processManager->fork(a, PID, b).first;
+	uint8_t error = processManager->fork(a, PID, b + ".txt").first;
 	if (error != 0) throw error;
 }
 
@@ -508,7 +515,7 @@ std::vector<int8_t> Interpreter::convertToMachine(std::string m) {
 			else if (arg[i] == "BX") machine.push_back(-0x02);
 			else if (arg[i] == "CX") machine.push_back(-0x03);
 			else if (arg[i] == "DX") machine.push_back(-0x04);
-			else if (arg[i][0] >= 65 && arg[i][0] <= 90) {
+			else if ((arg[i][0] >= 65 && arg[i][0] <= 90) || (arg[i][0] >= 97 && arg[i][0] <= 122)) {
 				machine.push_back(arg[i][0]);
 				machine.push_back(arg[i][1]);
 			}
