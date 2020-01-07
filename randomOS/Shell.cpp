@@ -956,14 +956,18 @@ void Shell::run()
 			this->print("EXECUTING ", 13);
 			this->print(count, 9);
 			this->printLine(" INSTRUCTIONS ", 13);
+			this->printLine("  No. Details",5 );
 			for (unsigned int i = 0; i < count; i++)
 			{
 				uint8_t errorCode = this->scheduler->schedule();
 				if (errorCode != 0) 
 				{ 
 					this->print("  " + std::to_string(i+1), 12);
-					this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); 
-					this->print("    ", 0);
+					//position the string appropriately
+					std::string spaces = "    ";
+					for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+					this->printLine(spaces+"AN ERROR OCCURED IN SCHEDULER!", 12);
+					this->print("     ", 0);
 					this->printCode(errorCode); 
 				}
 
@@ -971,24 +975,31 @@ void Shell::run()
 				if (errorC.first != 0)
 				{
 					this->print("  " + std::to_string(i+1), 12);
-					this->printLine(" AN ERROR OCCURED IN INTERPRETER!", 12);
+					//position the string appropriately
+					std::string spaces = "    ";
+					for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+					this->printLine(spaces+"AN ERROR OCCURED IN INTERPRETER!", 12);
 					if (errorC.second != "" || errorC.second != "ERR")
 					{
-						this->print("    (When trying to execute ", 14);
+						this->print("      (When trying to execute ", 14);
 						this->print(errorC.second, 11);
 						this->print(" in  ", 14);
 						this->print(RUNNING->getName(), 12);
 						this->printLine(")", 14);
 					}
-					this->print("    ",0);
+					this->print("      ",0);
 					this->printCode(errorC.first);
 				}
 				else
 				{
 					this->print("  "+std::to_string(i+1), 9);
-					this->print(" Currently running: ", 14);
+					//position the string appropriately
+					std::string spaces = "    ";
+					for (int z = 0; z < std::to_string(i + 1).length(); z++){ if (spaces.length() > 0) { spaces.pop_back(); }}
+
+					this->print(spaces+"Currently running: ", 14);
 					this->printLine(RUNNING->getName(), 12);
-					this->print("    Completed instruction: ", 14);
+					this->print("      Completed instruction: ", 14);
 					this->printLine(errorC.second, 11);
 				}
 			}
