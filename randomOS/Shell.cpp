@@ -1254,6 +1254,9 @@ void Shell::run()
 				if (i < scheduler->expired->size())
 				{
 					this->print((*scheduler->expired)[i]->getName(), 4);
+					this->print(" [", 2);
+					this->print(std::to_string((*scheduler->expired)[i]->priority), 10);
+					this->print("]", 2);
 				}
 				//if there are no elements in this collumn at all
 				if (i == 0 && scheduler->expired->size() == 0) { this->print("<none>", 4); }
