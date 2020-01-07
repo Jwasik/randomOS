@@ -171,7 +171,7 @@ void Shell::run()
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description", 5);
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
 
 				//var 1
 				///variable name and what it is
@@ -179,6 +179,8 @@ void Shell::run()
 				this->print("     <string>", 3);
 				this->print("   the name of the file.", 14);
 				///usefull information, exceptions, what cannot be used
+				///usefull information, exceptions, what cannot be used
+				this->print("                               must be " + std::to_string(FileNameLenght) + " chars long, case sensitive.", 6);
 
 				//example
 				this->printLine("\n\n  Examples", 5);
@@ -660,7 +662,18 @@ void Shell::run()
 				this->print(command, 12);
 				this->printLine(" has been created.", 14);
 			}
-			else { this->printLine("AN ERROR OCCURED!", 12); this->printCode(code); }
+			else {
+				this->printLine("AN ERROR OCCURED!", 12); this->printCode(code); 
+				//print tip for innaproriate name lenght
+				if (code == 71) 
+				{
+					this->print("[", 14);
+					this->print("Tip: ", 13);
+					this->print("The fileName must be ", 14);
+					this->print(std::to_string(FileNameLenght), 11);
+					this->printLine(" chars long.]", 14);
+				}
+			}
 		}
 		else if (std::regex_match(command, match, std::regex("^(cat[ ]+)([0-9a-zA-z]+)( -[ah])?$")))
 		{
@@ -1428,6 +1441,9 @@ void Shell::printCode(uint8_t code)
 		break;
 	case 70:
 		std::cout << "CODE 70 : ERROR_FILE_IS_OPENED_CANNOT_DELETE" << std::endl;
+		break;
+	case 71:
+		std::cout << "CODE 71 : ERROR_INAPPROPRIATE_FILENAME_LENGHT" << std::endl;
 		break;
 	case 81:
 		std::cout << "CODE 81 : ERROR_PAGE_DOESNT_EXIST" << std::endl;

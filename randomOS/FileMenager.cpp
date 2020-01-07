@@ -20,7 +20,7 @@ File::File()
 
 int8_t FileMenager::createFile(std::string nazwa_pliku)
 {
-	if (nazwa_pliku.size() != 2) return ERROR_BAD_NAME_SIZE;
+	if (nazwa_pliku.size() != FileNameLenght) return ERROR_INAPPROPRIATE_FILENAME_LENGHT;
 	if (isNameColision(nazwa_pliku))//sprawdzam czy nie istnieje ju� plik o podanej nazwie
 	{
 		return ERROR_ALREADY_EXISTING_FILE; //istnieje plik o danej nazwie
