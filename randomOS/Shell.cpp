@@ -78,8 +78,8 @@ void Shell::run()
 			print("<COMMAND>", 9);
 			printLine(" --HELP\"", 14);
 			printLine("GENERAL COMMANDS", 13);
-			print("  POWEROFF    ", 9);printLine("- shutdown",14);
-			print("  CLEAN       ", 9);printLine("- clear console window", 14);
+			print("  POWEROFF    ", 9); printLine("- shutdown", 14);
+			print("  CLEAN       ", 9); printLine("- clear console window", 14);
 			print("  MAN         ", 9); printLine("- print a list of commands", 14);
 			printLine("FILE SYSTEM COMMANDS", 13);
 			print("  LS          ", 9); printLine("- print directory content", 14);
@@ -100,7 +100,9 @@ void Shell::run()
 			printLine("MODULE COMMANDS", 13);
 			print("  P RAM", 9); print(" -d -h ", 11); printLine("- print RAM content", 14);
 			print("  P VM", 9); print("  -d -h ", 11); printLine("- print vMemory content", 14);
+			print("  P FS", 9); print("  -d -h ", 11); printLine("- print File System content", 14);
 			print("  P SCH       ", 9); printLine("- print Scheduler state", 14);
+			print("  P SEM       ", 9); printLine("- print Semaphores states", 14);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^poweroff$")))
 		{
@@ -293,41 +295,41 @@ void Shell::run()
 			}
 			else if (helpFor == "append")
 			{
-			//DESCRIPTION
-			this->printLine("DESCRIPTION: ", 13);
-			this->print("  appends text to end of file.\n", 14);
+				//DESCRIPTION
+				this->printLine("DESCRIPTION: ", 13);
+				this->print("  appends text to end of file.\n", 14);
 
-			//USAGE
-			this->printLine("USAGE: ", 13);
-			//general form of the command
-			this->print("  >append", 14);
-			this->print(" [fName]", 12);
-			this->print(" [text]", 11);
-			this->print("\n", 14);
-			//variables explained
-			//table header
-			this->printLine("\n  Name      Type       Description                                         Details", 5);
+				//USAGE
+				this->printLine("USAGE: ", 13);
+				//general form of the command
+				this->print("  >append", 14);
+				this->print(" [fName]", 12);
+				this->print(" [text]", 11);
+				this->print("\n", 14);
+				//variables explained
+				//table header
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
 
-			//var 1
-			///variable name and what it is
-			this->print("  fName", 12);
-			this->print("    <string>", 3);
-			this->print("   the name of the file.\n", 14);
-			//var 2
-			///variable name and what it is
-			this->print("  text", 11);
-			this->print("     <string>", 3);
-			this->print("    the name of the file after renaming.", 14);
-			this->print("                can contain only letters and digits", 6);
+				//var 1
+				///variable name and what it is
+				this->print("  fName", 12);
+				this->print("    <string>", 3);
+				this->print("   the name of the file.\n", 14);
+				//var 2
+				///variable name and what it is
+				this->print("  text", 11);
+				this->print("     <string>", 3);
+				this->print("    the name of the file after renaming.", 14);
+				this->print("                can contain only letters and digits", 6);
 
-			///usefull information, exceptions, what cannot be used
+				///usefull information, exceptions, what cannot be used
 
-			//example
-			this->printLine("\n\n  Examples", 5);
-			this->print("  >append", 14);
-			this->print(" foo", 12);
-			this->print(" abcd", 11);
-			this->printLine("  (appends \"abcd\" to file \"foo\")", 14);
+				//example
+				this->printLine("\n\n  Examples", 5);
+				this->print("  >append", 14);
+				this->print(" foo", 12);
+				this->print(" abcd", 11);
+				this->printLine("  (appends \"abcd\" to file \"foo\")", 14);
 			}
 			else if (helpFor == "clear")
 			{
@@ -513,7 +515,7 @@ void Shell::run()
 				//DESCRIPTION
 				this->printLine("DESCRIPTION: ", 13);
 				this->print("  prints the contents of RAM memory. In HEXa by default, but can be modified using the parameter.", 14);
-	
+
 				//USAGE
 				this->printLine("\nUSAGE: ", 13);
 				//general form of the command
@@ -620,9 +622,9 @@ void Shell::run()
 
 			this->printLine(" DIRECTORY: \\HOME>", 14);
 			if (files.size() == 0) { this->printLine("  <the directory is empty>", 4); }
-			else 
+			else
 			{
-				this->printLine("",0);
+				this->printLine("", 0);
 				this->printLine(" TYPE: FILENAME:             SIZE:", 14);
 				for (const auto& filename : files)
 				{
@@ -663,7 +665,7 @@ void Shell::run()
 		else if (std::regex_match(command, match, std::regex("^(cat[ ]+)([0-9a-zA-z]+)( -[ah])?$")))
 		{
 			std::pair<uint8_t, std::string> code = fileManager->cat(match[2]);
-			
+
 			if (code.first == 0)
 			{
 				this->print("FILENAME: ", 13);
@@ -671,7 +673,7 @@ void Shell::run()
 				this->printLine("CONTENTS ", 13);
 				//check if it's an empty file
 				if (code.second == "") { this->printLine("<the file is empty>", 4); }
-				else 
+				else
 				{
 					//print in hexa
 					if (match[3] == " -h")
@@ -686,7 +688,7 @@ void Shell::run()
 					//print as string
 					else { this->printLine(code.second, 14); }
 				}
-					
+
 			}
 			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code.first); }
 		}
@@ -704,12 +706,12 @@ void Shell::run()
 			filename = command;
 
 			std::pair<uint8_t, unsigned int> code = fileManager->wc(filename);
-			if (code.first == 0) 
-			{ 
+			if (code.first == 0)
+			{
 				this->print("File ", 14);
 				this->print(filename, 12);
 				this->print(" has ", 14);
-				this->print(code.second, 11); 
+				this->print(code.second, 11);
 				this->printLine(" characters. ", 14);
 			}
 			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code.first); }
@@ -785,6 +787,22 @@ void Shell::run()
 			for (auto& letter : argument)
 			{
 				code = fileManager->append(filename, letter);
+				if (code != 0)
+				{
+					if (code == 65)
+					{
+						this->printLine("AN ERROR OCCURED!", 4);
+						this->print("The string \"", 14);
+						this->print(argument, 11);
+						this->print("\" has been", 14);
+						this->print(" PARTIALLY ", 12);
+						this->print("added to ", 14);
+						this->print(filename, 12);
+						this->printLine(".", 14);
+					}
+					this->printCode(code);
+					break;
+				}
 			}
 			if (code == 0)
 			{
@@ -794,7 +812,6 @@ void Shell::run()
 				this->print(filename, 12);
 				this->printLine(".", 14);
 			}
-			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^test$")))
 		{
@@ -892,14 +909,14 @@ void Shell::run()
 			uint8_t errorCode = this->scheduler->schedule();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
 
-			std::pair < uint8_t, std::string> errorC= this->interpreter->go();
+			std::pair < uint8_t, std::string> errorC = this->interpreter->go();
 			if (errorC.first != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorC.first); }
 			else
 			{
 				this->print("Currently running: ", 14);
 				this->printLine(RUNNING->getName(), 12);
 				this->print("Completed instruction: ", 14);
-				this->printLine(errorC.second,11);
+				this->printLine(errorC.second, 11);
 			}
 
 		}
@@ -907,7 +924,7 @@ void Shell::run()
 		{
 			this->print("PROCESSES TREE", 13);
 
-			this->printWithPadding("\n"+processManager->displayTree(), 14,2);
+			this->printWithPadding("\n" + processManager->displayTree(), 14, 2);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps[ ]-[wra]$")))
 		{
@@ -916,13 +933,13 @@ void Shell::run()
 			{
 				this->printLine("WAITING PROCESSES", 13);
 				temp = this->processManager->getAllWithState(PCB::ProcessState::WAITING);
-				for (auto p : temp) 
+				for (auto p : temp)
 				{
-					this->print("  -"+p->getName() +" [PID ", 14);
+					this->print("  -" + p->getName() + " [PID ", 14);
 					this->print(p->getPID(), 11);
-					this->printLine("]",14);
+					this->printLine("]", 14);
 				}
-				if (temp.size()==0) { this->printLine("<No processes found>", 4); }
+				if (temp.size() == 0) { this->printLine("<No processes found>", 4); }
 			}
 			else if (command.at(command.length() - 1) == 'r')
 			{
@@ -949,13 +966,17 @@ void Shell::run()
 			auto names = fileManager->ls();
 
 			std::string str;
-			for (unsigned int i = 0; i < Containers::bit_vector.size(); i++)
+			for (unsigned int i = 0; i < Containers::bit_vector.size() / 2; i++)
 			{
-				//this->print(i + '0', 14);
+				this->print(i, 14);
+				this->print("  ", 14);
+				if (i < 10)this->print(" ", 14);
+			}
+			std::cout << std::endl;
+			for (unsigned int i = 0; i < Containers::bit_vector.size() / 2; i++)
+			{
 				if (Containers::bit_vector[i] == 0)
 				{
-
-
 					std::string owner = Containers::BitVectorWithFiles[i];
 					unsigned int color = 1;
 					for (unsigned int j = 0; j < names.size(); j++)
@@ -975,14 +996,61 @@ void Shell::run()
 						}
 					}
 					this->print(char(178), color);
+					this->print(char(178), color);
+					std::cout << " ";
 				}
 				else if (Containers::bit_vector[i] == 1)
 				{
 					this->print(char(176), 14);
+					this->print(char(176), 14);
+					std::cout << " ";
 				}
+				std::cout << " ";
 			}
 			std::cout << std::endl;
 
+			for (unsigned int i = Containers::bit_vector.size() / 2; i < Containers::bit_vector.size(); i++)
+			{
+				this->print(i, 14);
+				this->print("  ", 14);
+				if (i < 10)this->print(" ", 14);
+			}
+			std::cout << std::endl;
+			for (unsigned int i = Containers::bit_vector.size() / 2; i < Containers::bit_vector.size(); i++)
+			{
+				if (Containers::bit_vector[i] == 0)
+				{
+					std::string owner = Containers::BitVectorWithFiles[i];
+					unsigned int color = 1;
+					for (unsigned int j = 0; j < names.size(); j++)
+					{
+						if (names[j] == owner)
+						{
+							for (auto& x : Containers::Colors)
+							{
+								if (x.first == owner)
+								{
+									color = x.second + 1;
+									break;
+								}
+							}
+
+							break;
+						}
+					}
+					this->print(char(178), color);
+					this->print(char(178), color);
+					std::cout << " ";
+				}
+				else if (Containers::bit_vector[i] == 1)
+				{
+					this->print(char(176), 14);
+					this->print(char(176), 14);
+					std::cout << " ";
+				}
+				std::cout << " ";
+			}
+			std::cout << std::endl;
 		}
 		else if (std::regex_match(command, match, std::regex("^(p vm)( -[dh])?$")))
 		{
@@ -1003,7 +1071,7 @@ void Shell::run()
 			//print as decimal if specified
 			if (match[2] == " -d") { this->printLine("PAGE CONTENT [IN DECIMAL]", 13); }
 			//else print as hexa
-			else { this->printLine("PAGE CONTENT [IN HEXA]", 13); }
+			else { this->printLine("PAGE CONTENT [HEX]", 13); }
 
 
 			for (auto& pair : virtualMemory->swapFile)
@@ -1145,26 +1213,31 @@ void Shell::run()
 			}
 
 		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^test ram$")))
+		else if (std::regex_match(command, match, std::regex("^p sem$")))
 		{
-			std::pair<uint8_t, int8_t&> t = memoryManager->getMemoryContent(0, 0);
-		}
-		else if (std::regex_match(command.begin(), command.end(), std::regex("^test vm$")))
-		{
-			//insert test program
-			Page testPage;
-			int8_t data[16]{ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };
-			std::vector<Page> testVector;
-			testVector.push_back(Page(data));
-			data[11] = 127;
-			testVector.push_back(Page(data));
-			std::pair<int, std::vector<Page>> testPair;
-			testPair.first = 0;
-			testPair.second = testVector;
-			virtualMemory->insertProgram(testPair);
-			testPair.first = 1;
-			virtualMemory->insertProgram(testPair);
-			//end test program
+		this->print("FILENAME",13);
+		this->print("        ",13);
+		this->print("STATE",13); 
+		this->print("        ", 13);
+		this->print("VALUE\n",13);
+			for (auto& file : Containers::MainFileCatalog)
+			{
+				this->print(file.name,14);
+				for (unsigned int i = file.name.length(); i < 16; i++) { this->print(" ",14); }
+
+				if (file.s.getValue() < 0)
+				{
+					for (unsigned int i = 0; i < 5;i++)this->print(char(178), 4);
+				}
+				else
+				{
+					for (unsigned int i = 0; i < 5; i++)this->print(char(178), 2);
+				}
+				this->print("        ", 13);
+				this->print(file.s.getValue(), 13);
+				std::cout << std::endl;
+			}
+			std::cout << std::endl;
 		}
 		else
 		{
