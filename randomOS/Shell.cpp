@@ -942,7 +942,41 @@ void Shell::run()
 				this->print("Completed instruction: ", 14);
 				this->printLine(errorC.second, 11);
 			}
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("go[ ][0-9]+")))
+		{
+			unsigned int count = 0;
+			command.erase(0, 3);
 
+			for (unsigned int i = 0; i < command.length(); i++)
+			{
+				count *= 10;
+				count += (command[i] - '0');
+			}
+			this->print("EXECUTING ", 13);
+			this->print(count, 12);
+			this->printLine(" INSTRUCTIONS ", 13);
+			for (unsigned int i = 0; i < count; i++)
+			{
+				uint8_t errorCode = this->scheduler->schedule();
+				if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 4); this->printCode(errorCode); }
+
+				std::pair < uint8_t, std::string> errorC = this->interpreter->go();
+				if (errorC.first != 0)
+				{
+					this->printLine("AN ERROR OCCURED IN INTERPRETER!", 4);
+					this->printCode(errorC.first);
+					this->print("Tried to execute instruction: ", 14);
+					this->printLine(errorC.second, 11);
+				}
+				else
+				{
+					this->print("Currently running: ", 14);
+					this->printLine(RUNNING->getName(), 12);
+					this->print("Completed instruction: ", 14);
+					this->printLine(errorC.second, 11);
+				}
+			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
@@ -1239,19 +1273,19 @@ void Shell::run()
 		}
 		else if (std::regex_match(command, match, std::regex("^p sem$")))
 		{
-		this->print("FILENAME",13);
-		this->print("        ",13);
-		this->print("STATE",13); 
-		this->print("        ", 13);
-		this->print("VALUE\n",13);
+			this->print("FILENAME", 13);
+			this->print("        ", 13);
+			this->print("STATE", 13);
+			this->print("        ", 13);
+			this->print("VALUE\n", 13);
 			for (auto& file : Containers::MainFileCatalog)
 			{
-				this->print(file.name,14);
-				for (unsigned int i = file.name.length(); i < 16; i++) { this->print(" ",14); }
+				this->print(file.name, 14);
+				for (unsigned int i = file.name.length(); i < 16; i++) { this->print(" ", 14); }
 
 				if (file.s.getValue() < 0)
 				{
-					for (unsigned int i = 0; i < 5;i++)this->print(char(178), 4);
+					for (unsigned int i = 0; i < 5; i++)this->print(char(178), 4);
 				}
 				else
 				{
