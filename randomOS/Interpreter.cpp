@@ -354,27 +354,31 @@ void Interpreter::OFI() {
 }
 
 void Interpreter::SFI() {
-	fileSystem->closeProcessFiles(PID);
+	std::string a = loadArgText(2);
+	fileSystem->closeFile(a, PID);
 }
 
 void Interpreter::EFI() {
-	int8_t& a = loadArgAdrOrReg();
-	//uint8_t error = fileSystem->writeToEndFile(a, PID);
-	//if (error != 0) throw error;
+	std::string a = loadArgText(2);
+	int8_t& b = loadArgAdrOrReg();
+	uint8_t error = fileSystem->writeToEndFile(b, PID, a);
+	if (error != 0) throw error;
 }
 
 void Interpreter::WFI() {
-	int8_t& a = loadArgAdrOrReg();
-	int8_t b = loadArgNum();
-	//uint8_t error = fileSystem->writeToFile(a, b, PID);
-	//if (error != 0) throw error;
+	std::string a = loadArgText(2);
+	int8_t& b = loadArgAdrOrReg();
+	int8_t c = loadArgNum();
+	uint8_t error = fileSystem->writeToFile(b, c, PID, a);
+	if (error != 0) throw error;
 }
 
 void Interpreter::PFI() {
-	int8_t& a = loadArgAdrOrReg();
+	std::string a = loadArgText(2);
 	int8_t& b = loadArgAdrOrReg();
-	//uint8_t error = fileSystem->writeToFile(a, b, PID);
-	//if (error != 0) throw error;
+	int8_t& c = loadArgAdrOrReg();
+	uint8_t error = fileSystem->writeToFile(b, c, PID, a);
+	if (error != 0) throw error;
 }
 
 void Interpreter::RFI() {
@@ -392,10 +396,11 @@ void Interpreter::AFI() {
 }
 
 void Interpreter::LFI() {
-	int8_t& a = loadArgAdrOrReg();
-	uint8_t error = fileSystem->wc(PID).first;
+	std::string a = loadArgText(2);
+	int8_t& b = loadArgAdrOrReg();
+	uint8_t error = fileSystem->wc(a).first;
 	if (error != 0) throw error;
-	a = fileSystem->wc(PID).second;
+	b = fileSystem->wc(PID).second;
 }
 
 void Interpreter::CPR() {
