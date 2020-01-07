@@ -8,6 +8,11 @@ void VirtualMemory::insertProgram(std::pair<int, std::vector<Page>> program)
 	swapFile.insert(program);
 }
 
+void VirtualMemory::removeProgram(const unsigned int & PID)
+{
+	swapFile.erase(PID);
+}
+
 void VirtualMemory::updateQueue(int frameNumber) {
 	for (auto &frame : queue)
 		if (frame.first == frameNumber) frame.second = true;

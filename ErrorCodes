@@ -30,7 +30,8 @@ ZAKRES: <64,80)
 
 Zarządzanie pamięcią (Piotr)
 ZAKRES: <81,97)
-81 ERROR_PAGE_DOESNT_EXIST
+81 ERROR_PROCESS_DOESNT_EXIST
+
 
 
 Interpreter assemblera (Marcin)

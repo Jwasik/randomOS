@@ -45,7 +45,7 @@ public:
 	* Returns all processes as a plain list (no tree formatting)
 	*/
 	std::string displayProcesses();
-	std::string displayWithState(PCB::ProcessState state);
+	std::vector<std::shared_ptr<PCB>> getAllWithState(PCB::ProcessState state);
 
 	/********************************
 	*            GETTERS            *
@@ -55,7 +55,7 @@ public:
 	std::shared_ptr<PCB> getInit();
 
 	//used in scheduler
-	static bool deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler);
+	static bool deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler, const std::shared_ptr<VirtualMemory>& virtualMemory);
 
 private:
 	//pointers to other modules

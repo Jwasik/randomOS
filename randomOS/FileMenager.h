@@ -79,7 +79,7 @@ public:
 	// 68 plik nie jest otwarty
 	//   0 udalo sie zamknac plik
 
-	int8_t writeToEndFile(uint16_t byte, unsigned int PID); //funkcja wpisuj�ca 1 bajt do otwartego pliku
+	int8_t writeToEndFile(uint16_t byte, unsigned int PID, std::string name); //funkcja wpisuj�ca 1 bajt do otwartego pliku
 	// 65 brak miejsca na dysku
 	// 68 plik nie jest otwarty
 	//   0 udalo sie otworzyc plik
@@ -89,7 +89,7 @@ public:
 	// 68 plik nie jest otwarty
 	//   0 udalo sie otworzyc plik
 
-	int8_t writeToFile(uint8_t byte, uint8_t pos, unsigned int PID); //funkcja wpisuj�ca bajt do podanego pliku na podana pozycje
+	int8_t writeToFile(uint8_t byte, uint8_t pos, unsigned int PID,std::string name); //funkcja wpisuj�ca bajt do podanego pliku na podana pozycje
 	// 69 pos z poza zakresu pliku
 	// 68 plik nie jest otwarty
 	//   0 udalo sie otworzyc plik
@@ -117,8 +117,11 @@ public:
 	//  0 uda�o si� uzyskac liczbe
 
 	std::vector<std::string> ls(); //zwraca wszystkie nazwy plikow jakie istnieja w folderze glownym
+
 	std::pair<int8_t, std::string> cat(std::string name); //zwraca zawartosc calego pliku jako string
+
 	void closeProcessFiles(unsigned int PID); //zamyka wszystkie pliki u�ywane przez proces o podanym I
+
 	int FindFreeBlock(File* file); //szuka wolengo bloku jesli znajdzie zwraca jego adres logiczny, w przeciwnym wypadku zwraca -1
 
 };

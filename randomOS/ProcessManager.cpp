@@ -25,9 +25,9 @@ int8_t ProcessManager::createInit()
 	//ads innit to scheduler
 	DUMMY = this->init;
 
-	
-	RUNNING = this->init;
 	addProcessToScheduler(this->init);
+	RUNNING = this->init;
+
 	return 0;
 }
 
@@ -66,6 +66,8 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 	// if all else went well, increment the free PID field, because the current one is now taken and linkt the process to a parent
 	parentPCB->addChild(newProcess);
 	freePID++;
+	//call scheduler to update queues
+	scheduler->schedule();
 	return std::make_pair(0,PIDOfTheCreatedProcess);
 }
 
@@ -82,7 +84,7 @@ int8_t ProcessManager::deleteProcess(const unsigned int& PID)
 	if (found == nullptr){ return ERROR_PM_PROCESS_COULD_NOT_BE_FOUND; }
 	
 	//call for reccurent deletion of the process and its children
-	deleteProcess(found,this->fileManager, this->scheduler);
+	deleteProcess(found,this->fileManager, this->scheduler,  this->virtualMemory);
 	return 0;
 }
 
@@ -99,27 +101,28 @@ int8_t ProcessManager::deleteProcess(const std::string & processName)
 	if (found->getHasPID(0)) { return  ERROR_PM_INIT_CANNOT_BE_DELETED; }
 
 	//call for reccurent deletion of the process and its children
-	deleteProcess(found, this->fileManager, this->scheduler);
+	deleteProcess(found, this->fileManager, this->scheduler, this->virtualMemory);
 	return 0;
 }
 
 
-bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler)
+bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler, const std::shared_ptr<VirtualMemory>& virtualMemory)
 {
-		//check if the process has any children
+		//check if the process has any children and call for recursive deletion of all of them
 		if (process->getHasChildren())
 		{
 			std::shared_ptr<PCB> child = process->getChildren()[0];
-			deleteProcess(child, fileManager,scheduler);
-			deleteProcess(process, fileManager,scheduler);
+			deleteProcess(child, fileManager,scheduler, virtualMemory);
+			deleteProcess(process, fileManager,scheduler, virtualMemory);
 		}
 		//if the process doesn't have children it can simply be deleted
 		else
 		{
-			//freeMemoryFromProcess(process)
 			fileManager->closeProcessFiles(process->getPID());
 			scheduler->deleteProcess(process->getPID());
 			process->getParentPCB()->removeChild(process);
+			//not sure if needed
+			//virtualMemory->removeProgram(process->getPID());
 			return true;
 		}
 	
@@ -292,9 +295,9 @@ std::string ProcessManager::displayProcesses()
 	return result;
 }
 
-std::string ProcessManager::displayWithState(PCB::ProcessState state)
+std::vector<std::shared_ptr<PCB>> ProcessManager::getAllWithState(PCB::ProcessState state)
 {
-	std::string result{ "" };
+	std::vector<std::shared_ptr<PCB>> result;
 
 	std::stack<std::shared_ptr<PCB>> allProcesses;
 	allProcesses.push(init);
@@ -306,8 +309,7 @@ std::string ProcessManager::displayWithState(PCB::ProcessState state)
 		allProcesses.pop();
 		if (currentProcess->getHasState(state))
 		{
-			if(state == PCB::ProcessState::RUNNING){ result += currentProcess->getInformation(); }
-			else{ result += "\n-" + currentProcess->getNameAndPIDString(); }
+			result.push_back(currentProcess);
 		}
 
 		//add all of its children to the queue

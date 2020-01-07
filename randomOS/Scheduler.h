@@ -4,6 +4,7 @@
 #include "FileMenager.h"
 
 
+
 #define DUMMY_TICS 100 //ammount of processor tics one runtime of dummy process takes
 //ERROR CODES
 //IN RANGE: <16,32)
@@ -17,7 +18,7 @@ static class Scheduler : public std::enable_shared_from_this<Scheduler>
 public:
 	uint16_t counter;
 
-	Scheduler(std::shared_ptr<FileMenager> fileManager);
+	Scheduler(std::shared_ptr<FileMenager> fileManager, std::shared_ptr<VirtualMemory> virtualMemory);
 	~Scheduler();
 	
 	uint8_t schedule();
@@ -29,6 +30,7 @@ public:
 
 private:
 	std::shared_ptr<FileMenager> fileManager;
+	std::shared_ptr<VirtualMemory> virtualMemory;
 
 	uint8_t result;
 	std::shared_ptr<std::vector<std::shared_ptr<PCB>>> active;
