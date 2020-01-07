@@ -953,56 +953,61 @@ void Shell::run()
 				count *= 10;
 				count += (command[i] - '0');
 			}
-			this->print("EXECUTING ", 13);
-			this->print(count, 9);
-			this->printLine(" INSTRUCTIONS ", 13);
-			this->printLine("  No. Details",5 );
-			for (unsigned int i = 0; i < count; i++)
+			if (count <= 999) 
 			{
-				uint8_t errorCode = this->scheduler->schedule();
-				if (errorCode != 0) 
-				{ 
-					this->print("  " + std::to_string(i+1), 12);
-					//position the string appropriately
-					std::string spaces = "    ";
-					for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
-					this->printLine(spaces+"AN ERROR OCCURED IN SCHEDULER!", 12);
-					this->print("     ", 0);
-					this->printCode(errorCode); 
-				}
-
-				std::pair < uint8_t, std::string> errorC = this->interpreter->go();
-				if (errorC.first != 0)
+				this->print("EXECUTING ", 13);
+				this->print(count, 9);
+				this->printLine(" INSTRUCTIONS ", 13);
+				this->printLine("  No. Details", 5);
+				for (unsigned int i = 0; i < count; i++)
 				{
-					this->print("  " + std::to_string(i+1), 12);
-					//position the string appropriately
-					std::string spaces = "    ";
-					for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
-					this->printLine(spaces+"AN ERROR OCCURED IN INTERPRETER!", 12);
-					if (errorC.second != "" || errorC.second != "ERR")
+					uint8_t errorCode = this->scheduler->schedule();
+					if (errorCode != 0)
 					{
-						this->print("      (When trying to execute ", 14);
-						this->print(errorC.second, 11);
-						this->print(" in  ", 14);
-						this->print(RUNNING->getName(), 12);
-						this->printLine(")", 14);
+						this->print("  " + std::to_string(i + 1), 12);
+						//position the string appropriately
+						std::string spaces = "    ";
+						for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+						this->printLine(spaces + "AN ERROR OCCURED IN SCHEDULER!", 12);
+						this->print("     ", 0);
+						this->printCode(errorCode);
 					}
-					this->print("      ",0);
-					this->printCode(errorC.first);
-				}
-				else
-				{
-					this->print("  "+std::to_string(i+1), 9);
-					//position the string appropriately
-					std::string spaces = "    ";
-					for (int z = 0; z < std::to_string(i + 1).length(); z++){ if (spaces.length() > 0) { spaces.pop_back(); }}
 
-					this->print(spaces+"Currently running: ", 14);
-					this->printLine(RUNNING->getName(), 12);
-					this->print("      Completed instruction: ", 14);
-					this->printLine(errorC.second, 11);
+					std::pair < uint8_t, std::string> errorC = this->interpreter->go();
+					if (errorC.first != 0)
+					{
+						this->print("  " + std::to_string(i + 1), 12);
+						//position the string appropriately
+						std::string spaces = "    ";
+						for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+						this->printLine(spaces + "AN ERROR OCCURED IN INTERPRETER!", 12);
+						if (errorC.second != "" || errorC.second != "ERR")
+						{
+							this->print("      (When trying to execute ", 14);
+							this->print(errorC.second, 11);
+							this->print(" in  ", 14);
+							this->print(RUNNING->getName(), 12);
+							this->printLine(")", 14);
+						}
+						this->print("      ", 0);
+						this->printCode(errorC.first);
+					}
+					else
+					{
+						this->print("  " + std::to_string(i + 1), 9);
+						//position the string appropriately
+						std::string spaces = "    ";
+						for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+
+						this->print(spaces + "Currently running: ", 14);
+						this->printLine(RUNNING->getName(), 12);
+						this->print("      Completed instruction: ", 14);
+						this->printLine(errorC.second, 11);
+					}
 				}
 			}
+			else { this->printLine("AN ERROR OCCURED!", 12); this->printCode(1); }
+			
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
@@ -1444,6 +1449,9 @@ void Shell::printCode(uint8_t code)
 	{
 	case 0:
 		std::cout << "ALLES GING BESSER ALS ERWARTET" << std::endl;
+		break;
+	case 1:
+		std::cout << "CODE 1 : GO_CAN_EXECUTE_MAX_999_COMMANDS_AT_ONCE" << std::endl;
 		break;
 	case 16:
 		std::cout << "CODE 16 : ERROR_SH_PRIORITY_OUT_OF_RANGE" << std::endl;
