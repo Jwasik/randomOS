@@ -411,20 +411,19 @@ void Interpreter::NOP() {}
 // ******************* GO *******************
 // ******************************************
 
-uint8_t Interpreter::go() {
+std::pair<uint8_t,std::string> Interpreter::go() {
 	try {
 		loadPCB();
 		loadCode();
 		interpret();
 		returnToPCB();
-		std::cout << instructionString << std::endl;
 		if (changeToTerminated) PCB->setStateTerminated();
 	}
 	catch (uint8_t e) {
 		PCB->setStateTerminated();
-		return e;
+		return std::make_pair(e,"");
 	}
-	return 0;
+	return  std::make_pair(0, instructionString);
 }
 
 // *******************************************

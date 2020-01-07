@@ -66,6 +66,8 @@ std::pair<int8_t, unsigned int> ProcessManager::fork(const std::string& processN
 	// if all else went well, increment the free PID field, because the current one is now taken and linkt the process to a parent
 	parentPCB->addChild(newProcess);
 	freePID++;
+	//call scheduler to update queues
+	scheduler->schedule();
 	return std::make_pair(0,PIDOfTheCreatedProcess);
 }
 
@@ -116,11 +118,11 @@ bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shar
 		//if the process doesn't have children it can simply be deleted
 		else
 		{
-			//freeMemoryFromProcess(process)
 			fileManager->closeProcessFiles(process->getPID());
 			scheduler->deleteProcess(process->getPID());
 			process->getParentPCB()->removeChild(process);
-			virtualMemory->removeProgram(process->getPID());
+			//not sure if needed
+			//virtualMemory->removeProgram(process->getPID());
 			return true;
 		}
 	
@@ -293,9 +295,9 @@ std::string ProcessManager::displayProcesses()
 	return result;
 }
 
-std::string ProcessManager::displayWithState(PCB::ProcessState state)
+std::vector<std::shared_ptr<PCB>> ProcessManager::getAllWithState(PCB::ProcessState state)
 {
-	std::string result{ "" };
+	std::vector<std::shared_ptr<PCB>> result;
 
 	std::stack<std::shared_ptr<PCB>> allProcesses;
 	allProcesses.push(init);
@@ -307,8 +309,7 @@ std::string ProcessManager::displayWithState(PCB::ProcessState state)
 		allProcesses.pop();
 		if (currentProcess->getHasState(state))
 		{
-			if(state == PCB::ProcessState::RUNNING){ result += currentProcess->getInformation(); }
-			else{ result += "\n-" + currentProcess->getNameAndPIDString(); }
+			result.push_back(currentProcess);
 		}
 
 		//add all of its children to the queue

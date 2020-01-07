@@ -302,6 +302,8 @@ void FileMenager::closeProcessFiles(unsigned int PID)
 std::pair<int8_t, std::string> FileMenager::cat(std::string name)
 {
 	std::pair<int8_t, std::string> result;
+	result.first = ERROR_NO_FILE_WITH_THAT_NAME;
+
 	for (auto i : Containers::MainFileCatalog)
 	{
 		if (i.name == name)
@@ -329,11 +331,10 @@ std::pair<int8_t, std::string> FileMenager::cat(std::string name)
 				}
 				req++;
 			}
-
+			result.first = 0;
+			break;
 		}
-		else result.first = ERROR_NO_FILE_WITH_THAT_NAME;
 	}
-	result.first = 0;
 	return result;
 }
 
