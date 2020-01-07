@@ -17,7 +17,6 @@ int8_t ProcessManager::createInit()
 	this->init = std::make_shared<PCB>("Init", 0, nullptr);
 	init->setStateRunning();
 
-
 	//adds the program code to init's memory
 	std::string initCode = "JUM 0";
 	std::vector<Page> initPages { Page((Interpreter::convertToMachine(initCode))) };
