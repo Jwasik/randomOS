@@ -7,6 +7,7 @@
 #define DiskSize  1024 //Wielko�� dysku wyra�ona w bajtach
 #define MaxFileSize  512 //Max wielkosc pliku w bajtach
 #define MaxFileNumber  32
+#define FileNameLenght 2
 
 
 
@@ -17,7 +18,7 @@
 #define ERROR_FILE_IS_NOT_OPENED 68
 #define ERROR_UOT_OF_FILE_RANGE 69
 #define ERROR_FILE_IS_OPENED_CANT_DELETE 70
-#define ERROR_BAD_NAME_SIZE 71
+#define ERROR_INAPPROPRIATE_FILENAME_LENGHT 71
 
 
 

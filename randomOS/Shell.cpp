@@ -171,7 +171,7 @@ void Shell::run()
 				this->print("\n", 14);
 				//variables explained
 				//table header
-				this->printLine("\n  Name      Type       Description", 5);
+				this->printLine("\n  Name      Type       Description                                         Details", 5);
 
 				//var 1
 				///variable name and what it is
@@ -179,6 +179,8 @@ void Shell::run()
 				this->print("     <string>", 3);
 				this->print("   the name of the file.", 14);
 				///usefull information, exceptions, what cannot be used
+				///usefull information, exceptions, what cannot be used
+				this->print("                               must be " + std::to_string(FileNameLenght) + " chars long, case sensitive.", 6);
 
 				//example
 				this->printLine("\n\n  Examples", 5);
@@ -598,7 +600,7 @@ void Shell::run()
 		{
 			//print info with pid
 			std::shared_ptr<PCB> temp = processManager->getPCBByPID(std::stoi(match[3]));
-			if (temp == nullptr) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(38); }
+			if (temp == nullptr) { this->printLine("AN ERROR OCCURED!", 12); this->printCode(38); }
 			else
 			{
 				this->print("PROCESS INFORMATION ", 13);
@@ -609,7 +611,7 @@ void Shell::run()
 		{
 			//print info with name
 			std::shared_ptr<PCB> temp = processManager->getPCBByName(match[3]);
-			if (temp == nullptr) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(38); }
+			if (temp == nullptr) { this->printLine("AN ERROR OCCURED!", 12); this->printCode(38); }
 			else
 			{
 				this->print("PROCESS INFORMATION ", 13);
@@ -648,7 +650,7 @@ void Shell::run()
 				this->print(command, 12);
 				this->printLine(" has been removed.", 14);
 			}
-			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); }
+			else { this->printLine("AN ERROR OCCURED!", 12); this->printCode(code); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^touch[ ]+[0-9a-zA-z]+$")))
 		{
@@ -660,7 +662,18 @@ void Shell::run()
 				this->print(command, 12);
 				this->printLine(" has been created.", 14);
 			}
-			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); }
+			else {
+				this->printLine("AN ERROR OCCURED!", 12); this->printCode(code); 
+				//print tip for innaproriate name lenght
+				if (code == 71) 
+				{
+					this->print("[", 14);
+					this->print("Tip: ", 13);
+					this->print("The fileName must be ", 14);
+					this->print(std::to_string(FileNameLenght), 11);
+					this->printLine(" chars long.]", 14);
+				}
+			}
 		}
 		else if (std::regex_match(command, match, std::regex("^(cat[ ]+)([0-9a-zA-z]+)( -[ah])?$")))
 		{
@@ -690,7 +703,7 @@ void Shell::run()
 				}
 
 			}
-			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code.first); }
+			else { this->printLine("AN ERROR OCCURED!", 12); this->printCode(code.first); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^wc[ ]+[0-9a-zA-z]+$")))
 		{
@@ -714,7 +727,7 @@ void Shell::run()
 				this->print(code.second, 11);
 				this->printLine(" characters. ", 14);
 			}
-			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code.first); }
+			else { this->printLine("AN ERROR OCCURED!", 12); this->printCode(code.first); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^mv[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-Z]+$")))
 		{
@@ -753,7 +766,7 @@ void Shell::run()
 				this->print(argument, 11);
 				this->printLine(".", 14);
 			}
-			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); }
+			else { this->printLine("AN ERROR OCCURED!", 12); this->printCode(code); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^append[ ]+[0-9a-zA-z]+[ ]+[0-9a-zA-z]+$")))
 		{
@@ -791,7 +804,7 @@ void Shell::run()
 				{
 					if (code == 65)
 					{
-						this->printLine("AN ERROR OCCURED!", 4);
+						this->printLine("AN ERROR OCCURED!", 12);
 						this->print("The string \"", 14);
 						this->print(argument, 11);
 						this->print("\" has been", 14);
@@ -839,7 +852,7 @@ void Shell::run()
 				this->print(filename, 12);
 				this->printLine(" has been cleared.", 14);
 			}
-			else { this->printLine("AN ERROR OCCURED!", 4); this->printCode(code); };
+			else { this->printLine("AN ERROR OCCURED!", 12); this->printCode(code); };
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^fork[ ]+[a-z0-9]+[ ]+.+$")))
 		{
@@ -873,7 +886,7 @@ void Shell::run()
 
 			std::pair<uint8_t, unsigned int> errorCode = this->processManager->fork(filename, 0, argument);
 
-			if (errorCode.first != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode.first); }
+			if (errorCode.first != 0) { this->printLine("AN ERROR OCCURED!", 12); this->printCode(errorCode.first); }
 			else
 			{
 				this->print("New process created with PID = ", 14);
@@ -884,7 +897,7 @@ void Shell::run()
 		{
 			//delete with pid
 			uint8_t errorCode = processManager->deleteProcess(std::stoi(match[3]));
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); this->printCode(errorCode); }
 			else
 			{
 				this->print("Process ", 14);
@@ -896,7 +909,7 @@ void Shell::run()
 		{
 			//delete with name
 			uint8_t errorCode = processManager->deleteProcess(match[3]);
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); this->printCode(errorCode); }
 			else
 			{
 				this->print("Process ", 14);
@@ -907,10 +920,21 @@ void Shell::run()
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
 			uint8_t errorCode = this->scheduler->schedule();
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorCode); }
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
 
 			std::pair < uint8_t, std::string> errorC = this->interpreter->go();
-			if (errorC.first != 0) { this->printLine("AN ERROR OCCURED!", 4); this->printCode(errorC.first); }
+			if (errorC.first != 0) {
+				this->printLine("AN ERROR OCCURED IN INTERPRETER!", 12);
+				if (errorC.second != "" || errorC.second != "ERR")
+				{
+					this->print("(When trying to execute ", 14);
+					this->print(errorC.second, 11);
+					this->print(" in  ", 14);
+					this->print(RUNNING->getName(), 12);
+					this->printLine(")", 14);
+				}	
+				this->printCode(errorC.first); 
+			}
 			else
 			{
 				this->print("Currently running: ", 14);
@@ -918,7 +942,56 @@ void Shell::run()
 				this->print("Completed instruction: ", 14);
 				this->printLine(errorC.second, 11);
 			}
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("go[ ][0-9]+")))
+		{
+			unsigned int count = 0;
+			command.erase(0, 3);
 
+			for (unsigned int i = 0; i < command.length(); i++)
+			{
+				count *= 10;
+				count += (command[i] - '0');
+			}
+			this->print("EXECUTING ", 13);
+			this->print(count, 9);
+			this->printLine(" INSTRUCTIONS ", 13);
+			for (unsigned int i = 0; i < count; i++)
+			{
+				uint8_t errorCode = this->scheduler->schedule();
+				if (errorCode != 0) 
+				{ 
+					this->print("  " + std::to_string(i+1), 12);
+					this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); 
+					this->print("    ", 0);
+					this->printCode(errorCode); 
+				}
+
+				std::pair < uint8_t, std::string> errorC = this->interpreter->go();
+				if (errorC.first != 0)
+				{
+					this->print("  " + std::to_string(i+1), 12);
+					this->printLine(" AN ERROR OCCURED IN INTERPRETER!", 12);
+					if (errorC.second != "" || errorC.second != "ERR")
+					{
+						this->print("    (When trying to execute ", 14);
+						this->print(errorC.second, 11);
+						this->print(" in  ", 14);
+						this->print(RUNNING->getName(), 12);
+						this->printLine(")", 14);
+					}
+					this->print("    ",0);
+					this->printCode(errorC.first);
+				}
+				else
+				{
+					this->print("  "+std::to_string(i+1), 9);
+					this->print(" Currently running: ", 14);
+					this->printLine(RUNNING->getName(), 12);
+					this->print("    Completed instruction: ", 14);
+					this->printLine(errorC.second, 11);
+				}
+			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
@@ -1054,31 +1127,31 @@ void Shell::run()
 		}
 		else if (std::regex_match(command, match, std::regex("^(p vm)( -[dh])?$")))
 		{
-			this->printLine("DC QUEUE", 14);
-			this->print("FRAME NUMBER    ", 13);
-			this->printLine("REFERENCE BIT", 13);
+			this->printLine("DC QUEUE", 13);
+			this->print("  Frame Number    ", 5);
+			this->printLine("Reference Bit", 5);
 			for (auto& pair : virtualMemory->queue)
 			{
-				this->print("     ", 14);
-				this->print(int(pair.first), 14);
+				this->print("       ", 14);
+				this->print(int(pair.first), 9);
 				this->print("               ", 14);
 				this->printLine(int(pair.second), 14);
 			}
 			std::cout << std::endl;
 
-			this->printLine("VIRTUAL MEMORY CONTENT", 14);
-			this->print("PID   ", 13);
+			this->printLine("VIRTUAL MEMORY CONTENT", 13);
+			this->print("  PID   ", 5);
 			//print as decimal if specified
-			if (match[2] == " -d") { this->printLine("PAGE CONTENT [IN DECIMAL]", 13); }
+			if (match[2] == " -d") { this->printLine("Page content [DEC]", 5); }
 			//else print as hexa
-			else { this->printLine("PAGE CONTENT [HEX]", 13); }
+			else { this->printLine("Page Content [HEX]", 5); }
 
 
 			for (auto& pair : virtualMemory->swapFile)
 			{
 				for (auto& page : pair.second)
 				{
-					std::cout << " ";
+					std::cout << "   ";
 					this->print(pair.first, 9);
 
 					std::cout << "    ";
@@ -1097,15 +1170,15 @@ void Shell::run()
 		}
 		else if (std::regex_match(command, match, std::regex("^(p ram)( -[dh])?$")))
 		{
-			this->printLine("RAM CONTENT", 14);
-			this->print("FRAME NUMBER    ", 13);
-			if (match[2] == " -d") { this->printLine("CONTENT [IN DECIMAL]", 13); }
+			this->printLine("RAM CONTENT", 13);
+			this->print("  Frame Number    ", 5);
+			if (match[2] == " -d") { this->printLine("Contents [DEC]", 5); }
 			//print in hexa
-			else { this->printLine("CONTENT [IN HEXA]", 13); }
+			else { this->printLine("Contents [HEX]", 5); }
 
 			for (unsigned int i = 0; i < 8; i++)
 			{
-				this->print("     ", 9);
+				this->print("       ", 9);
 				this->print(int(i), 9);
 				std::cout << "          ";
 				for (unsigned int j = 0; j < 16; j++)
@@ -1155,7 +1228,7 @@ void Shell::run()
 			std::cout << std::endl;
 			this->printLine("QUEUES ", 13);
 
-			this->print("No.  ", 11);
+			this->print("  No.  ", 11);
 			this->print("ACTIVE [PRIORITY]", 10);
 			this->print("    ", 10);
 			this->print("EXPIRED", 12);
@@ -1169,7 +1242,7 @@ void Shell::run()
 			{
 
 				//print Number first
-				this->print(" " + std::to_string(i + 1), 3);
+				this->print("   " + std::to_string(i + 1), 3);
 
 				unsigned int spaceDelay = 20;
 
@@ -1215,19 +1288,19 @@ void Shell::run()
 		}
 		else if (std::regex_match(command, match, std::regex("^p sem$")))
 		{
-		this->print("FILENAME",13);
-		this->print("        ",13);
-		this->print("STATE",13); 
-		this->print("        ", 13);
-		this->print("VALUE\n",13);
+			this->print("FILENAME", 13);
+			this->print("        ", 13);
+			this->print("STATE", 13);
+			this->print("        ", 13);
+			this->print("VALUE\n", 13);
 			for (auto& file : Containers::MainFileCatalog)
 			{
-				this->print(file.name,14);
-				for (unsigned int i = file.name.length(); i < 16; i++) { this->print(" ",14); }
+				this->print(file.name, 14);
+				for (unsigned int i = file.name.length(); i < 16; i++) { this->print(" ", 14); }
 
 				if (file.s.getValue() < 0)
 				{
-					for (unsigned int i = 0; i < 5;i++)this->print(char(178), 4);
+					for (unsigned int i = 0; i < 5; i++)this->print(char(178), 4);
 				}
 				else
 				{
@@ -1351,7 +1424,7 @@ void Shell::toLower(std::string& str)
 
 void Shell::printCode(uint8_t code)
 {
-	SetConsoleTextAttribute(hConsole, 12);
+	SetConsoleTextAttribute(hConsole, 4);
 
 	switch (code)
 	{
@@ -1417,6 +1490,9 @@ void Shell::printCode(uint8_t code)
 		break;
 	case 70:
 		std::cout << "CODE 70 : ERROR_FILE_IS_OPENED_CANNOT_DELETE" << std::endl;
+		break;
+	case 71:
+		std::cout << "CODE 71 : ERROR_INAPPROPRIATE_FILENAME_LENGHT" << std::endl;
 		break;
 	case 81:
 		std::cout << "CODE 81 : ERROR_PAGE_DOESNT_EXIST" << std::endl;
