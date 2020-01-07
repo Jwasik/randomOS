@@ -33,7 +33,8 @@ Shell::Shell() :defaultColor(10)
 
 Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm, std::shared_ptr<ProcessManager> pm, std::shared_ptr<Scheduler> sch, std::shared_ptr<Interpreter> inte)
 	:defaultColor(10), fileManager(fm), memoryManager(mm), virtualMemory(vm), processManager(pm), scheduler(sch), interpreter(inte)
-{
+{	
+	goCounter = 0;
 	system("color 0A");
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -942,6 +943,16 @@ void Shell::run()
 				this->print("Completed instruction: ", 14);
 				this->printLine(errorC.second, 11);
 			}
+			goCounter++;
+			if (goCounter == 7) 
+			{
+				this->print("[", 14);
+				this->print("Tip: ", 13);
+				this->print("You can use \"go ", 14);
+				this->print("[NUMBER OF STEPS]", 11);
+				this->printLine("\" instead.]", 14);
+				goCounter = 0;
+			}
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go[ ][0-9]+")))
 		{
@@ -1052,8 +1063,10 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
 		{
+			this->printLine("DRIVE CONTENTS", 13);
 			auto names = fileManager->ls();
 
+			this->print("  ",0);
 			std::string str;
 			for (unsigned int i = 0; i < Containers::bit_vector.size() / 2; i++)
 			{
@@ -1061,7 +1074,9 @@ void Shell::run()
 				this->print("  ", 14);
 				if (i < 10)this->print(" ", 14);
 			}
+
 			std::cout << std::endl;
+			this->print("  ", 0);
 			for (unsigned int i = 0; i < Containers::bit_vector.size() / 2; i++)
 			{
 				if (Containers::bit_vector[i] == 0)
@@ -1098,6 +1113,7 @@ void Shell::run()
 			}
 			std::cout << std::endl;
 
+			this->print("  ", 0);
 			for (unsigned int i = Containers::bit_vector.size() / 2; i < Containers::bit_vector.size(); i++)
 			{
 				this->print(i, 14);
@@ -1105,6 +1121,8 @@ void Shell::run()
 				if (i < 10)this->print(" ", 14);
 			}
 			std::cout << std::endl;
+
+			this->print("  ", 0);
 			for (unsigned int i = Containers::bit_vector.size() / 2; i < Containers::bit_vector.size(); i++)
 			{
 				if (Containers::bit_vector[i] == 0)
@@ -1140,6 +1158,41 @@ void Shell::run()
 				std::cout << " ";
 			}
 			std::cout << std::endl;
+
+			//if there are any files, print out the color legend
+			if (Containers::Colors.size() > 0) {
+				this->printLine("LEGEND", 13);
+				this->printLine("  Color  FileName  Size  Preview", 5);
+				
+				for (int z=0;z< Containers::Colors.size(); z++)
+				{
+					auto x = Containers::Colors[z];
+					this->print("   ", 0);
+					this->print(char(178), x.second + 1);
+					this->print(char(178), x.second + 1);
+					this->print("      " + x.first, 14);
+					std::string wcTemp = std::to_string(fileManager->wc(x.first).second);
+					this->print("      " +wcTemp , 11);
+					std::string catTemp = fileManager->cat(x.first).second;
+					//if cat too long elapse it (max 20 chars)
+					if (catTemp.size() > 25) { catTemp=catTemp.substr(0, 22)+"{...}";}
+					
+					//calculate spaces
+					std::string spaces = "    ";
+					for (int z = 0; z < wcTemp.length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+					//if cat empty, print empty file tag
+					if(catTemp.length()==0)
+					{
+						this->print(spaces + "  \"", 14);
+						this->print("<emptyFile>", 12);
+						this->printLine("\"", 14);
+					}
+					else{ this->printLine(spaces + "  \"" + catTemp + "\"", 14); }
+					if (z <Containers::Colors.size()-1) { std::cout << std::endl; }
+				}
+			}
+			
+			
 		}
 		else if (std::regex_match(command, match, std::regex("^(p vm)( -[dh])?$")))
 		{
@@ -1181,8 +1234,9 @@ void Shell::run()
 					}
 					std::cout << std::endl;
 				}
-				std::cout << std::endl;
 			}
+			
+
 		}
 		else if (std::regex_match(command, match, std::regex("^(p ram)( -[dh])?$")))
 		{
