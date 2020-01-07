@@ -359,22 +359,22 @@ void Interpreter::SFI() {
 
 void Interpreter::EFI() {
 	int8_t& a = loadArgAdrOrReg();
-	uint8_t error = fileSystem->writeToEndFile(a, PID);
-	if (error != 0) throw error;
+	//uint8_t error = fileSystem->writeToEndFile(a, PID);
+	//if (error != 0) throw error;
 }
 
 void Interpreter::WFI() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
-	uint8_t error = fileSystem->writeToFile(a, b, PID);
-	if (error != 0) throw error;
+	//uint8_t error = fileSystem->writeToFile(a, b, PID);
+	//if (error != 0) throw error;
 }
 
 void Interpreter::PFI() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t& b = loadArgAdrOrReg();
-	uint8_t error = fileSystem->writeToFile(a, b, PID);
-	if (error != 0) throw error;
+	//uint8_t error = fileSystem->writeToFile(a, b, PID);
+	//if (error != 0) throw error;
 }
 
 void Interpreter::RFI() {

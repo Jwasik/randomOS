@@ -35,7 +35,6 @@ int8_t FileMenager::createFile(std::string nazwa_pliku)
 		}
 		else//je�eli blok zosta� przydzielony ustawiam domy�lne warto�ci FCB i dodaje utworzony plik do katalogu plik�w
 		{
-			//file.s.wait();
 			Containers::Colors.push_back({ nazwa_pliku,color });
 			this->color++;
 			file.name = nazwa_pliku;
@@ -54,7 +53,6 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 	{
 		if (Containers::MainFileCatalog[i].name == name)//szukamy pliku o podanej nazwie
 		{
-			//Sprawdzenie tego za pomoca semaforow
 			if (isFileOpen(name, PID)) return ERROR_FILE_OPENED_BY_OTHER_PROCESS;//sprawdza czy plik nie jest otwarty przez inny proes
 			else//je�eli nie to ustawiam PID na te jakie odsta�em i dodaje plik do tabilcy otwartych plik�w
 			{
@@ -69,7 +67,7 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 	return ERROR_NO_FILE_WITH_THAT_NAME;
 }
 
-int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
+int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID, std::string name)
 {
 	int phycial = 0; //zmienna przechowuj�ca adres pod ktory zapisze bajt
 
@@ -79,9 +77,8 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 		
 		int req = ((t->size) / BlockSize); //numer logiczny bloku w ktorym bedzie sie znajdowal bajt 
 		int pom = ((t->size-1) / BlockSize);//numer logiczny poprzedniego zapisanego bajtu
-		if (t->PID == PID) //sprawdza czy plik jest owtarty przez podany proces
+		if (t->PID == PID && t->name == name) //sprawdza czy plik jest owtarty przez podany proces
 		{
-			//t->size++;
 			if (req!=pom)//sprawdzam czy b�d� potrzebowa� nowego bloku
 			{
 				if (FindFreeBlock(t) == -1)//szukam wolnego bloku przekazuj�c *plik dla ktorego ma by� znaleziony blok w przypadku braku blok�w wyrzucam b��d
@@ -91,7 +88,6 @@ int8_t FileMenager::writeToEndFile(uint16_t byte, unsigned int PID)
 				}
 
 			}
-			//t->size--;
 			if (req == 0)//je�eli baj b�dzie si� znajdowa� w 0 bloku (blok bezpo�redni)
 			{
 				phycial = (t->i_node[req] * BlockSize) + ((t->size)%BlockSize);
@@ -127,7 +123,7 @@ int8_t FileMenager::append(std::string name, uint16_t byte)
 	int8_t ret;
 	ret = openFile(name, 0);
 	if (ret != 0) return ret;
-	ret = writeToEndFile(byte, 0);
+	ret = writeToEndFile(byte, 0,name);
 	if (ret != 0)
 	{
 		closeFile(name, 0);
@@ -137,14 +133,14 @@ int8_t FileMenager::append(std::string name, uint16_t byte)
 	return ret;
 }
 
-int8_t FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID)
+int8_t FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID,std::string name)
 {
 	int phycial = 0;
 
 	for (auto i : Containers::open_file_table)//iteruje po tablicy otawrtych plik�w
 	{
 		File *t = &Containers::MainFileCatalog[Containers::open_file_table[i]];
-		if (t->PID == PID)
+		if (t->PID == PID && t->name == name)
 		{
 			int req = pos / BlockSize; //numer  bloku
 			if (pos >= t->size) return ERROR_UOT_OF_FILE_RANGE;//sprawdzam czy nie wyszlismy poza zakres pliku
