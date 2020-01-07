@@ -96,7 +96,7 @@ public:
 	// 66 brak pliku o podanej nazwie
 	//   0 udalo sie zmienic nazwe pliku
 
-	int8_t readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID); //odczytaj n bajt�w z otwartego pliku(z danej pozycji) i wpisz do kom�rek pami�ci z podanym adresem pierwszej
+	int8_t readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID,std::string name); //odczytaj n bajt�w z otwartego pliku(z danej pozycji) i wpisz do kom�rek pami�ci z podanym adresem pierwszej
 	// 69 zakres z poza pliku
 	// 68 plik nie jst otwarty
 	//   0 udalo sie odczytac dane z pliku

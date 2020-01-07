@@ -168,7 +168,7 @@ int8_t FileMenager::writeToFile(uint8_t byte, uint8_t pos, unsigned int PID,std:
 	return ERROR_FILE_IS_NOT_OPENED;
 }
 
-int8_t FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID)
+int8_t FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned int PID, std::string name)
 {
 	int phycial = 0;
 	int curr_pos = pos;
@@ -176,7 +176,7 @@ int8_t FileMenager::readFile(uint8_t addr, uint8_t pos, unsigned int n, unsigned
 	for (auto i : Containers::open_file_table)//itereacja po tablicy otawrtych plik�w
 	{
 		File* t = &Containers::MainFileCatalog[Containers::open_file_table[i]];//pomoc
-		if (t->PID == PID)//sprawdzenie czy plik jest otwarty przez podany proces
+		if (t->PID == PID && t->name == name)//sprawdzenie czy plik jest otwarty przez podany proces
 		{
 			if ((pos + n) > t->size - pos) return ERROR_UOT_OF_FILE_RANGE;//sprawdzenie czy nie wychodzimy poza zakres pliku
 			ret = 1;//zmienia pomocnicza do stwierdzenia czy plik jest otawrty czy nie
