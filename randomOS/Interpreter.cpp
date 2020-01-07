@@ -421,7 +421,7 @@ std::pair<uint8_t,std::string> Interpreter::go() {
 	}
 	catch (uint8_t e) {
 		PCB->setStateTerminated();
-		return std::make_pair(e,"");
+		return std::make_pair(e, instructionString);
 	}
 	return  std::make_pair(0, instructionString);
 }
