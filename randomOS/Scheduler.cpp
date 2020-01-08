@@ -46,7 +46,8 @@ uint8_t Scheduler::nextProcess()
 	//move the currently running process into the expired queue and remove it from active
 	if (RUNNING != nullptr){ 
 		//if it wasn't dummy or terminated put it into expired 
-		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) { this->addProcess(RUNNING, this->expired); }
+		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) {
+			this->addProcess(RUNNING, this->expired); }
 		//if it was terminated call processManager to deleteIt
 		if (RUNNING->getIsTerminated()) {
 			ProcessManager::deleteProcess(RUNNING,this->fileManager, shared_from_this(),virtualMemory); }
@@ -76,7 +77,6 @@ uint8_t Scheduler::nextProcess()
 	//to avoid null pointer exception (nulls in queue because of cascade deletion)
 	if (RUNNING == nullptr) { nextProcess(); }
 
-	//tut
 
 	//else set its state as running
 	RUNNING->setStateRunning();
@@ -85,6 +85,12 @@ uint8_t Scheduler::nextProcess()
 
 uint8_t Scheduler::deleteProcess(const unsigned int& PID) 
 {
+	if (RUNNING->getHasPID(PID))
+	{
+		RUNNING = nullptr;
+		this->active->erase(this->active->begin());
+	}
+
 	for (auto it=active->begin();it!=active->end();it++)
 	{
 		if ((*it)->getHasPID(PID))
