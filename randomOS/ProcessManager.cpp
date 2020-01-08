@@ -117,11 +117,13 @@ bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shar
 		//if the process doesn't have children it can simply be deleted
 		else
 		{
+			
 			fileManager->closeProcessFiles(process->getPID());
 			scheduler->deleteProcess(process->getPID());
 			process->getParentPCB()->removeChild(process);
 			//not sure if needed
 			//virtualMemory->removeProgram(process->getPID());
+			process = NULL;
 			return true;
 		}
 	

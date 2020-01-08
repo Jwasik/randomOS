@@ -1455,7 +1455,7 @@ void Shell::run()
 			this->print("FILENAME", 13);
 			this->print("        ", 13);
 			this->print("STATE", 13);
-		
+			this->print("        ", 13);
 			this->print("VALUE", 13);
 			this->print("        ", 13);
 			this->print("QUEUEU\n", 13);
