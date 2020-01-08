@@ -15,27 +15,25 @@ Scheduler::~Scheduler()
 
 uint8_t Scheduler::schedule()
 {
+
+	if (RUNNING == nullptr || RUNNING->counter <= this->counter || RUNNING->getIsTerminated())
+	{
+		return nextProcess();
+	}
+
+	//if the now running porocess is under a semaphore, switch to next
 	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
 	{
 		RUNNING->counter = this->counter;
 		return this->nextProcess();
 	}
+
 	//INCREMENT THE COUNTER
 	counter++;
 	if (counter > 1000000) { counter = 0; } //to avoid overflow
 
 	//if dummy is running and any other process is in the queue, switch to it
 	if (RUNNING->getHasPID(0)){ if(active->size()>1){ return nextProcess(); }}
-
-	
-
-	if  (RUNNING == nullptr || RUNNING->counter <= this->counter || RUNNING->getIsTerminated() )
-	{
-		return nextProcess();
-	}
-
-
-	//if the now running porocess is under a semaphore, switch to next
 
 
 	return 0;
@@ -87,7 +85,6 @@ uint8_t Scheduler::deleteProcess(const unsigned int& PID)
 {
 	if (RUNNING->getHasPID(PID))
 	{
-		RUNNING = nullptr;
 		this->active->erase(this->active->begin());
 	}
 
@@ -97,7 +94,6 @@ uint8_t Scheduler::deleteProcess(const unsigned int& PID)
 		{
 			if ((*it)->getIsRunning()) 
 			{ 
-				RUNNING = NULL;
 				active->erase(it);
 				nextProcess(); 
 				return 0; 
@@ -158,7 +154,6 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 
 	
 	int waitingTime = this->counter - process->counter;
-	std::cout << "TTTTTTTTTTTTTTTTEST Set priority of " << process->getName() << " to " << (int)process->priority << " waitied " << waitingTime << " pcounter " << process->counter << " counter " << this->counter << std::endl;
 	if (waitingTime < 0)
 		waitingTime += 1000000;
 

@@ -123,7 +123,6 @@ bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shar
 			process->getParentPCB()->removeChild(process);
 			//not sure if needed
 			//virtualMemory->removeProgram(process->getPID());
-			process = NULL;
 			return true;
 		}
 	
