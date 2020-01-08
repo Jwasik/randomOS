@@ -17,6 +17,7 @@ uint8_t Scheduler::schedule()
 {
 	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
 	{
+		RUNNING->counter = this->counter;
 		return this->nextProcess();
 	}
 	//INCREMENT THE COUNTER
@@ -115,9 +116,9 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std:
 	//if the queue is not specified (passed as null) the active queue is assumed
 	if (queue == NULL) 
 	{ 
-		std::cout << "wch" << std::endl;
 		if (process == NULL) { return ERROR_SH_ADDED_PROCESS_DOES_NOT_EXIST; } //process does not exist
 		queue = this->active; 
+		process->basePriority = 120;
 		process->priority = 120;
 		process->counter = this->counter;
 		queue->push_back(process);
@@ -148,12 +149,13 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std:
 
 uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process)
 {
+
 	
 	int waitingTime = this->counter - process->counter;
+	std::cout << "TTTTTTTTTTTTTTTTEST Set priority of " << process->getName() << " to " << (int)process->priority << " waitied " << waitingTime << " pcounter " << process->counter << " counter " << this->counter << std::endl;
 	if (waitingTime < 0)
 		waitingTime += 1000000;
 
-	
 	int bonus = 0.1 * waitingTime;
 	if (bonus > 10)
 		bonus = 10;
@@ -180,7 +182,7 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 		
 	}
 
-	//std::cout << "TEST Set priority of " << process->getName() << " to " << (int)process->priority << " counter " << process->counter - this->counter <<   std::endl;
+	
 
 	return 0;
 }
