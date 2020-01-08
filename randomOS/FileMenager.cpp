@@ -274,9 +274,14 @@ int8_t FileMenager::closeFile(std::string name, unsigned int PID)
 		int pom = Containers::open_file_table[i];
 		if (Containers::MainFileCatalog[pom].name == name && Containers::MainFileCatalog[pom].PID == PID)
 		{
+
 			Containers::MainFileCatalog[pom].isOpen = false;
-			Containers::MainFileCatalog[pom].s.signal();
 			Containers::open_file_table.erase(Containers::open_file_table.begin() + i);
+			int po = Containers::MainFileCatalog[pom].s.signal();
+			if (po != -1)
+			{
+				return openFile(name, po);
+			}
 			return 0;
 		}
 	}
@@ -300,7 +305,8 @@ void FileMenager::closeProcessFiles(unsigned int PID)
 {
 	for (auto i : Containers::open_file_table)
 	{
-		if (Containers::MainFileCatalog[i].PID == PID) closeFile(Containers::MainFileCatalog[i].name, Containers::MainFileCatalog[i].PID);
+		if (Containers::MainFileCatalog[i].PID == PID) 
+		closeFile(Containers::MainFileCatalog[i].name, Containers::MainFileCatalog[i].PID);
 	}
 }
 
