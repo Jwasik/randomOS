@@ -54,7 +54,7 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 	{
 		if (Containers::MainFileCatalog[i].name == name)//szukamy pliku o podanej nazwie
 		{
-			if (Containers::MainFileCatalog[i].s.getValue() < 0)
+			if (!Containers::MainFileCatalog[i].s.firstElement(PID))
 			{
 				Containers::MainFileCatalog[i].s.wait();
 				return ERROR_FILE_OPENED_BY_OTHER_PROCESS;//sprawdza czy plik nie jest otwarty przez inny proes

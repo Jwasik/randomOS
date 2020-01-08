@@ -18,4 +18,5 @@ public:
 	void deleteFromList(int PID);
 	const int& getValue();
 	const std::vector<std::shared_ptr<PCB>>& getList();
+	bool firstElement(unsigned int PID);
 };
