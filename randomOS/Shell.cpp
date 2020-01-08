@@ -1264,7 +1264,6 @@ void Shell::run()
 		}
 		else if (std::regex_match(command, match, std::regex("^(p ram)( -[dh])?$")))
 		{
-		
 			this->printLine("RAM CONTENT", 13);
 			this->print("  Frame Number    ", 5);
 			if (match[2] == " -d") { this->printLine("Contents [DEC]", 5); }
