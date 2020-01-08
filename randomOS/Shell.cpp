@@ -1455,9 +1455,9 @@ void Shell::run()
 			this->print("FILENAME", 13);
 			this->print("        ", 13);
 			this->print("STATE", 13);
-			this->print("        ", 13);
+		
 			this->print("VALUE", 13);
-			his->print("  ", 13);
+			this->print("        ", 13);
 			this->print("QUEUEU\n", 13);
 			for (auto& file : Containers::MainFileCatalog)
 			{
@@ -1474,6 +1474,9 @@ void Shell::run()
 				}
 				this->print("        ", 13);
 				this->print(file.s.getValue(), 13);
+				this->print("        ", 13);
+				auto procList = file.s.getList();;
+				for (auto p : procList) { this->print(p->getName()+ ", ", 14); }
 				std::cout << std::endl;
 			}
 			std::cout << std::endl;
