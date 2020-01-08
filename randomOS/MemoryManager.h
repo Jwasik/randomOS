@@ -7,7 +7,7 @@ class Memory
 {
 	struct Frame
 	{
-		int pid;
+		int pid=-1;
 		int page;
 		bool dirtyflag = 0;
 	};
@@ -23,8 +23,6 @@ class Memory
 public:
 	Memory();
 	Memory(std::shared_ptr<VirtualMemory>);
-	void creatProcess(int pid);
-
 
 
 	std::vector<std::pair<int, bool>> ProcessPages
@@ -39,7 +37,7 @@ public:
 		{ -1, 0 }
 	};
 	std::map<int, std::vector<std::pair<int, bool>>> PageTable;
-	void printPageTable(int);
+	std::pair<std::vector<int>, std::vector<bool>> printPageTable(int, uint8_t& errorCode);
 
 
 
@@ -51,7 +49,7 @@ public:
 	//    probuje sprowadzic ja z pliku wymiany
 	//     jesli jest to ja laduje, ale jesli jej nie ma rzucam wyjatek o zlym adresie logicznym
 	std::pair<uint8_t, int8_t&> getMemoryContent(int pid, int logical);
-	void test();
+
 
 	friend class Shell;
 };

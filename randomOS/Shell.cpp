@@ -33,7 +33,8 @@ Shell::Shell() :defaultColor(10)
 
 Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm, std::shared_ptr<ProcessManager> pm, std::shared_ptr<Scheduler> sch, std::shared_ptr<Interpreter> inte)
 	:defaultColor(10), fileManager(fm), memoryManager(mm), virtualMemory(vm), processManager(pm), scheduler(sch), interpreter(inte)
-{
+{	
+	goCounter = 0;
 	system("color 0A");
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -919,8 +920,7 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
-			uint8_t errorCode = this->scheduler->schedule();
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
+			
 
 			std::pair < uint8_t, std::string> errorC = this->interpreter->go();
 			if (errorC.first != 0) {
@@ -942,6 +942,19 @@ void Shell::run()
 				this->print("Completed instruction: ", 14);
 				this->printLine(errorC.second, 11);
 			}
+			goCounter++;
+			if (goCounter == 7) 
+			{
+				this->print("[", 14);
+				this->print("Tip: ", 13);
+				this->print("You can use \"go ", 14);
+				this->print("[NUMBER OF STEPS]", 11);
+				this->printLine("\" instead.]", 14);
+				goCounter = 0;
+			}
+
+			uint8_t errorCode = this->scheduler->schedule();
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go[ ][0-9]+")))
 		{
@@ -953,45 +966,61 @@ void Shell::run()
 				count *= 10;
 				count += (command[i] - '0');
 			}
-			this->print("EXECUTING ", 13);
-			this->print(count, 9);
-			this->printLine(" INSTRUCTIONS ", 13);
-			for (unsigned int i = 0; i < count; i++)
+			if (count <= 999) 
 			{
-				uint8_t errorCode = this->scheduler->schedule();
-				if (errorCode != 0) 
-				{ 
-					this->print("  " + std::to_string(i+1), 12);
-					this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); 
-					this->print("    ", 0);
-					this->printCode(errorCode); 
-				}
-
-				std::pair < uint8_t, std::string> errorC = this->interpreter->go();
-				if (errorC.first != 0)
+				this->print("EXECUTING ", 13);
+				this->print(count, 9);
+				this->printLine(" INSTRUCTIONS ", 13);
+				this->printLine("  No. Details", 5);
+				for (unsigned int i = 0; i < count; i++)
 				{
-					this->print("  " + std::to_string(i+1), 12);
-					this->printLine(" AN ERROR OCCURED IN INTERPRETER!", 12);
-					if (errorC.second != "" || errorC.second != "ERR")
+					uint8_t errorCode = this->scheduler->schedule();
+					if (errorCode != 0)
 					{
-						this->print("    (When trying to execute ", 14);
-						this->print(errorC.second, 11);
-						this->print(" in  ", 14);
-						this->print(RUNNING->getName(), 12);
-						this->printLine(")", 14);
+						this->print("  " + std::to_string(i + 1), 12);
+						//position the string appropriately
+						std::string spaces = "    ";
+						for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+						this->printLine(spaces + "AN ERROR OCCURED IN SCHEDULER!", 12);
+						this->print("     ", 0);
+						this->printCode(errorCode);
 					}
-					this->print("    ",0);
-					this->printCode(errorC.first);
-				}
-				else
-				{
-					this->print("  "+std::to_string(i+1), 9);
-					this->print(" Currently running: ", 14);
-					this->printLine(RUNNING->getName(), 12);
-					this->print("    Completed instruction: ", 14);
-					this->printLine(errorC.second, 11);
+
+					std::pair < uint8_t, std::string> errorC = this->interpreter->go();
+					if (errorC.first != 0)
+					{
+						this->print("  " + std::to_string(i + 1), 12);
+						//position the string appropriately
+						std::string spaces = "    ";
+						for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+						this->printLine(spaces + "AN ERROR OCCURED IN INTERPRETER!", 12);
+						if (errorC.second != "" || errorC.second != "ERR")
+						{
+							this->print("      (When trying to execute ", 14);
+							this->print(errorC.second, 11);
+							this->print(" in  ", 14);
+							this->print(RUNNING->getName(), 12);
+							this->printLine(")", 14);
+						}
+						this->print("      ", 0);
+						this->printCode(errorC.first);
+					}
+					else
+					{
+						this->print("  " + std::to_string(i + 1), 9);
+						//position the string appropriately
+						std::string spaces = "    ";
+						for (int z = 0; z < std::to_string(i + 1).length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+
+						this->print(spaces + "Currently running: ", 14);
+						this->printLine(RUNNING->getName(), 12);
+						this->print("      Completed instruction: ", 14);
+						this->printLine(errorC.second, 11);
+					}
 				}
 			}
+			else { this->printLine("AN ERROR OCCURED!", 12); this->printCode(1); }
+			
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
@@ -1036,8 +1065,10 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p fs$")))
 		{
+			this->printLine("DRIVE CONTENTS", 13);
 			auto names = fileManager->ls();
 
+			this->print("  ",0);
 			std::string str;
 			for (unsigned int i = 0; i < Containers::bit_vector.size() / 2; i++)
 			{
@@ -1045,7 +1076,9 @@ void Shell::run()
 				this->print("  ", 14);
 				if (i < 10)this->print(" ", 14);
 			}
+
 			std::cout << std::endl;
+			this->print("  ", 0);
 			for (unsigned int i = 0; i < Containers::bit_vector.size() / 2; i++)
 			{
 				if (Containers::bit_vector[i] == 0)
@@ -1082,6 +1115,7 @@ void Shell::run()
 			}
 			std::cout << std::endl;
 
+			this->print("  ", 0);
 			for (unsigned int i = Containers::bit_vector.size() / 2; i < Containers::bit_vector.size(); i++)
 			{
 				this->print(i, 14);
@@ -1089,6 +1123,8 @@ void Shell::run()
 				if (i < 10)this->print(" ", 14);
 			}
 			std::cout << std::endl;
+
+			this->print("  ", 0);
 			for (unsigned int i = Containers::bit_vector.size() / 2; i < Containers::bit_vector.size(); i++)
 			{
 				if (Containers::bit_vector[i] == 0)
@@ -1124,6 +1160,40 @@ void Shell::run()
 				std::cout << " ";
 			}
 			std::cout << std::endl;
+
+			//if there are any files, print out the color legend
+			if (Containers::Colors.size() > 0) {
+				this->printLine("LEGEND", 13);
+				this->printLine("  Color  FileName  Size  Preview", 5);
+				
+				for (int z=0;z< Containers::Colors.size(); z++)
+				{
+					auto x = Containers::Colors[z];
+					this->print("   ", 0);
+					this->print(char(178), x.second + 1);
+					this->print(char(178), x.second + 1);
+					this->print("      " + x.first, 14);
+					std::string wcTemp = std::to_string(fileManager->wc(x.first).second);
+					this->print("      " +wcTemp , 11);
+					std::string catTemp = fileManager->cat(x.first).second;
+					//if cat too long elapse it (max 20 chars)
+					if (catTemp.size() > 25) { catTemp=catTemp.substr(0, 22)+"{...}";}
+					
+					//calculate spaces
+					std::string spaces = "    ";
+					for (int z = 0; z < wcTemp.length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
+					//if cat empty, print empty file tag
+					if(catTemp.length()==0)
+					{
+						this->print(spaces+"  " , 14);
+						this->printLine("<emptyFile>", 12);
+					}
+					else{ this->printLine(spaces + "  \"" + catTemp + "\"", 14); }
+					if (z <Containers::Colors.size()-1) { std::cout << std::endl; }
+				}
+			}
+			
+			
 		}
 		else if (std::regex_match(command, match, std::regex("^(p vm)( -[dh])?$")))
 		{
@@ -1167,12 +1237,39 @@ void Shell::run()
 				}
 				std::cout << std::endl;
 			}
+			
+
+		}
+		else if (std::regex_match(command, match, std::regex("^(p pt )([0-9]+)$")))
+		{
+		
+		uint8_t errorCode = 0;
+		std::pair<std::vector<int>, std::vector<bool>> results= this->memoryManager->printPageTable(std::stoi(match[2]), errorCode);
+		//check for errors
+		if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); printCode(errorCode); }
+		else 
+		{
+			this->print("PAGE TABLE for PID=", 13);
+			this->printLine(match[2], 11);
+
+			this->printLine("No. Frame Correctness Bit ", 5);
+			for (int i = 0; i < results.first.size() && i < results.second.size(); i++)
+			{
+				print(" " + std::to_string(i), 9);
+				std::string frameTemp = std::to_string(results.first[i]);
+				if (results.first[i] == -1) { frameTemp = "-"; }
+				print("    " + frameTemp, 14);
+				printLine("         " + std::to_string(results.second[i]), 14);
+			}
+		}
+		
 		}
 		else if (std::regex_match(command, match, std::regex("^(p ram)( -[dh])?$")))
 		{
 			this->printLine("RAM CONTENT", 13);
 			this->print("  Frame Number    ", 5);
 			if (match[2] == " -d") { this->printLine("Contents [DEC]", 5); }
+
 			//print in hexa
 			else { this->printLine("Contents [HEX]", 5); }
 
@@ -1181,6 +1278,12 @@ void Shell::run()
 				this->print("       ", 9);
 				this->print(int(i), 9);
 				std::cout << "          ";
+
+				//COLORING RAM
+				int color = 14;
+				int result= memoryManager->FrameTable[i].pid;
+				if (result != -1) { color = 14 + 16 * (result + 1); }
+				
 				for (unsigned int j = 0; j < 16; j++)
 				{
 					std::string temp = "";
@@ -1189,12 +1292,52 @@ void Shell::run()
 					//print in hexa
 					else { temp = toHexString(memoryManager->ram[(PAGE_SIZE * i) + j]); }
 
-					this->print(temp, 14);
+					this->print(temp, color);
 					int spaceNumber = 4 - temp.length();
-					for (int z = 0; z < spaceNumber; z++) { print(" ", 1); }
+					//TO AVOID COLOR BEING ALL THE WAY THROUGH THE CONSOLE
+					if (j == 15) { this->print("", 0); }
+
+					for (int z = 0; z < spaceNumber; z++) { print(" ", color); }
 				}
 				std::cout << std::endl;
 			}
+			std::vector<int> addedPIDs;
+			if (memoryManager->FrameTable[0].pid != -1) {
+				this->printLine("LEGEND", 13);
+				this->printLine("  Color  PID", 5);
+				for (int z = 0; z < 8; z++)
+				{
+					int color = 14;
+					int result = memoryManager->FrameTable[z].pid;
+					if (result == -1) { break; }
+				
+					bool printLegend = true;
+					for (auto p : addedPIDs) { if (p == result) { printLegend = false; }}
+
+					if (printLegend) 
+					{
+						addedPIDs.push_back(result);
+						color = (result + 1);
+
+						this->print("   ", 0);
+						this->print(char(178), color);
+						this->print(char(178), color);
+						this->print("     " + std::to_string(result), 14);
+						if (z < 7) { std::cout << std::endl; }
+					}
+				
+				}
+			}
+
+
+		}
+		else if (std::regex_match(command, match, std::regex("^color$")))
+		{
+			for (int i = 0; i < 256; i++)
+			{
+				printLine(std::to_string(i)+ "----------",i);
+			}
+			
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p sch")))
 		{
@@ -1231,7 +1374,7 @@ void Shell::run()
 			this->print("  No.  ", 11);
 			this->print("ACTIVE [PRIORITY]", 10);
 			this->print("    ", 10);
-			this->print("EXPIRED", 12);
+			this->print("EXPIRED [PRIORITY]", 12);
 			std::cout << std::endl;
 
 			//check which has more elements
@@ -1269,9 +1412,9 @@ void Shell::run()
 				if (i < scheduler->expired->size())
 				{
 					this->print((*scheduler->expired)[i]->getName(), 4);
-					this->print(" [", 2);
-					this->print(std::to_string((*scheduler->expired)[i]->priority), 10);
-					this->print("]", 2);
+					this->print(" [", 4);
+					this->print(std::to_string((*scheduler->expired)[i]->priority), 12);
+					this->print("]", 4);
 				}
 				//if there are no elements in this collumn at all
 				if (i == 0 && scheduler->expired->size() == 0) { this->print("<none>", 4); }
@@ -1434,6 +1577,9 @@ void Shell::printCode(uint8_t code)
 	case 0:
 		std::cout << "ALLES GING BESSER ALS ERWARTET" << std::endl;
 		break;
+	case 1:
+		std::cout << "CODE 1 : GO_CAN_EXECUTE_MAX_999_COMMANDS_AT_ONCE" << std::endl;
+		break;
 	case 16:
 		std::cout << "CODE 16 : ERROR_SH_PRIORITY_OUT_OF_RANGE" << std::endl;
 		break;
@@ -1499,6 +1645,9 @@ void Shell::printCode(uint8_t code)
 		break;
 	case 81:
 		std::cout << "CODE 81 : ERROR_PAGE_DOESNT_EXIST" << std::endl;
+		break;
+	case 82:
+		std::cout << "CODE 82 : ERROR_PROCESS_IS_NOT_RUNNING" << std::endl;
 		break;
 	case 200:
 		std::cout << "CODE 200 : ERROR_UNKNOWN_INSTRUCTION" << std::endl;

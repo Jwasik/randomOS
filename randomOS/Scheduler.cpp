@@ -15,6 +15,10 @@ Scheduler::~Scheduler()
 
 uint8_t Scheduler::schedule()
 {
+	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
+	{
+		return this->nextProcess();
+	}
 	//INCREMENT THE COUNTER
 	counter++;
 	if (counter > 1000000) { counter = 0; } //to avoid overflow
@@ -22,10 +26,16 @@ uint8_t Scheduler::schedule()
 	//if dummy is running and any other process is in the queue, switch to it
 	if (RUNNING->getHasPID(0)){ if(active->size()>1){ return nextProcess(); }}
 
+	
+
 	if  (RUNNING == nullptr || RUNNING->counter <= this->counter || RUNNING->getIsTerminated() )
 	{
 		return nextProcess();
 	}
+
+
+	//if the now running porocess is under a semaphore, switch to next
+
 
 	return 0;
 }
@@ -37,8 +47,10 @@ uint8_t Scheduler::nextProcess()
 		//if it wasn't dummy or terminated put it into expired 
 		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) { this->addProcess(RUNNING, this->expired); }
 		//if it was terminated call processManager to deleteIt
-		if (RUNNING->getIsTerminated()) { ProcessManager::deleteProcess(RUNNING,this->fileManager, shared_from_this(),virtualMemory); }
-		else if (active->size() > 0) { this->active->erase(this->active->begin()); }
+		if (RUNNING->getIsTerminated()) {
+			ProcessManager::deleteProcess(RUNNING,this->fileManager, shared_from_this(),virtualMemory); }
+		else if (active->size() > 0) { 
+			this->active->erase(this->active->begin()); }
 
 		RUNNING->setStateReady();
 	}
@@ -53,7 +65,8 @@ uint8_t Scheduler::nextProcess()
 			this->addProcess(RUNNING,NULL);
 			return 0;
 		}
-		for (int i = 0; i < expired->size(); i++) { active->push_back(expired->at(i)); }
+		//for (int i = 0; i < expired->size(); i++) { active->push_back(expired->at(i)); }
+		*this->active = *this->expired;
 		this->expired->clear();
 	}
 
@@ -62,11 +75,8 @@ uint8_t Scheduler::nextProcess()
 	//to avoid null pointer exception (nulls in queue because of cascade deletion)
 	if (RUNNING == nullptr) { nextProcess(); }
 
-	//if the now running porocess is under a semaphore, switch to next
-	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
-	{
-		return this->nextProcess();
-	}
+	//tut
+
 	//else set its state as running
 	RUNNING->setStateRunning();
 	return normalProcessPriorityAndTimerChange(RUNNING);
@@ -105,6 +115,7 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std:
 	//if the queue is not specified (passed as null) the active queue is assumed
 	if (queue == NULL) 
 	{ 
+		std::cout << "wch" << std::endl;
 		if (process == NULL) { return ERROR_SH_ADDED_PROCESS_DOES_NOT_EXIST; } //process does not exist
 		queue = this->active; 
 		process->priority = 120;
