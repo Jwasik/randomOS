@@ -59,6 +59,9 @@ public:
 	//     jesli jest to ja laduje, ale jesli jej nie ma rzucam wyjatek o zlym adresie logicznym
 	std::pair<uint8_t, int8_t&> getMemoryContent(int pid, int logical);
 
+	//assigns page table to PID if not present, else does nothing
+	void assignPageTable(unsigned int pid);
+
 
 	friend class Shell;
 };
