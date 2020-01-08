@@ -85,7 +85,9 @@ uint8_t Scheduler::deleteProcess(const unsigned int& PID)
 {
 	if (RUNNING->getHasPID(PID))
 	{
+		RUNNING = nullptr;
 		this->active->erase(this->active->begin());
+		this->nextProcess();
 	}
 
 	for (auto it=active->begin();it!=active->end();it++)
