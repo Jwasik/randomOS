@@ -1294,6 +1294,9 @@ void Shell::run()
 
 					this->print(temp, color);
 					int spaceNumber = 4 - temp.length();
+					//TO AVOID COLOR BEING ALL THE WAY THROUGH THE CONSOLE
+					if (j == 15) { this->print("", 0); }
+
 					for (int z = 0; z < spaceNumber; z++) { print(" ", color); }
 				}
 				std::cout << std::endl;
