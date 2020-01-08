@@ -1054,9 +1054,6 @@ void Shell::run()
 				this->printLine("  No. Details", 5);
 				for (unsigned int i = 0; i < count; i++)
 				{
-					this->print("INSTRUCTION COUNTER ", 120);
-					this->printLine(RUNNING->getInstructionCounter(), 120);
-
 					uint8_t errorCode = this->scheduler->schedule();
 					if (errorCode != 0)
 					{

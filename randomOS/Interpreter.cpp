@@ -38,7 +38,7 @@ uint8_t Interpreter::loadCode()
 	if (error != 0) return error;
 	this->code = memory->getMemoryContent(PID, PC).second;
 	PC++;
-	std::cout << "CODE " << int(this->code) << std::endl;
+	//std::cout << "CODE " << int(this->code) << std::endl;
 	instructionHex.push_back(this->code);
 	return 0;
 }
