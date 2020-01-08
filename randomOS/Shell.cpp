@@ -1277,6 +1277,13 @@ void Shell::run()
 				this->print("       ", 9);
 				this->print(int(i), 9);
 				std::cout << "          ";
+				int color= memoryManager->FrameTable[i].pid;
+				if (color == 14) { color = 15; }
+
+				if (color == -1){ color = 14; }
+				else{ color = color + 1; }
+				
+
 				for (unsigned int j = 0; j < 16; j++)
 				{
 					std::string temp = "";
@@ -1285,7 +1292,7 @@ void Shell::run()
 					//print in hexa
 					else { temp = toHexString(memoryManager->ram[(PAGE_SIZE * i) + j]); }
 
-					this->print(temp, 14);
+					this->print(temp, color);
 					int spaceNumber = 4 - temp.length();
 					for (int z = 0; z < spaceNumber; z++) { print(" ", 1); }
 				}
