@@ -38,6 +38,8 @@ private:
 	void printCode(uint8_t);
 
 
+	//variable for counting number of times user used go and proposing he should use go <number> istead after set ammount
+	unsigned int goCounter;
 
 	std::string osName;
 

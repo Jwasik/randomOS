@@ -36,7 +36,6 @@ struct File
 struct Containers
 {
 
-
 	static std::vector<File> MainFileCatalog; // Katlog g�owny
 
 	static std::array<int, DiskSize / BlockSize> bit_vector; // Mapa bitowa

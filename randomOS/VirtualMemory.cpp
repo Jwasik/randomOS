@@ -1,29 +1,30 @@
 #include "VirtualMemory.h"
 
 
-
-void VirtualMemory::insertProgram(std::pair<int, std::vector<Page>> program)
-{
-
+uint8_t VirtualMemory::insertProgram(std::pair<int, std::vector<Page>> program) {
+	for (auto &p : swapFile)
+		if (p.first == program.first) return 96;
+	if (program.second.empty()) return 97;
 	swapFile.insert(program);
+	return 0;
 }
 
-void VirtualMemory::removeProgram(const unsigned int & PID)
-{
-	swapFile.erase(PID);
-}
-
-void VirtualMemory::updateQueue(int frameNumber) {
+uint8_t VirtualMemory::updateQueue(int frameNumber) {
+	if (frameNumber < 0 || frameNumber > queue.size() - 1) return 98;
 	for (auto &frame : queue)
 		if (frame.first == frameNumber) frame.second = true;
+	return 0;
 }
 
-void VirtualMemory::updateSwapFilePage(int pid, int pageNumber, Page page) {
+uint8_t VirtualMemory::updateSwapFilePage(int pid, int pageNumber, Page page) {
+	if (swapFile.count(pid) == 0) return 100;
+	if (pageNumber < 0 || pageNumber > swapFile.find(pid)->second.size() - 1) return 99;
 	for (auto &program : swapFile) {
 		if (program.first == pid)
 			for (int i = 0; i < sizeof(page.data); i++)
 				program.second[pageNumber].data[i] = page.data[i];
 	}
+	return 0;
 }
 
 int VirtualMemory::getVictimFrameNumber() {
@@ -41,8 +42,12 @@ int VirtualMemory::getVictimFrameNumber() {
 	return temp.first;
 }
 
-Page VirtualMemory::getPage(int pid, int pageNumber) {
-	return swapFile.find(pid)->second[pageNumber];
+std::pair<uint8_t, Page> VirtualMemory::getPage(int pid, int pageNumber) {
+	if (swapFile.count(pid) == 0)
+		return std::make_pair(100, Page());
+	if (pageNumber < 0 || pageNumber > swapFile.find(pid)->second.size() - 1)
+		return std::make_pair(99, Page());
+	return std::make_pair(0, swapFile.find(pid)->second[pageNumber]);
 }
 
 void VirtualMemory::printSwapFile() {
@@ -107,7 +112,7 @@ void VirtualMemory::test() {
 	std::cout << "So we first get the desired page, e.g. 3rd page of process with pid = 1, and put it into RAM"
 		<< std::endl;
 	std::cout << "That page (got using getPage()): ";
-	getPage(1, 2).print();
+	getPage(1, 2).second.print();
 	std::cout << std::endl;
 
 	std::cout << "Now we have to update the page that was taken down in SwapFile" << std::endl;
