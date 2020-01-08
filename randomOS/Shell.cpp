@@ -1235,15 +1235,41 @@ void Shell::run()
 					}
 					std::cout << std::endl;
 				}
+				std::cout << std::endl;
 			}
 			
 
+		}
+		else if (std::regex_match(command, match, std::regex("^(p pt )([0-9]+)$")))
+		{
+		
+		uint8_t errorCode = 0;
+		std::pair<std::vector<int>, std::vector<bool>> results= this->memoryManager->printPageTable(std::stoi(match[2]), errorCode);
+		//check for errors
+		if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); printCode(errorCode); }
+		else 
+		{
+			this->print("PAGE TABLE for PID=", 13);
+			this->printLine(match[2], 11);
+
+			this->printLine("No. Frame Correctness Bit ", 5);
+			for (int i = 0; i < results.first.size() && i < results.second.size(); i++)
+			{
+				print(" " + std::to_string(i), 9);
+				std::string frameTemp = std::to_string(results.first[i]);
+				if (results.first[i] == -1) { frameTemp = "-"; }
+				print("    " + frameTemp, 14);
+				printLine("         " + std::to_string(results.second[i]), 14);
+			}
+		}
+		
 		}
 		else if (std::regex_match(command, match, std::regex("^(p ram)( -[dh])?$")))
 		{
 			this->printLine("RAM CONTENT", 13);
 			this->print("  Frame Number    ", 5);
 			if (match[2] == " -d") { this->printLine("Contents [DEC]", 5); }
+
 			//print in hexa
 			else { this->printLine("Contents [HEX]", 5); }
 
@@ -1252,6 +1278,13 @@ void Shell::run()
 				this->print("       ", 9);
 				this->print(int(i), 9);
 				std::cout << "          ";
+				int color= memoryManager->FrameTable[i].pid;
+				if (color == 14) { color = 15; }
+
+				if (color == -1){ color = 14; }
+				else{ color = color + 1; }
+				
+
 				for (unsigned int j = 0; j < 16; j++)
 				{
 					std::string temp = "";
@@ -1260,7 +1293,7 @@ void Shell::run()
 					//print in hexa
 					else { temp = toHexString(memoryManager->ram[(PAGE_SIZE * i) + j]); }
 
-					this->print(temp, 14);
+					this->print(temp, color);
 					int spaceNumber = 4 - temp.length();
 					for (int z = 0; z < spaceNumber; z++) { print(" ", 1); }
 				}
@@ -1573,6 +1606,9 @@ void Shell::printCode(uint8_t code)
 		break;
 	case 81:
 		std::cout << "CODE 81 : ERROR_PAGE_DOESNT_EXIST" << std::endl;
+		break;
+	case 82:
+		std::cout << "CODE 82 : ERROR_PROCESS_IS_NOT_RUNNING" << std::endl;
 		break;
 	case 200:
 		std::cout << "CODE 200 : ERROR_UNKNOWN_INSTRUCTION" << std::endl;
