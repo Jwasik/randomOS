@@ -38,13 +38,14 @@ uint8_t Interpreter::loadCode()
 	if (error != 0) return error;
 	code = memory->getMemoryContent(PID, PC).second;
 	PC++;
+	std::cout << "CODE " << int(code) << std::endl;
 	instructionHex.push_back(code);
 	return 0;
 }
 
 uint8_t Interpreter::interpret() {
 	uint8_t errorCode = 0;
-	switch (code) {
+	switch (this->code) {
 	case 0x00:
 		instructionString += "RET";
 		RET();
