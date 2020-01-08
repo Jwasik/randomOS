@@ -37,6 +37,19 @@ bool Semaphore::wait()
 	return 0;
 }
 
+void Semaphore::deleteFromList(int PID)
+{
+	for (int i=0;i<list.size();i++)
+	{
+		if (list[i]->getPID() == PID)
+		{
+			list.erase(list.begin() + i);
+			value++;
+			break;
+		}
+	}
+}
+
 int Semaphore::signal() 
 {
 	if (value < 0)

@@ -15,7 +15,7 @@ public:
 	Semaphore();
 	bool wait(); //returns 1 if a semaphore is down, 0 if it's not
 	int signal();
-
+	void deleteFromList(int PID);
 	const int& getValue();
 	const std::vector<std::shared_ptr<PCB>>& getList();
 };

@@ -54,7 +54,7 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 	{
 		if (Containers::MainFileCatalog[i].name == name)//szukamy pliku o podanej nazwie
 		{
-			if (isFileOpen(name, PID))
+			if (Containers::MainFileCatalog[i].s.getValue() < 0)
 			{
 				Containers::MainFileCatalog[i].s.wait();
 				return ERROR_FILE_OPENED_BY_OTHER_PROCESS;//sprawdza czy plik nie jest otwarty przez inny proes
@@ -313,8 +313,14 @@ void FileMenager::closeProcessFiles(unsigned int PID)
 {
 	for (auto i : Containers::open_file_table)
 	{
-		if (Containers::MainFileCatalog[i].PID == PID) 
-		closeFile(Containers::MainFileCatalog[i].name, Containers::MainFileCatalog[i].PID);
+		if (Containers::MainFileCatalog[i].PID == PID)
+		{
+			closeFile(Containers::MainFileCatalog[i].name, Containers::MainFileCatalog[i].PID);
+		}
+		else
+		{
+			Containers::MainFileCatalog[i].s.deleteFromList(PID);
+		}
 	}
 }
 
