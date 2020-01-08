@@ -53,7 +53,8 @@ uint8_t Scheduler::nextProcess()
 			this->addProcess(RUNNING,NULL);
 			return 0;
 		}
-		for (int i = 0; i < expired->size(); i++) { active->push_back(expired->at(i)); }
+		//for (int i = 0; i < expired->size(); i++) { active->push_back(expired->at(i)); }
+		*this->active = *this->expired;
 		this->expired->clear();
 	}
 
