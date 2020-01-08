@@ -150,7 +150,7 @@ uint8_t Interpreter::interpret() {
 		instructionString += "CPR";
 		errorCode = CPR();
 		break;
-	case 0xFF:
+	case -0x01:
 		instructionString += "NOP";
 		NOP();
 		break;
