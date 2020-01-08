@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <utility>
+#include <fstream>
 #include <vector>
 #include <map>
 #include <string>
@@ -13,5 +14,3 @@
 #include <cstdlib>
 #include <ctime>
 #include <regex>
-#include <fstream>
-#include <queue>
