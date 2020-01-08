@@ -1278,13 +1278,12 @@ void Shell::run()
 				this->print("       ", 9);
 				this->print(int(i), 9);
 				std::cout << "          ";
-				int color= memoryManager->FrameTable[i].pid;
-				if (color == 14) { color = 15; }
 
-				if (color == -1){ color = 14; }
-				else{ color = color + 1; }
+				//COLORING RAM
+				int color = 14;
+				int result= memoryManager->FrameTable[i].pid;
+				if (result != -1) { color = 14 + 16 * (result + 1); }
 				
-
 				for (unsigned int j = 0; j < 16; j++)
 				{
 					std::string temp = "";
@@ -1295,10 +1294,50 @@ void Shell::run()
 
 					this->print(temp, color);
 					int spaceNumber = 4 - temp.length();
-					for (int z = 0; z < spaceNumber; z++) { print(" ", 1); }
+					//TO AVOID COLOR BEING ALL THE WAY THROUGH THE CONSOLE
+					if (j == 15) { this->print("", 0); }
+
+					for (int z = 0; z < spaceNumber; z++) { print(" ", color); }
 				}
 				std::cout << std::endl;
 			}
+			std::vector<int> addedPIDs;
+			if (memoryManager->FrameTable[0].pid != -1) {
+				this->printLine("LEGEND", 13);
+				this->printLine("  Color  PID", 5);
+				for (int z = 0; z < 8; z++)
+				{
+					int color = 14;
+					int result = memoryManager->FrameTable[z].pid;
+					if (result == -1) { break; }
+				
+					bool printLegend = true;
+					for (auto p : addedPIDs) { if (p == result) { printLegend = false; }}
+
+					if (printLegend) 
+					{
+						addedPIDs.push_back(result);
+						color = (result + 1);
+
+						this->print("   ", 0);
+						this->print(char(178), color);
+						this->print(char(178), color);
+						this->print("     " + std::to_string(result), 14);
+						if (z < 7) { std::cout << std::endl; }
+					}
+				
+				}
+			}
+
+
+		}
+		else if (std::regex_match(command, match, std::regex("^color$")))
+		{
+			for (int i = 0; i < 256; i++)
+			{
+				printLine(std::to_string(i)+ "----------",i);
+			}
+			
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p sch")))
 		{
