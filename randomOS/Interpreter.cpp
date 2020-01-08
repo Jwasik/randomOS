@@ -32,16 +32,18 @@ void Interpreter::loadPCB() {
 	instructionHex.clear();
 }
 
-uint8_t Interpreter::loadCode() {
+uint8_t Interpreter::loadCode() 
+{
 	uint8_t error = memory->getMemoryContent(PID, PC).first;
 	if (error != 0) return error;
 	code = memory->getMemoryContent(PID, PC).second;
 	PC++;
 	instructionHex.push_back(code);
+	return 0;
 }
 
 uint8_t Interpreter::interpret() {
-	uint8_t code = 0;
+	uint8_t errorCode = 0;
 	switch (code) {
 	case 0x00:
 		instructionString += "RET";
@@ -156,7 +158,7 @@ uint8_t Interpreter::interpret() {
 		return (uint8_t)200;
 		break;
 	}
-	return code;
+	return 0;
 }
 
 int8_t& Interpreter::loadArgAdrOrReg() {
