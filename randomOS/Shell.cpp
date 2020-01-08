@@ -1183,9 +1183,8 @@ void Shell::run()
 					//if cat empty, print empty file tag
 					if(catTemp.length()==0)
 					{
-						this->print(spaces + "  \"", 14);
-						this->print("<emptyFile>", 12);
-						this->printLine("\"", 14);
+						this->print(spaces+"  " , 14);
+						this->printLine("<emptyFile>", 12);
 					}
 					else{ this->printLine(spaces + "  \"" + catTemp + "\"", 14); }
 					if (z <Containers::Colors.size()-1) { std::cout << std::endl; }
