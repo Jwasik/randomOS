@@ -36,8 +36,17 @@ public:
 		{ -1, 0 },
 		{ -1, 0 }
 	};
-	std::map<int, std::vector<std::pair<int, bool>>> PageTable;
-	std::pair<std::vector<int>, std::vector<bool>> printPageTable(int, uint8_t& errorCode);
+
+	struct tempFrame
+	{
+		unsigned int pid;
+		std::vector<std::pair<int, bool>> pageTable;
+	};
+
+	//mapa strona_procesu, ramka, bit_obecnoœci
+	std::vector<tempFrame> PageTable;
+	//std::map<int, std::vector<std::pair<int, bool>>> PageTable;
+	std::vector<std::pair<int,bool>> printPageTable(int, uint8_t& errorCode);
 
 
 

@@ -32,14 +32,14 @@ void Interpreter::loadPCB() {
 	instructionHex.clear();
 }
 
-uint8_t Interpreter::loadCode() 
+uint8_t Interpreter::loadCode()
 {
 	uint8_t error = memory->getMemoryContent(PID, PC).first;
 	if (error != 0) return error;
-	code = memory->getMemoryContent(PID, PC).second;
+	this->code = memory->getMemoryContent(PID, PC).second;
 	PC++;
-	std::cout << "CODE " << int(code) << std::endl;
-	instructionHex.push_back(code);
+	std::cout << "CODE " << int(this->code) << std::endl;
+	instructionHex.push_back(this->code);
 	return 0;
 }
 
@@ -238,6 +238,32 @@ void Interpreter::returnToPCB() {
 	PCB->setInstructionCounter(PC);
 }
 
+uint8_t Interpreter::write(uint8_t adr, int8_t byte)
+{
+	if (adr > 127)
+	{
+		switch (adr) {
+		case 255:
+			this->AX = byte;
+			break;
+		case 254:
+			this->BX = byte;
+			break;
+		case 253:
+			this->CX = byte;
+			break;
+		case 252:
+			this->DX = byte;
+			break;
+		}
+		return 0;
+	}
+	else
+	{
+		return memory->writeInMem(PID, adr, byte);
+	}
+}
+
 // *****************************************
 // ********** INSTRUKCJE ASEMBLER **********
 // *****************************************
@@ -259,19 +285,127 @@ void Interpreter::WRI() {
 }
 
 uint8_t Interpreter::ADD() {
-	int8_t& a = loadArgAdrOrReg();
-	int8_t& b = loadArgAdrOrReg();
-	if ((a + b) > maxValue) return (uint8_t)201;
-	if ((a + b) < minValue) return (uint8_t)202;
-	a = a + b;
+	uint8_t adr1, adr2;
+	int8_t a, b;
+	adr1 = memory->getMemoryContent(this->PID, this->PC).second;
+	this->PC++;
+	adr2 = memory->getMemoryContent(this->PID, this->PC).second;
+	this->PC++;
+
+
+	//POBRA ADRESY
+	if (adr1 > 127)
+	{
+		switch (adr1) {
+		case 255:
+			a = this->AX;
+			break;
+		case 254:
+			a = this->BX;
+			break;
+		case 253:
+			a = this->CX;
+			break;
+		case 252:
+			a = this->DX;
+			break;
+		}
+	}
+	else
+	{
+		a = memory->getMemoryContent(this->PID, adr1).second; 
+	}
+
+	if (adr2 > 127)
+	{
+		switch (adr2) {
+		case 255:
+			b = this->AX;
+			break;
+		case 254:
+			b = this->BX;
+			break;
+		case 253:
+			b = this->CX;
+			break;
+		case 252:
+			b = this->DX;
+			break;
+		}
+	}
+	else
+	{
+		b = memory->getMemoryContent(this->PID, adr2).second;
+	}
+
+	int8_t c = a + b;
+
+	if (c > maxValue) return (uint8_t)201;
+	if (c < minValue) return (uint8_t)202;
+
+	this->write(adr1, c);
 }
 
 uint8_t Interpreter::SUB() {
-	int8_t& a = loadArgAdrOrReg();
-	int8_t& b = loadArgAdrOrReg();
-	if ((a - b) > maxValue) return (uint8_t)201;
-	if ((a - b) < minValue) return (uint8_t)202;
-	a = a - b;
+	uint8_t adr1, adr2;
+	int8_t a=0, b=0;
+	adr1 = memory->getMemoryContent(this->PID, this->PC).second;
+	this->PC++;
+	adr2 = memory->getMemoryContent(this->PID, this->PC).second;
+	this->PC++;
+
+	//POBRA ADRESY
+	if (adr1 > 127)
+	{
+		switch (adr1) {
+		case 255:
+			a = this->AX;
+			break;
+		case 254:
+			a = this->BX;
+			break;
+		case 253:
+			a = this->CX;
+			break;
+		case 252:
+			a = this->DX;
+			break;
+		}
+	}
+	else
+	{
+		a = memory->getMemoryContent(this->PID, adr1).second;
+	}
+
+	if (adr2 > 127)
+	{
+		switch (adr2) {
+		case 255:
+			b = this->AX;
+			break;
+		case 254:
+			b = this->BX;
+			break;
+		case 253:
+			b = this->CX;
+			break;
+		case 252:
+			b = this->DX;
+			break;
+		}
+	}
+	else
+	{
+		b = memory->getMemoryContent(this->PID, adr2).second;
+	}
+	std::cout << "sub " << int(a) << " " << int(b)<<  std::endl;
+	int8_t c = a - b;
+
+	if (c > maxValue) return (uint8_t)201;
+	if (c < minValue) return (uint8_t)202;
+	std::cout << (int)c << std::endl;
+
+	this->write(adr1, c);
 }
 
 uint8_t Interpreter::MUL() {
@@ -319,6 +453,7 @@ void Interpreter::IFS() {
 	int8_t& a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
 	if (a < 0) PC = b;
+	std::cout << (int)a << std::endl;
 }
 
 void Interpreter::IFE() {
@@ -424,13 +559,16 @@ void Interpreter::NOP() {}
 // ******************************************
 
 std::pair<uint8_t, std::string> Interpreter::go() {
-	uint8_t code;
+	uint8_t errorCode;
 	loadPCB();
-	code = loadCode();
-	if (code != 0)return  std::make_pair(code, instructionString);
-	code = interpret();
-	if (code != 0)return  std::make_pair(code, instructionString);
+	errorCode = loadCode();
+	if (errorCode != 0)return  std::make_pair(errorCode, instructionString);
+	
+	errorCode = interpret();
+
+	if (errorCode != 0)return  std::make_pair(errorCode, instructionString);
 	returnToPCB();
+
 	if (changeToTerminated) PCB->setStateTerminated();
 	return  std::make_pair(0, instructionString);
 }

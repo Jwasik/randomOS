@@ -33,6 +33,7 @@ private:
 	int8_t loadArgNum();
 	std::string loadArgText(int n);
 	void returnToPCB();
+	uint8_t write(uint8_t, int8_t);
 
 	void RET(); //Koniec                                    (0   | 0x00)
 	void MOV(); //Przenieœ                                  (1   | 0x01)

@@ -1260,7 +1260,7 @@ void Shell::run()
 		{
 
 			uint8_t errorCode = 0;
-			std::pair<std::vector<int>, std::vector<bool>> results = this->memoryManager->printPageTable(std::stoi(match[2]), errorCode);
+			auto results = this->memoryManager->printPageTable(std::stoi(match[2]), errorCode);
 			//check for errors
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); printCode(errorCode); }
 			else
@@ -1269,13 +1269,13 @@ void Shell::run()
 				this->printLine(match[2], 11);
 
 				this->printLine("No. Frame Correctness Bit ", 5);
-				for (int i = 0; i < results.first.size() && i < results.second.size(); i++)
+				for (int i = 0; i < results.size() ; i++)
 				{
 					print(" " + std::to_string(i), 9);
-					std::string frameTemp = std::to_string(results.first[i]);
-					if (results.first[i] == -1) { frameTemp = "-"; }
+					std::string frameTemp = std::to_string(results[i].first);
+					if (results[i].first == -1) { frameTemp = "-"; }
 					print("    " + frameTemp, 14);
-					printLine("         " + std::to_string(results.second[i]), 14);
+					printLine("         " + std::to_string(results[i].second), 14);
 				}
 			}
 
