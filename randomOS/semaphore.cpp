@@ -26,7 +26,10 @@ bool Semaphore::wait()
 	}
 	else if (exist)
 	{
-		RUNNING->setStateWaiting();
+		if (!firstElement(RUNNING->getPID())) 
+		{ 
+			RUNNING->setStateWaiting(); 
+		}
 		return 1;
 	}
 	if (list.empty())
