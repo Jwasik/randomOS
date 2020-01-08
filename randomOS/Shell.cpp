@@ -920,8 +920,7 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
-			uint8_t errorCode = this->scheduler->schedule();
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
+			
 
 			std::pair < uint8_t, std::string> errorC = this->interpreter->go();
 			if (errorC.first != 0) {
@@ -953,6 +952,9 @@ void Shell::run()
 				this->printLine("\" instead.]", 14);
 				goCounter = 0;
 			}
+
+			uint8_t errorCode = this->scheduler->schedule();
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go[ ][0-9]+")))
 		{
