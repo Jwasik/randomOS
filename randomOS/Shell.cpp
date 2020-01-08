@@ -1456,25 +1456,37 @@ void Shell::run()
 			this->print("        ", 13);
 			this->print("STATE", 13);
 			this->print("        ", 13);
-			this->print("VALUE\n", 13);
-			for (auto& file : Containers::MainFileCatalog)
+			this->print("VALUE", 13);
+			this->print("        ", 13);
+			this->print("QUEUE\n", 13);
+			if (Containers::MainFileCatalog.size() != 0) 
 			{
-				this->print(file.name, 14);
-				for (unsigned int i = file.name.length(); i < 16; i++) { this->print(" ", 14); }
+				for (auto& file : Containers::MainFileCatalog)
+				{
+					this->print(file.name, 14);
+					for (unsigned int i = file.name.length(); i < 16; i++) { this->print(" ", 14); }
 
-				if (file.s.getValue() < 0)
-				{
-					for (unsigned int i = 0; i < 5; i++)this->print(char(178), 4);
+					if (file.s.getValue() < 0)
+					{
+						for (unsigned int i = 0; i < 5; i++)this->print(char(178), 4);
+					}
+					else
+					{
+						for (unsigned int i = 0; i < 5; i++)this->print(char(178), 2);
+					}
+					this->print("         ", 13);
+					this->print(file.s.getValue(), 11);
+					this->print("          ", 13);
+					auto procList = file.s.getList();;
+					for (int i = 0; i < procList.size(); i++)
+					{
+						this->print(procList[i]->getName(), 14);
+						if (i < procList.size() - 1) { this->print(", ", 14); }
+					}
+					std::cout << std::endl;
 				}
-				else
-				{
-					for (unsigned int i = 0; i < 5; i++)this->print(char(178), 2);
-				}
-				this->print("        ", 13);
-				this->print(file.s.getValue(), 13);
-				std::cout << std::endl;
-			}
-			std::cout << std::endl;
+			}else { printLine("<no files>",4); }
+			
 		}
 		else
 		{
