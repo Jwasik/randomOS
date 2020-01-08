@@ -60,31 +60,31 @@ uint8_t Interpreter::interpret() {
 		break;
 	case 0x03:
 		instructionString += "ADD";
-		code = ADD();
+		errorCode = ADD();
 		break;
 	case 0x04:
 		instructionString += "SUB";
-		code = SUB();
+		errorCode = SUB();
 		break;
 	case 0x05:
 		instructionString += "MUL";
-		code = MUL();
+		errorCode = MUL();
 		break;
 	case 0x06:
 		instructionString += "DIV";
-		code = DIV();
+		errorCode = DIV();
 		break;
 	case 0x07:
 		instructionString += "MOD";
-		code = MOD();
+		errorCode = MOD();
 		break;
 	case 0x08:
 		instructionString += "INC";
-		code = INC();
+		errorCode = INC();
 		break;
 	case 0x09:
 		instructionString += "DEC";
-		code = DEC();
+		errorCode = DEC();
 		break;
 	case 0x0A:
 		instructionString += "JUM";
@@ -108,15 +108,15 @@ uint8_t Interpreter::interpret() {
 		break;
 	case 0x0F:
 		instructionString += "CFI";
-		code = CFI();
+		errorCode = CFI();
 		break;
 	case 0x10:
 		instructionString += "DFI";
-		code = DFI();
+		errorCode = DFI();
 		break;
 	case 0x11:
 		instructionString += "OFI";
-		code = OFI();
+		errorCode = OFI();
 		break;
 	case 0x12:
 		instructionString += "SFI";
@@ -124,31 +124,31 @@ uint8_t Interpreter::interpret() {
 		break;
 	case 0x13:
 		instructionString += "EFI";
-		code = EFI();
+		errorCode = EFI();
 		break;
 	case 0x14:
 		instructionString += "WFI";
-		code = WFI();
+		errorCode = WFI();
 		break;
 	case 0x15:
 		instructionString += "PFI";
-		code = PFI();
+		errorCode = PFI();
 		break;
 	case 0x16:
 		instructionString += "RFI";
-		code = RFI();
+		errorCode = RFI();
 		break;
 	case 0x17:
 		instructionString += "AFI";
-		code = AFI();
+		errorCode = AFI();
 		break;
 	case 0x18:
 		instructionString += "LFI";
-		code = LFI();
+		errorCode = LFI();
 		break;
 	case 0x19:
 		instructionString += "CPR";
-		code = CPR();
+		errorCode = CPR();
 		break;
 	case 0xFF:
 		instructionString += "NOP";
@@ -159,48 +159,72 @@ uint8_t Interpreter::interpret() {
 		return (uint8_t)200;
 		break;
 	}
-	return 0;
+	return errorCode;
 }
 
-int8_t& Interpreter::loadArgAdrOrReg() {
-	//uint8_t error = memory->getMemoryContent(PID, PC).first;
-	//if (error != 0) throw error;
+int8_t Interpreter::loadArgAdrOrReg(uint8_t& adr) {
 
-	int8_t adr = memory->getMemoryContent(PID, PC).second;
-	PC++;
+	adr = memory->getMemoryContent(this->PID, this->PC).second;
+	this->PC++;
 
-	instructionHex.push_back(adr);
-
-	switch (adr) {
-	case -0x01:
-		instructionString += " AX";
-		return AX;
-		break;
-	case -0x02:
-		instructionString += " BX";
-		return BX;
-		break;
-	case -0x03:
-		instructionString += " CX";
-		return CX;
-		break;
-	case -0x04:
-		instructionString += " DX";
-		return DX;
-		break;
-	default:
+	if (adr > 127) {
+		switch (adr) {
+		case 0xFF:
+			this->instructionString += " AX";
+			return this->AX;
+			break;
+		case 0xFE:
+			this->instructionString += " BX";
+			return this->BX;
+			break;
+		case 0xFD:
+			this->instructionString += " CX";
+			return this->CX;
+			break;
+		case 0xFC:
+			this->instructionString += " DX";
+			return this->DX;
+			break;
+		}
+	}
+	else {
 		instructionString += " [" + std::to_string(adr) + "]";
-		//error = memory->getMemoryContent(PID, adr).first;
-		//if (error != 0) throw error;
-		return memory->getMemoryContent(PID, adr).second;
-		break;
+		return memory->getMemoryContent(this->PID, adr).second;
+	}
+}
+
+int8_t Interpreter::loadArgAdrOrReg() {
+
+	uint8_t adr = memory->getMemoryContent(this->PID, this->PC).second;
+	this->PC++;
+
+	if (adr > 127) {
+		switch (adr) {
+		case 0xFF:
+			return this->AX;
+			this->instructionString += " AX";
+			break;
+		case 0xFE:
+			return this->BX;
+			this->instructionString += " BX";
+			break;
+		case 0xFD:
+			return this->CX;
+			this->instructionString += " CX";
+			break;
+		case 0xFC:
+			return this->DX;
+			this->instructionString += " DX";
+			break;
+		}
+	}
+	else {
+		instructionString += " [" + std::to_string(adr) + "]";
+		return memory->getMemoryContent(this->PID, adr).second;
 	}
 }
 
 int8_t Interpreter::loadArgNum() {
-	//uint8_t error = memory->getMemoryContent(PID, PC).first;
-	//if (error != 0) throw error;
-
 	int8_t num = memory->getMemoryContent(PID, PC).second;
 	PC++;
 
@@ -211,13 +235,10 @@ int8_t Interpreter::loadArgNum() {
 }
 
 std::string Interpreter::loadArgText(int n) {
-	//uint8_t error = memory->getMemoryContent(PID, PC).first;
-	//if (error != 0) throw error;
-
 	std::string text = "";
 	char t;
 
-	instructionString += " ";
+	instructionString += " \"";
 
 	for (int i = 0; i < n; i++) {
 		t = memory->getMemoryContent(PID, PC).second;
@@ -227,21 +248,14 @@ std::string Interpreter::loadArgText(int n) {
 		instructionHex.push_back(t);
 		instructionString += t;
 	}
+
+	instructionString += "\"";
 	return text;
 }
 
-void Interpreter::returnToPCB() {
-	PCB->setRegisterA(AX);
-	PCB->setRegisterB(BX);
-	PCB->setRegisterC(CX);
-	PCB->setRegisterD(DX);
-	PCB->setInstructionCounter(PC);
-}
-
-uint8_t Interpreter::write(uint8_t adr, int8_t byte)
+uint8_t Interpreter::writeMemOrReg(uint8_t adr, int8_t byte)
 {
-	if (adr > 127)
-	{
+	if (adr > 127) {
 		switch (adr) {
 		case 255:
 			this->AX = byte;
@@ -258,10 +272,17 @@ uint8_t Interpreter::write(uint8_t adr, int8_t byte)
 		}
 		return 0;
 	}
-	else
-	{
+	else {
 		return memory->writeInMem(PID, adr, byte);
 	}
+}
+
+void Interpreter::returnToPCB() {
+	PCB->setRegisterA(AX);
+	PCB->setRegisterB(BX);
+	PCB->setRegisterC(CX);
+	PCB->setRegisterD(DX);
+	PCB->setInstructionCounter(PC);
 }
 
 // *****************************************
@@ -273,175 +294,92 @@ void Interpreter::RET() {
 }
 
 void Interpreter::MOV() {
-	int8_t& a = loadArgAdrOrReg();
-	int8_t& b = loadArgAdrOrReg();
+	uint8_t adr1;
+	int8_t a = loadArgAdrOrReg(adr1);
+	int8_t b = loadArgAdrOrReg();
 	a = b;
+	writeMemOrReg(adr1, a);
 }
 
 void Interpreter::WRI() {
-	int8_t& a = loadArgAdrOrReg();
+	uint8_t adr1;
+	int8_t a = loadArgAdrOrReg(adr1);
 	int8_t b = loadArgNum();
 	a = b;
+	writeMemOrReg(adr1, a);
 }
 
 uint8_t Interpreter::ADD() {
-	uint8_t adr1, adr2;
-	int8_t a, b;
-	adr1 = memory->getMemoryContent(this->PID, this->PC).second;
-	this->PC++;
-	adr2 = memory->getMemoryContent(this->PID, this->PC).second;
-	this->PC++;
-
-
-	//POBRA ADRESY
-	if (adr1 > 127)
-	{
-		switch (adr1) {
-		case 255:
-			a = this->AX;
-			break;
-		case 254:
-			a = this->BX;
-			break;
-		case 253:
-			a = this->CX;
-			break;
-		case 252:
-			a = this->DX;
-			break;
-		}
-	}
-	else
-	{
-		a = memory->getMemoryContent(this->PID, adr1).second; 
-	}
-
-	if (adr2 > 127)
-	{
-		switch (adr2) {
-		case 255:
-			b = this->AX;
-			break;
-		case 254:
-			b = this->BX;
-			break;
-		case 253:
-			b = this->CX;
-			break;
-		case 252:
-			b = this->DX;
-			break;
-		}
-	}
-	else
-	{
-		b = memory->getMemoryContent(this->PID, adr2).second;
-	}
-
-	int8_t c = a + b;
-
-	if (c > maxValue) return (uint8_t)201;
-	if (c < minValue) return (uint8_t)202;
-
-	this->write(adr1, c);
+	uint8_t adr1;
+	int8_t a = loadArgAdrOrReg(adr1);
+	int8_t b = loadArgAdrOrReg();
+	if (a + b > maxValue) return (uint8_t)201;
+	if (a + b < minValue) return (uint8_t)202;
+	a = a + b;
+	writeMemOrReg(adr1, a);
+	return 0;
 }
 
 uint8_t Interpreter::SUB() {
-	uint8_t adr1, adr2;
-	int8_t a=0, b=0;
-	adr1 = memory->getMemoryContent(this->PID, this->PC).second;
-	this->PC++;
-	adr2 = memory->getMemoryContent(this->PID, this->PC).second;
-	this->PC++;
-
-	//POBRA ADRESY
-	if (adr1 > 127)
-	{
-		switch (adr1) {
-		case 255:
-			a = this->AX;
-			break;
-		case 254:
-			a = this->BX;
-			break;
-		case 253:
-			a = this->CX;
-			break;
-		case 252:
-			a = this->DX;
-			break;
-		}
-	}
-	else
-	{
-		a = memory->getMemoryContent(this->PID, adr1).second;
-	}
-
-	if (adr2 > 127)
-	{
-		switch (adr2) {
-		case 255:
-			b = this->AX;
-			break;
-		case 254:
-			b = this->BX;
-			break;
-		case 253:
-			b = this->CX;
-			break;
-		case 252:
-			b = this->DX;
-			break;
-		}
-	}
-	else
-	{
-		b = memory->getMemoryContent(this->PID, adr2).second;
-	}
-	std::cout << "sub " << int(a) << " " << int(b)<<  std::endl;
-	int8_t c = a - b;
-
-	if (c > maxValue) return (uint8_t)201;
-	if (c < minValue) return (uint8_t)202;
-	std::cout << (int)c << std::endl;
-
-	this->write(adr1, c);
+	uint8_t adr1;
+	int8_t a = loadArgAdrOrReg(adr1);
+	int8_t b = loadArgAdrOrReg();
+	if (a - b > maxValue) return (uint8_t)201;
+	if (a - b < minValue) return (uint8_t)202;
+	a = a - b;
+	writeMemOrReg(adr1, a);
+	return 0;
 }
 
 uint8_t Interpreter::MUL() {
-	int8_t& a = loadArgAdrOrReg();
-	int8_t& b = loadArgAdrOrReg();
+	uint8_t adr1;
+	int8_t a = loadArgAdrOrReg(adr1);
+	int8_t b = loadArgAdrOrReg();
 	if ((a * b) > maxValue) return (uint8_t)201;
 	if ((a * b) < minValue) return (uint8_t)202;
 	a = a * b;
+	writeMemOrReg(adr1, a);
+	return 0;
 }
 
 uint8_t Interpreter::DIV() {
-	int8_t& a = loadArgAdrOrReg();
-	int8_t& b = loadArgAdrOrReg();
+	uint8_t adr1;
+	int8_t a = loadArgAdrOrReg(adr1);
+	int8_t b = loadArgAdrOrReg();
 	if (b == 0) return (uint8_t)203;
 	a = a / b;
+	writeMemOrReg(adr1, a);
+	return 0;
 }
 
 uint8_t Interpreter::MOD() {
-	int8_t& a = loadArgAdrOrReg();
-	int8_t& b = loadArgAdrOrReg();
+	uint8_t adr1;
+	int8_t a = loadArgAdrOrReg(adr1);
+	int8_t b = loadArgAdrOrReg();
 	if (b == 0) return (uint8_t)203;
 	a = a % b;
+	writeMemOrReg(adr1, a);
+	return 0;
 }
 
 uint8_t Interpreter::INC() {
-	int8_t& a = loadArgAdrOrReg();
+	uint8_t adr1;
+	int8_t a = loadArgAdrOrReg(adr1);
 	if ((a + 1) > maxValue) return (uint8_t)201;
 	if ((a + 1) < minValue) return (uint8_t)202;
 	a = a + 1;
+	writeMemOrReg(adr1, a);
+	return 0;
 }
 
 uint8_t Interpreter::DEC() {
-	int8_t& a = loadArgAdrOrReg();
+	uint8_t adr1;
+	int8_t a = loadArgAdrOrReg(adr1);
 	if ((a - 1) > maxValue) return (uint8_t)201;
-	if ((a - 1) < maxValue) return (uint8_t)202;
+	if ((a - 1) < minValue) return (uint8_t)202;
 	a = a - 1;
+	writeMemOrReg(adr1, a);
+	return 0;
 }
 
 void Interpreter::JUM() {
@@ -450,26 +388,25 @@ void Interpreter::JUM() {
 }
 
 void Interpreter::IFS() {
-	int8_t& a = loadArgAdrOrReg();
+	int8_t a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
 	if (a < 0) PC = b;
-	std::cout << (int)a << std::endl;
 }
 
 void Interpreter::IFE() {
-	int8_t& a = loadArgAdrOrReg();
+	int8_t a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
 	if (a == 0) PC = b;
 }
 
 void Interpreter::IFB() {
-	int8_t& a = loadArgAdrOrReg();
+	int8_t a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
 	if (a > 0) PC = b;
 }
 
 void Interpreter::IFN() {
-	int8_t& a = loadArgAdrOrReg();
+	int8_t a = loadArgAdrOrReg();
 	int8_t b = loadArgNum();
 	if (a != 0) PC = b;
 }
@@ -478,12 +415,14 @@ uint8_t Interpreter::CFI() {
 	std::string a = loadArgText(2);
 	uint8_t error = fileSystem->createFile(a);
 	if (error != 0) return error;
+	return 0;
 }
 
 uint8_t Interpreter::DFI() {
 	std::string a = loadArgText(2);
 	uint8_t error = fileSystem->deleteFile(a);
 	if (error != 0) return error;
+	return 0;
 }
 
 uint8_t Interpreter::OFI() {
@@ -491,6 +430,7 @@ uint8_t Interpreter::OFI() {
 	uint8_t error = fileSystem->openFile(a, PID);
 	if (error == 67) PC -= 3;
 	else if (error != 0) return error;
+	return 0;
 }
 
 void Interpreter::SFI() {
@@ -500,49 +440,57 @@ void Interpreter::SFI() {
 
 uint8_t Interpreter::EFI() {
 	std::string a = loadArgText(2);
-	int8_t& b = loadArgAdrOrReg();
+	int8_t b = loadArgAdrOrReg();
 	uint8_t error = fileSystem->writeToEndFile(b, PID, a);
 	if (error != 0) return error;
+	return 0;
 }
 
 uint8_t Interpreter::WFI() {
 	std::string a = loadArgText(2);
-	int8_t& b = loadArgAdrOrReg();
+	int8_t b = loadArgAdrOrReg();
 	int8_t c = loadArgNum();
 	uint8_t error = fileSystem->writeToFile(b, c, PID, a);
 	if (error != 0) return error;
+	return 0;
 }
 
 uint8_t Interpreter::PFI() {
 	std::string a = loadArgText(2);
-	int8_t& b = loadArgAdrOrReg();
-	int8_t& c = loadArgAdrOrReg();
+	int8_t b = loadArgAdrOrReg();
+	int8_t c = loadArgAdrOrReg();
 	uint8_t error = fileSystem->writeToFile(b, c, PID, a);
 	if (error != 0) return error;
+	return 0;
 }
 
 uint8_t Interpreter::RFI() {
 	std::string a = loadArgText(2);
-	int8_t& b = loadArgAdrOrReg();
+	int8_t b = loadArgAdrOrReg();
 	int8_t c = loadArgNum();
 	uint8_t error = fileSystem->readFile(b, c, 1, PID, a);
 	if (error != 0) return error;
+	return 0;
 }
 
 uint8_t Interpreter::AFI() {
 	std::string a = loadArgText(2);
-	int8_t& b = loadArgAdrOrReg();
-	int8_t& c = loadArgAdrOrReg();
+	int8_t b = loadArgAdrOrReg();
+	int8_t c = loadArgAdrOrReg();
 	uint8_t error = fileSystem->readFile(b, c, 1, PID, a);
 	if (error != 0) return error;
+	return 0;
 }
 
 uint8_t Interpreter::LFI() {
+	uint8_t adr1;
 	std::string a = loadArgText(2);
-	int8_t& b = loadArgAdrOrReg();
+	int8_t b = loadArgAdrOrReg(adr1);
 	uint8_t error = fileSystem->wc(a).first;
 	if (error != 0) return error;
 	b = fileSystem->wc(PID).second;
+	writeMemOrReg(adr1, b);
+	return 0;
 }
 
 uint8_t Interpreter::CPR() {
@@ -550,6 +498,7 @@ uint8_t Interpreter::CPR() {
 	std::string b = loadArgText(2);
 	uint8_t error = processManager->fork(a, PID, b + ".txt").first;
 	if (error != 0) return error;
+	return 0;
 }
 
 void Interpreter::NOP() {}

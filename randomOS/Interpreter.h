@@ -29,11 +29,12 @@ private:
 	void loadPCB();
 	uint8_t loadCode();
 	uint8_t interpret();
-	int8_t& loadArgAdrOrReg();
+	int8_t loadArgAdrOrReg(uint8_t& adr);
+	int8_t loadArgAdrOrReg();
 	int8_t loadArgNum();
 	std::string loadArgText(int n);
+	uint8_t writeMemOrReg(uint8_t, int8_t);
 	void returnToPCB();
-	uint8_t write(uint8_t, int8_t);
 
 	void RET(); //Koniec                                    (0   | 0x00)
 	void MOV(); //Przenieœ                                  (1   | 0x01)
