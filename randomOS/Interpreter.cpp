@@ -185,6 +185,8 @@ int8_t Interpreter::loadArgAdrOrReg(uint8_t& adr) {
 			this->instructionString += " DX";
 			return this->DX;
 			break;
+		default:
+			return 0;
 		}
 	}
 	else {
@@ -201,22 +203,24 @@ int8_t Interpreter::loadArgAdrOrReg() {
 	if (adr > 127) {
 		switch (adr) {
 		case 0xFF:
-			return this->AX;
 			this->instructionString += " AX";
+			return this->AX;
 			break;
 		case 0xFE:
-			return this->BX;
 			this->instructionString += " BX";
+			return this->BX;
 			break;
 		case 0xFD:
-			return this->CX;
 			this->instructionString += " CX";
+			return this->CX;
 			break;
 		case 0xFC:
-			return this->DX;
 			this->instructionString += " DX";
+			return this->DX;
 			break;
-		}
+		default:
+			return 0;
+		} 
 	}
 	else {
 		instructionString += " [" + std::to_string(adr) + "]";
