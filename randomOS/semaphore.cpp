@@ -2,17 +2,17 @@
 
 Semaphore::Semaphore(int new_value)
 {
-	value = new_value;
+	value = 1;
 }
 
 Semaphore::Semaphore()
 {
-	value = 0;
+	value = 1;
 }
 
 bool Semaphore::wait()
 {
-	value--;
+	if(value >= 0)value--;
 	if (value < 0)
 	{
 		list.push(RUNNING);
