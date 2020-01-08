@@ -33,7 +33,7 @@ Shell::Shell() :defaultColor(10)
 
 Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm, std::shared_ptr<ProcessManager> pm, std::shared_ptr<Scheduler> sch, std::shared_ptr<Interpreter> inte)
 	:defaultColor(10), fileManager(fm), memoryManager(mm), virtualMemory(vm), processManager(pm), scheduler(sch), interpreter(inte)
-{	
+{
 	goCounter = 0;
 	system("color 0A");
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -664,9 +664,9 @@ void Shell::run()
 				this->printLine(" has been created.", 14);
 			}
 			else {
-				this->printLine("AN ERROR OCCURED!", 12); this->printCode(code); 
+				this->printLine("AN ERROR OCCURED!", 12); this->printCode(code);
 				//print tip for innaproriate name lenght
-				if (code == 71) 
+				if (code == 71)
 				{
 					this->print("[", 14);
 					this->print("Tip: ", 13);
@@ -920,7 +920,11 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
-			
+			this->print("INSTRUCTION COUNTER ",120);
+			this->printLine(RUNNING->getInstructionCounter(),120);
+
+			uint8_t errorCode = this->scheduler->schedule();
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
 
 			std::pair < uint8_t, std::string> errorC = this->interpreter->go();
 			if (errorC.first != 0) {
@@ -932,8 +936,8 @@ void Shell::run()
 					this->print(" in  ", 14);
 					this->print(RUNNING->getName(), 12);
 					this->printLine(")", 14);
-				}	
-				this->printCode(errorC.first); 
+				}
+				this->printCode(errorC.first);
 			}
 			else
 			{
@@ -943,7 +947,7 @@ void Shell::run()
 				this->printLine(errorC.second, 11);
 			}
 			goCounter++;
-			if (goCounter == 7) 
+			if (goCounter == 7)
 			{
 				this->print("[", 14);
 				this->print("Tip: ", 13);
@@ -953,7 +957,7 @@ void Shell::run()
 				goCounter = 0;
 			}
 
-			uint8_t errorCode = this->scheduler->schedule();
+			//uint8_t errorCode = this->scheduler->schedule();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go[ ][0-9]+")))
@@ -966,7 +970,7 @@ void Shell::run()
 				count *= 10;
 				count += (command[i] - '0');
 			}
-			if (count <= 999) 
+			if (count <= 999)
 			{
 				this->print("EXECUTING ", 13);
 				this->print(count, 9);
@@ -974,6 +978,9 @@ void Shell::run()
 				this->printLine("  No. Details", 5);
 				for (unsigned int i = 0; i < count; i++)
 				{
+					this->print("INSTRUCTION COUNTER ", 120);
+					this->printLine(RUNNING->getInstructionCounter(), 120);
+
 					uint8_t errorCode = this->scheduler->schedule();
 					if (errorCode != 0)
 					{
@@ -1020,13 +1027,22 @@ void Shell::run()
 				}
 			}
 			else { this->printLine("AN ERROR OCCURED!", 12); this->printCode(1); }
-			
+
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps$")))
 		{
 			this->print("PROCESSES TREE", 13);
 
 			this->printWithPadding("\n" + processManager->displayTree(), 14, 2);
+		}
+		else if (std::regex_match(command.begin(), command.end(), std::regex("^format c$")))
+		{
+			while (Containers::MainFileCatalog.size() > 0)
+			{
+				uint8_t err=this->fileManager->deleteFile(Containers::MainFileCatalog.begin()->name);
+				if (err != 0) { printCode(err); }
+			}
+			this->printLine("FORMAT PERFORMED SUCCESFULLY", 12);
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^ps[ ]-[wra]$")))
 		{
@@ -1068,7 +1084,7 @@ void Shell::run()
 			this->printLine("DRIVE CONTENTS", 13);
 			auto names = fileManager->ls();
 
-			this->print("  ",0);
+			this->print("  ", 0);
 			std::string str;
 			for (unsigned int i = 0; i < Containers::bit_vector.size() / 2; i++)
 			{
@@ -1165,8 +1181,8 @@ void Shell::run()
 			if (Containers::Colors.size() > 0) {
 				this->printLine("LEGEND", 13);
 				this->printLine("  Color  FileName  Size  Preview", 5);
-				
-				for (int z=0;z< Containers::Colors.size(); z++)
+
+				for (int z = 0; z < Containers::Colors.size(); z++)
 				{
 					auto x = Containers::Colors[z];
 					this->print("   ", 0);
@@ -1174,26 +1190,26 @@ void Shell::run()
 					this->print(char(178), x.second + 1);
 					this->print("      " + x.first, 14);
 					std::string wcTemp = std::to_string(fileManager->wc(x.first).second);
-					this->print("      " +wcTemp , 11);
+					this->print("      " + wcTemp, 11);
 					std::string catTemp = fileManager->cat(x.first).second;
 					//if cat too long elapse it (max 20 chars)
-					if (catTemp.size() > 25) { catTemp=catTemp.substr(0, 22)+"{...}";}
-					
+					if (catTemp.size() > 25) { catTemp = catTemp.substr(0, 22) + "{...}"; }
+
 					//calculate spaces
 					std::string spaces = "    ";
 					for (int z = 0; z < wcTemp.length(); z++) { if (spaces.length() > 0) { spaces.pop_back(); } }
 					//if cat empty, print empty file tag
-					if(catTemp.length()==0)
+					if (catTemp.length() == 0)
 					{
-						this->print(spaces+"  " , 14);
+						this->print(spaces + "  ", 14);
 						this->printLine("<emptyFile>", 12);
 					}
-					else{ this->printLine(spaces + "  \"" + catTemp + "\"", 14); }
-					if (z <Containers::Colors.size()-1) { std::cout << std::endl; }
+					else { this->printLine(spaces + "  \"" + catTemp + "\"", 14); }
+					if (z < Containers::Colors.size() - 1) { std::cout << std::endl; }
 				}
 			}
-			
-			
+
+
 		}
 		else if (std::regex_match(command, match, std::regex("^(p vm)( -[dh])?$")))
 		{
@@ -1237,32 +1253,32 @@ void Shell::run()
 				}
 				std::cout << std::endl;
 			}
-			
+
 
 		}
 		else if (std::regex_match(command, match, std::regex("^(p pt )([0-9]+)$")))
 		{
-		
-		uint8_t errorCode = 0;
-		std::pair<std::vector<int>, std::vector<bool>> results= this->memoryManager->printPageTable(std::stoi(match[2]), errorCode);
-		//check for errors
-		if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); printCode(errorCode); }
-		else 
-		{
-			this->print("PAGE TABLE for PID=", 13);
-			this->printLine(match[2], 11);
 
-			this->printLine("No. Frame Correctness Bit ", 5);
-			for (int i = 0; i < results.first.size() && i < results.second.size(); i++)
+			uint8_t errorCode = 0;
+			std::pair<std::vector<int>, std::vector<bool>> results = this->memoryManager->printPageTable(std::stoi(match[2]), errorCode);
+			//check for errors
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); printCode(errorCode); }
+			else
 			{
-				print(" " + std::to_string(i), 9);
-				std::string frameTemp = std::to_string(results.first[i]);
-				if (results.first[i] == -1) { frameTemp = "-"; }
-				print("    " + frameTemp, 14);
-				printLine("         " + std::to_string(results.second[i]), 14);
+				this->print("PAGE TABLE for PID=", 13);
+				this->printLine(match[2], 11);
+
+				this->printLine("No. Frame Correctness Bit ", 5);
+				for (int i = 0; i < results.first.size() && i < results.second.size(); i++)
+				{
+					print(" " + std::to_string(i), 9);
+					std::string frameTemp = std::to_string(results.first[i]);
+					if (results.first[i] == -1) { frameTemp = "-"; }
+					print("    " + frameTemp, 14);
+					printLine("         " + std::to_string(results.second[i]), 14);
+				}
 			}
-		}
-		
+
 		}
 		else if (std::regex_match(command, match, std::regex("^(p ram)( -[dh])?$")))
 		{
@@ -1281,9 +1297,9 @@ void Shell::run()
 
 				//COLORING RAM
 				int color = 14;
-				int result= memoryManager->FrameTable[i].pid;
+				int result = memoryManager->FrameTable[i].pid;
 				if (result != -1) { color = 14 + 16 * (result + 1); }
-				
+
 				for (unsigned int j = 0; j < 16; j++)
 				{
 					std::string temp = "";
@@ -1310,11 +1326,11 @@ void Shell::run()
 					int color = 14;
 					int result = memoryManager->FrameTable[z].pid;
 					if (result == -1) { break; }
-				
-					bool printLegend = true;
-					for (auto p : addedPIDs) { if (p == result) { printLegend = false; }}
 
-					if (printLegend) 
+					bool printLegend = true;
+					for (auto p : addedPIDs) { if (p == result) { printLegend = false; } }
+
+					if (printLegend)
 					{
 						addedPIDs.push_back(result);
 						color = (result + 1);
@@ -1325,7 +1341,7 @@ void Shell::run()
 						this->print("     " + std::to_string(result), 14);
 						if (z < 7) { std::cout << std::endl; }
 					}
-				
+
 				}
 			}
 
@@ -1335,9 +1351,11 @@ void Shell::run()
 		{
 			for (int i = 0; i < 256; i++)
 			{
-				printLine(std::to_string(i)+ "----------",i);
+				print(std::to_string(i) + "                                                                        ", i);
+				this->restoreDefaultColor();
+				std::cout << std::endl;
 			}
-			
+
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^p sch")))
 		{
