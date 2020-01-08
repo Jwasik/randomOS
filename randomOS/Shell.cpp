@@ -920,7 +920,11 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go")))
 		{
+			this->print("INSTRUCTION COUNTER ",120);
+			this->printLine(RUNNING->getInstructionCounter(),120);
 
+			uint8_t errorCode = this->scheduler->schedule();
+			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
 
 			std::pair < uint8_t, std::string> errorC = this->interpreter->go();
 			if (errorC.first != 0) {
@@ -953,7 +957,7 @@ void Shell::run()
 				goCounter = 0;
 			}
 
-			uint8_t errorCode = this->scheduler->schedule();
+			//uint8_t errorCode = this->scheduler->schedule();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go[ ][0-9]+")))
@@ -974,6 +978,9 @@ void Shell::run()
 				this->printLine("  No. Details", 5);
 				for (unsigned int i = 0; i < count; i++)
 				{
+					this->print("INSTRUCTION COUNTER ", 120);
+					this->printLine(RUNNING->getInstructionCounter(), 120);
+
 					uint8_t errorCode = this->scheduler->schedule();
 					if (errorCode != 0)
 					{
