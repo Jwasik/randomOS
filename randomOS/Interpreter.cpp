@@ -163,8 +163,8 @@ uint8_t Interpreter::interpret() {
 }
 
 int8_t& Interpreter::loadArgAdrOrReg() {
-	uint8_t error = memory->getMemoryContent(PID, PC).first;
-	if (error != 0) throw error;
+	//uint8_t error = memory->getMemoryContent(PID, PC).first;
+	//if (error != 0) throw error;
 
 	int8_t adr = memory->getMemoryContent(PID, PC).second;
 	PC++;
@@ -190,16 +190,16 @@ int8_t& Interpreter::loadArgAdrOrReg() {
 		break;
 	default:
 		instructionString += " [" + std::to_string(adr) + "]";
-		error = memory->getMemoryContent(PID, adr).first;
-		if (error != 0) throw error;
+		//error = memory->getMemoryContent(PID, adr).first;
+		//if (error != 0) throw error;
 		return memory->getMemoryContent(PID, adr).second;
 		break;
 	}
 }
 
 int8_t Interpreter::loadArgNum() {
-	uint8_t error = memory->getMemoryContent(PID, PC).first;
-	if (error != 0) throw error;
+	//uint8_t error = memory->getMemoryContent(PID, PC).first;
+	//if (error != 0) throw error;
 
 	int8_t num = memory->getMemoryContent(PID, PC).second;
 	PC++;
@@ -211,8 +211,8 @@ int8_t Interpreter::loadArgNum() {
 }
 
 std::string Interpreter::loadArgText(int n) {
-	uint8_t error = memory->getMemoryContent(PID, PC).first;
-	if (error != 0) throw error;
+	//uint8_t error = memory->getMemoryContent(PID, PC).first;
+	//if (error != 0) throw error;
 
 	std::string text = "";
 	char t;
