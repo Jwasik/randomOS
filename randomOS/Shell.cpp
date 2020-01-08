@@ -957,7 +957,7 @@ void Shell::run()
 				goCounter = 0;
 			}
 
-			uint8_t errorCode = this->scheduler->schedule();
+			//uint8_t errorCode = this->scheduler->schedule();
 			if (errorCode != 0) { this->printLine("AN ERROR OCCURED IN SCHEDULER!", 12); this->printCode(errorCode); }
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("go[ ][0-9]+")))
