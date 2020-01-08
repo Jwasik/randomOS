@@ -15,26 +15,25 @@ Scheduler::~Scheduler()
 
 uint8_t Scheduler::schedule()
 {
+
+	if (RUNNING == nullptr || RUNNING->counter <= this->counter || RUNNING->getIsTerminated())
+	{
+		return nextProcess();
+	}
+
+	//if the now running porocess is under a semaphore, switch to next
 	if (RUNNING->getStateAsEnum() == PCB::ProcessState::WAITING)
 	{
+		RUNNING->counter = this->counter;
 		return this->nextProcess();
 	}
+
 	//INCREMENT THE COUNTER
 	counter++;
 	if (counter > 1000000) { counter = 0; } //to avoid overflow
 
 	//if dummy is running and any other process is in the queue, switch to it
 	if (RUNNING->getHasPID(0)){ if(active->size()>1){ return nextProcess(); }}
-
-	
-
-	if  (RUNNING == nullptr || RUNNING->counter <= this->counter || RUNNING->getIsTerminated() )
-	{
-		return nextProcess();
-	}
-
-
-	//if the now running porocess is under a semaphore, switch to next
 
 
 	return 0;
@@ -45,7 +44,8 @@ uint8_t Scheduler::nextProcess()
 	//move the currently running process into the expired queue and remove it from active
 	if (RUNNING != nullptr){ 
 		//if it wasn't dummy or terminated put it into expired 
-		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) { this->addProcess(RUNNING, this->expired); }
+		if (RUNNING != DUMMY && !RUNNING->getIsTerminated()) {
+			this->addProcess(RUNNING, this->expired); }
 		//if it was terminated call processManager to deleteIt
 		if (RUNNING->getIsTerminated()) {
 			ProcessManager::deleteProcess(RUNNING,this->fileManager, shared_from_this(),virtualMemory); }
@@ -75,7 +75,6 @@ uint8_t Scheduler::nextProcess()
 	//to avoid null pointer exception (nulls in queue because of cascade deletion)
 	if (RUNNING == nullptr) { nextProcess(); }
 
-	//tut
 
 	//else set its state as running
 	RUNNING->setStateRunning();
@@ -84,13 +83,19 @@ uint8_t Scheduler::nextProcess()
 
 uint8_t Scheduler::deleteProcess(const unsigned int& PID) 
 {
+	if (RUNNING->getHasPID(PID))
+	{
+		RUNNING = nullptr;
+		this->active->erase(this->active->begin());
+		this->nextProcess();
+	}
+
 	for (auto it=active->begin();it!=active->end();it++)
 	{
 		if ((*it)->getHasPID(PID))
 		{
 			if ((*it)->getIsRunning()) 
 			{ 
-				RUNNING = NULL;
 				active->erase(it);
 				nextProcess(); 
 				return 0; 
@@ -115,9 +120,9 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std:
 	//if the queue is not specified (passed as null) the active queue is assumed
 	if (queue == NULL) 
 	{ 
-		std::cout << "wch" << std::endl;
 		if (process == NULL) { return ERROR_SH_ADDED_PROCESS_DOES_NOT_EXIST; } //process does not exist
 		queue = this->active; 
+		process->basePriority = 120;
 		process->priority = 120;
 		process->counter = this->counter;
 		queue->push_back(process);
@@ -148,12 +153,12 @@ uint8_t Scheduler::addProcess(std::shared_ptr<PCB> process, std::shared_ptr<std:
 
 uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> process)
 {
+
 	
 	int waitingTime = this->counter - process->counter;
 	if (waitingTime < 0)
 		waitingTime += 1000000;
 
-	
 	int bonus = 0.1 * waitingTime;
 	if (bonus > 10)
 		bonus = 10;
@@ -180,7 +185,7 @@ uint8_t Scheduler::normalProcessPriorityAndTimerChange(std::shared_ptr<PCB> proc
 		
 	}
 
-	//std::cout << "TEST Set priority of " << process->getName() << " to " << (int)process->priority << " counter " << process->counter - this->counter <<   std::endl;
+	
 
 	return 0;
 }

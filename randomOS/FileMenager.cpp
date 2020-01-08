@@ -54,7 +54,7 @@ int8_t FileMenager::openFile(std::string name, unsigned int PID)
 	{
 		if (Containers::MainFileCatalog[i].name == name)//szukamy pliku o podanej nazwie
 		{
-			if (isFileOpen(name, PID))
+			if (!Containers::MainFileCatalog[i].s.firstElement(PID))
 			{
 				Containers::MainFileCatalog[i].s.wait();
 				return ERROR_FILE_OPENED_BY_OTHER_PROCESS;//sprawdza czy plik nie jest otwarty przez inny proes
@@ -282,9 +282,14 @@ int8_t FileMenager::closeFile(std::string name, unsigned int PID)
 		int pom = Containers::open_file_table[i];
 		if (Containers::MainFileCatalog[pom].name == name && Containers::MainFileCatalog[pom].PID == PID)
 		{
+
 			Containers::MainFileCatalog[pom].isOpen = false;
-			Containers::MainFileCatalog[pom].s.signal();
 			Containers::open_file_table.erase(Containers::open_file_table.begin() + i);
+			int po = Containers::MainFileCatalog[pom].s.signal();
+			if (po != -1)
+			{
+				return openFile(name, po);
+			}
 			return 0;
 		}
 	}
@@ -308,7 +313,14 @@ void FileMenager::closeProcessFiles(unsigned int PID)
 {
 	for (auto i : Containers::open_file_table)
 	{
-		if (Containers::MainFileCatalog[i].PID == PID) closeFile(Containers::MainFileCatalog[i].name, Containers::MainFileCatalog[i].PID);
+		if (Containers::MainFileCatalog[i].PID == PID)
+		{
+			closeFile(Containers::MainFileCatalog[i].name, Containers::MainFileCatalog[i].PID);
+		}
+		else
+		{
+			Containers::MainFileCatalog[i].s.deleteFromList(PID);
+		}
 	}
 }
 
