@@ -252,6 +252,14 @@ int8_t FileMenager::deleteFile(std::string name)
 					physical++;
 					
 				}
+				for (unsigned int k = 0; k < Containers::Colors.size(); k++)
+				{
+					if (Containers::Colors[k].first == name)
+					{
+						Containers::Colors.erase(Containers::Colors.begin() + k);
+						break;
+					}
+				}
 				clearBlock(Containers::MainFileCatalog[i].i_node[2]);//usuniecie bloku indeksowego
 
 				if(i > 0) Containers::MainFileCatalog.erase(Containers::MainFileCatalog.begin() + i);
