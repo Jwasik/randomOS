@@ -67,6 +67,16 @@ int Semaphore::signal()
 	return -1;
 }
 
+bool Semaphore::firstElement(unsigned int PID)
+{
+	
+	if (list.empty() || list.front()->getPID() == PID)
+	{
+		return true;
+	}
+	return false;
+}
+
 const int & Semaphore::getValue()
 {
 	return value;
