@@ -1449,7 +1449,9 @@ void Shell::run()
 			this->print("        ", 13);
 			this->print("STATE", 13);
 			this->print("        ", 13);
-			this->print("VALUE\n", 13);
+			this->print("VALUE", 13);
+			his->print("  ", 13);
+			this->print("QUEUEU\n", 13);
 			for (auto& file : Containers::MainFileCatalog)
 			{
 				this->print(file.name, 14);
