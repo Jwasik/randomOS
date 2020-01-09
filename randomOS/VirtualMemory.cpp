@@ -19,7 +19,6 @@ uint8_t VirtualMemory::updateQueue(int frameNumber) {
 uint8_t VirtualMemory::updateSwapFilePage(int pid, int pageNumber, Page page) {
 	if (swapFile.count(pid) == 0)
 	{
-		std::cout << "a" << std::endl;
 		return 100;
 	}
 	if (pageNumber < 0 || pageNumber > swapFile.find(pid)->second.size() - 1) return 99;
