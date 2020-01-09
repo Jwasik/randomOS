@@ -1,5 +1,5 @@
 5
-CFI "WY"
+WRI BX 2
 OFI "WY"
 WRI BX 2
 WRI CX 2
@@ -18,13 +18,9 @@ IFE AX 50
 INC [65]
 JUM 9
 SFI "WY"
-NOP
-NOP
-NOP
-NOP
-NOP
+CPR "CA" "CA"
 RET 
 EFI "WY" [65]
 JUM 37
 3
-7
+5
