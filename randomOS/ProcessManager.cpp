@@ -107,8 +107,6 @@ int8_t ProcessManager::deleteProcess(const std::string & processName)
 
 bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler, const std::shared_ptr<VirtualMemory>& virtualMemory, const std::shared_ptr<Memory>& memoryManager)
 {
-	virtualMemory->removeProgram(process->getPID());
-	memoryManager->removeProgram(process->getPID());
 		//check if the process has any children and call for recursive deletion of all of them
 		if (process->getHasChildren())
 		{
@@ -122,6 +120,10 @@ bool ProcessManager::deleteProcess(std::shared_ptr<PCB> process, const std::shar
 		{
 			scheduler->deleteProcess(process->getPID());
 			fileManager->closeProcessFiles(process->getPID());
+
+			virtualMemory->removeProgram(process->getPID());
+			memoryManager->removeProgram(process->getPID());
+
 			process->getParentPCB()->removeChild(process);
 			//not sure if needed
 			return true;

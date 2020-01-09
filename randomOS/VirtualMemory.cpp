@@ -17,7 +17,11 @@ uint8_t VirtualMemory::updateQueue(int frameNumber) {
 }
 
 uint8_t VirtualMemory::updateSwapFilePage(int pid, int pageNumber, Page page) {
-	if (swapFile.count(pid) == 0) return 100;
+	if (swapFile.count(pid) == 0)
+	{
+		std::cout << "a" << std::endl;
+		return 100;
+	}
 	if (pageNumber < 0 || pageNumber > swapFile.find(pid)->second.size() - 1) return 99;
 	for (auto &program : swapFile) {
 		if (program.first == pid)
@@ -43,8 +47,9 @@ int VirtualMemory::getVictimFrameNumber() {
 }
 
 std::pair<uint8_t, Page> VirtualMemory::getPage(int pid, int pageNumber) {
-	if (swapFile.count(pid) == 0)
+	if (swapFile.count(pid) == 0) {
 		return std::make_pair(100, Page());
+	}
 	if (pageNumber < 0 || pageNumber > swapFile.find(pid)->second.size() - 1)
 		return std::make_pair(99, Page());
 	return std::make_pair(0, swapFile.find(pid)->second[pageNumber]);
