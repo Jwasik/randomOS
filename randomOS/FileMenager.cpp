@@ -514,3 +514,23 @@ void showBitVector()
 	}
 	std::cout << "\n\n\n";
 }
+
+int8_t FileMenager::printInode(std::string name)
+{
+	File file;
+	for (auto i : Containers::MainFileCatalog)
+	{
+		if (i.name == name)
+		{
+			file = i;
+			break;
+		}
+	}
+
+	for (auto i : file.i_node)
+	{
+		std::cout << i << " ";
+	}
+
+	return ERROR_NO_FILE_WITH_THAT_NAME;
+}
