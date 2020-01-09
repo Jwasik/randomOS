@@ -1332,7 +1332,18 @@ void Shell::run()
 				std::cout << std::endl;
 			}
 			std::vector<int> addedPIDs;
-			if (memoryManager->FrameTable[0].pid != -1) {
+			//check if there is anything in frameTable
+			bool LEGENDFLAG = false;
+			for (auto mm :memoryManager->FrameTable) 
+			{
+				if (mm.pid != -1) 
+				{
+					LEGENDFLAG = true;
+					break;
+				}
+			
+			}
+			if (LEGENDFLAG) {
 				this->printLine("LEGEND", 13);
 				this->printLine("  Color  PID", 5);
 				for (int z = 0; z < 8; z++)
