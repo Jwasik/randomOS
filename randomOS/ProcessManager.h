@@ -1,6 +1,7 @@
 #pragma once
 #include "Includes.h"
 #include "PCB.h"
+#include "MemoryManager.h"
 #include "VirtualMemory.h"
 #include "Scheduler.h"
 
@@ -25,7 +26,7 @@
 class ProcessManager
 {
 public:
-	ProcessManager(std::shared_ptr <Scheduler> scheduler,std::shared_ptr <VirtualMemory> virtualMemory, std::shared_ptr <FileMenager> fileManager);
+	ProcessManager(std::shared_ptr <Scheduler> scheduler,std::shared_ptr <VirtualMemory> virtualMemory, std::shared_ptr <FileMenager> fileManager, std::shared_ptr<Memory> mem);
 	~ProcessManager();
 
 	/********************************
@@ -55,13 +56,14 @@ public:
 	std::shared_ptr<PCB> getInit();
 
 	//used in scheduler
-	static bool deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler, const std::shared_ptr<VirtualMemory>& virtualMemory);
+	static bool deleteProcess(std::shared_ptr<PCB> process, const std::shared_ptr<FileMenager>& fileManager, const std::shared_ptr<Scheduler>& scheduler, const std::shared_ptr<VirtualMemory>& virtualMemory,const std::shared_ptr<Memory>& memoryManager);
 
 private:
 	//pointers to other modules
 	std::shared_ptr <Scheduler> scheduler;
 	std::shared_ptr <VirtualMemory> virtualMemory;
 	std::shared_ptr <FileMenager> fileManager;
+	std::shared_ptr <Memory> memoryManager;
 
 	std::shared_ptr<PCB> init;
 	unsigned int freePID;

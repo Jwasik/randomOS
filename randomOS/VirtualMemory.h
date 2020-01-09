@@ -43,6 +43,9 @@ public:
 	// called every time a page fault happens
 	std::pair<uint8_t, Page> getPage(int pid, int PageNumber);
 
+	//deletes program from VM
+	void removeProgram(unsigned int PID);
+
 	void printSwapFile();
 
 	void printQueue();

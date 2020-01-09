@@ -116,6 +116,10 @@ public:
 	// 66 brak pliku o podanej nazwie
 	//  0 uda�o si� uzyskac liczbe
 
+	std::pair<std::vector<int>,int8_t> printInode(std::string name);
+	// 66 brak pliku o podanej nazwie
+	//  0 udało sie 
+
 	std::vector<std::string> ls(); //zwraca wszystkie nazwy plikow jakie istnieja w folderze glownym
 
 	std::pair<int8_t, std::string> cat(std::string name); //zwraca zawartosc calego pliku jako string

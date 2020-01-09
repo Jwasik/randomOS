@@ -282,7 +282,6 @@ int8_t FileMenager::closeFile(std::string name, unsigned int PID)
 		int pom = Containers::open_file_table[i];
 		if (Containers::MainFileCatalog[pom].name == name && Containers::MainFileCatalog[pom].PID == PID)
 		{
-
 			Containers::MainFileCatalog[pom].isOpen = false;
 			Containers::open_file_table.erase(Containers::open_file_table.begin() + i);
 			int po = Containers::MainFileCatalog[pom].s.signal();
@@ -513,4 +512,21 @@ void showBitVector()
 		licz++;
 	}
 	std::cout << "\n\n\n";
+}
+
+std::pair<std::vector<int>, int8_t> FileMenager::printInode(std::string name)
+{
+	std::pair<std::vector<int>, int8_t> ret;
+	for (auto i : Containers::MainFileCatalog)
+	{
+		if (i.name == name)
+		{
+			ret.first = i.i_node;
+			ret.second = 0;
+			return ret;
+		}
+	}
+
+	ret.second = ERROR_NO_FILE_WITH_THAT_NAME;
+	return ret;
 }
