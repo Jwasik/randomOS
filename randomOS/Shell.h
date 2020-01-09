@@ -1,4 +1,5 @@
 #pragma once
+#pragma comment(lib, "Winmm.lib")
 #include "Includes.h"
 #include <conio.h>
 #include <stdio.h>
@@ -36,7 +37,7 @@ private:
 	void restoreDefaultColor();
 	void toLower(std::string&);
 	void printCode(uint8_t);
-
+	void printLogo();
 
 	//variable for counting number of times user used go and proposing he should use go <number> istead after set ammount
 	unsigned int goCounter;

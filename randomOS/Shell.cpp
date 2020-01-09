@@ -1,21 +1,5 @@
 ﻿#include "Shell.h"
 
-
-
-//nie pytać
-#define c	32.7
-#define cis	34.6
-#define d	36.7
-#define dis	38.9
-#define e	41.2
-#define f	43.7
-#define fis	46.2
-#define g	49
-#define gis	51.9
-#define a	55.0
-#define ais	58.3
-#define h	61.7
-
 Shell::Shell() :defaultColor(10)
 {
 	system("color 0A");
@@ -29,7 +13,6 @@ Shell::Shell() :defaultColor(10)
 		this->osName += (rand() % 26) + 97;
 	}
 	this->osName += "OS";
-	this->printLine(this->osName, 11);
 }
 
 Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::shared_ptr<VirtualMemory> vm, std::shared_ptr<ProcessManager> pm, std::shared_ptr<Scheduler> sch, std::shared_ptr<Interpreter> inte)
@@ -47,7 +30,6 @@ Shell::Shell(std::shared_ptr<FileMenager> fm, std::shared_ptr<Memory> mm, std::s
 		this->osName += (rand() % 26) + 97;
 	}
 	this->osName += "OS";
-	this->printLine(this->osName, 11);
 }
 
 
@@ -58,7 +40,30 @@ Shell::~Shell()
 void Shell::run()
 {
 	system("color 0A");
+	Sleep(1000);
+
+	PlaySound(L"sound.wav", NULL, SND_ASYNC);
+
+	Sleep(200);
+	this->printLogo();
+
+	this->printLine("\n\n\t\t\t\t\t\t\tLOADING",10);
+	std::cout << "\t\t";
+	for (unsigned int i = 0; i < 84;i++)this->print(char(176), 8);
+	std::cout << "\r\t\t";
+	Sleep(200);
+	for (unsigned int i = 0; i < 84; i++)
+	{
+		this->print(char(178), 10);
+		Sleep(2500/84);
+	}
+
+	Sleep(500 / 84);
 	system("cls");
+	this->printLogo();
+	std::cout << std::endl;
+	std::cout << std::endl;
+		
 
 	std::string command = "";
 	while (1)
@@ -830,8 +835,8 @@ void Shell::run()
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^test$")))
 		{
-		std::string bambo =
-			R"(
+			std::string bambo =
+				R"(
 &&&&&&&&&&&&&&&&&&&&&&&&&&%#%&&&&&&&%&&&%%&%%%##(((((///((((/////(##########(#((//,,/(/(/(((//((((((//((%%%#########%%%#####((((///((//***/////((((((((((////**
 ###########%%%%#%%%%&&&&&%##%&&&&&&&&&&&&&%%(/*,,...               .......          .,*(((#(((((########%%%&&%%%%%%%%%%%##########(((((((((#((((#########((((//
 ((((((((#####%%#(######((((########((#(((//*,,,.                                              ,*(##%%&%&&&&&&&&&%%#(##%%%%%&%###%%######%%%%%###%%%%#########((
@@ -910,7 +915,7 @@ void Shell::run()
 /////((((((//////*///*/**///////////////////////////*****///////(((((((//////////////////**///////////////*//////**********,,**************************///////(
  )";
 
-		printLine(bambo, 240);
+			printLine(bambo, 240);
 
 		}
 		else if (std::regex_match(command.begin(), command.end(), std::regex("^clear[ ]+[0-9a-zA-z]+$")))
@@ -1112,7 +1117,7 @@ void Shell::run()
 		{
 			while (Containers::MainFileCatalog.size() > 0)
 			{
-				uint8_t err=this->fileManager->deleteFile(Containers::MainFileCatalog.begin()->name);
+				uint8_t err = this->fileManager->deleteFile(Containers::MainFileCatalog.begin()->name);
 				if (err != 0) { printCode(err); }
 			}
 			this->printLine("FORMAT PERFORMED SUCCESFULLY", 12);
@@ -1342,7 +1347,7 @@ void Shell::run()
 				this->printLine(match[2], 11);
 
 				this->printLine("No. Frame Correctness Bit ", 5);
-				for (int i = 0; i < results.size() ; i++)
+				for (int i = 0; i < results.size(); i++)
 				{
 					print(" " + std::to_string(i), 9);
 					std::string frameTemp = std::to_string(results[i].first);
@@ -1532,7 +1537,7 @@ void Shell::run()
 			this->print("VALUE", 13);
 			this->print("        ", 13);
 			this->print("QUEUE\n", 13);
-			if (Containers::MainFileCatalog.size() != 0) 
+			if (Containers::MainFileCatalog.size() != 0)
 			{
 				for (auto& file : Containers::MainFileCatalog)
 				{
@@ -1558,8 +1563,9 @@ void Shell::run()
 					}
 					std::cout << std::endl;
 				}
-			}else { printLine("<no files>",4); }
-			
+			}
+			else { printLine("<no files>", 4); }
+
 		}
 		else
 		{
@@ -1769,6 +1775,18 @@ void Shell::printCode(uint8_t code)
 		break;
 	}
 	SetConsoleTextAttribute(hConsole, this->defaultColor);
+}
+
+void Shell::printLogo()
+{
+	std::cout << "\n\n";
+	this->printLine("\t\t########     ###    ##    ## ########   #######  ##     ##    #######   ######  ", 8);
+	this->printLine("\t\t##     ##   ## ##   ###   ## ##     ## ##     ## ###   ###   ##     ## ##    ## ", 11);
+	this->printLine("\t\t##     ##  ##   ##  ####  ## ##     ## ##     ## #### ####   ##     ## ##       ", 12);
+	this->printLine("\t\t########  ##     ## ## ## ## ##     ## ##     ## ## ### ##   ##     ##  ######  ", 13);
+	this->printLine("\t\t##   ##   ######### ##  #### ##     ## ##     ## ##     ##   ##     ##       ## ", 14);
+	this->printLine("\t\t##    ##  ##     ## ##   ### ##     ## ##     ## ##     ##   ##     ## ##    ## ", 15);
+	this->printLine("\t\t##     ## ##     ## ##    ## ########   #######  ##     ##    #######   ######  ", 9);
 }
 
 template <typename I> std::string Shell::toHexString(I w) {
