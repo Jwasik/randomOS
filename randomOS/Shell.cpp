@@ -1274,25 +1274,38 @@ void Shell::run()
 		{
 
 			uint8_t errorCode = 0;
-			auto results = this->memoryManager->printPageTable(std::stoi(match[2]), errorCode);
-			//check for errors
-			if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); printCode(errorCode); }
-			else
-			{
-				this->print("PAGE TABLE for PID=", 13);
-				this->printLine(match[2], 11);
+			//check if process exists
+			auto v1 = processManager->getAllWithState(PCB::ProcessState::READY);
+			auto v2 = processManager->getAllWithState(PCB::ProcessState::RUNNING);
+			auto v3 = processManager->getAllWithState(PCB::ProcessState::WAITING);
+			bool eFlag = false;
+			for (auto a : v1) { if (a->getHasPID(std::stoi(match[2]))) { eFlag = true; } }
+			for (auto a : v2) { if (a->getHasPID(std::stoi(match[2]))) { eFlag = true; } }
+			for (auto a : v3) { if (a->getHasPID(std::stoi(match[2]))) { eFlag = true; } }
 
-				this->printLine("No. Frame Correctness Bit ", 5);
-				for (int i = 0; i < results.size(); i++)
+			if (eFlag)
+			{
+				auto results = this->memoryManager->printPageTable(std::stoi(match[2]), errorCode);
+				//check for errors
+				if (errorCode != 0) { this->printLine("AN ERROR OCCURED!", 12); printCode(errorCode); }
+				else
 				{
-					print(" " + std::to_string(i), 9);
-					std::string frameTemp = std::to_string(results[i].first);
-					if (results[i].first == -1) { frameTemp = "-"; }
-					print("    " + frameTemp, 14);
-					printLine("         " + std::to_string(results[i].second), 14);
+					this->print("PAGE TABLE for PID=", 13);
+					this->printLine(match[2], 11);
+
+					this->printLine("No. Frame Correctness Bit ", 5);
+					for (int i = 0; i < results.size(); i++)
+					{
+						print(" " + std::to_string(i), 9);
+						std::string frameTemp = std::to_string(results[i].first);
+						if (results[i].first == -1) { frameTemp = "-"; }
+						print("    " + frameTemp, 14);
+						printLine("         " + std::to_string(results[i].second), 14);
+					}
 				}
 			}
-
+			else { printLine("No such process", 14); }
+			
 		}
 		else if (std::regex_match(command, match, std::regex("^(p ram)( -[dh])?$")))
 		{
