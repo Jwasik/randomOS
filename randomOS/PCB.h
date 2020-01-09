@@ -217,4 +217,3 @@ private:
 	*/
 	bool checkWontOverflowInt(int currentValue, int valueToBeAdded);
 };
-

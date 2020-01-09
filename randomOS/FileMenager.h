@@ -138,6 +138,3 @@ void clearBlock(int log); //czysci blok pamieci pod podanym adresem logicznym
 
 void showBitVector();
 void ShowMemory();
-
-
-

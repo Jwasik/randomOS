@@ -1,15 +1,11 @@
 #pragma once
-#include "PCB.h"
 #include "RUNNING.h"
 #include <memory>
 
-
-class Semaphore //TODO: output for step-by-step execution
-{
+class Semaphore{
 private:
 	int value;
 	std::vector<std::shared_ptr<PCB>> list;
-
 public:
 	Semaphore(int new_value);
 	Semaphore();

@@ -71,10 +71,5 @@ public:
 	//returns pair <errorCode and executed command string>
 	std::pair<uint8_t, std::string> go();
 	static std::vector<int8_t> convertToMachine(std::string m);
-
-
-
-
-
 };
 
