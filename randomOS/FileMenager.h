@@ -116,7 +116,7 @@ public:
 	// 66 brak pliku o podanej nazwie
 	//  0 uda�o si� uzyskac liczbe
 
-	int8_t printInode(std::string node);
+	std::pair<std::vector<int>,int8_t> printInode(std::string node);
 	// 66 brak pliku o podanej nazwie
 	//  0 udało sie 
 
