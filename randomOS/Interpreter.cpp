@@ -515,11 +515,17 @@ std::pair<uint8_t, std::string> Interpreter::go() {
 	uint8_t errorCode;
 	loadPCB();
 	errorCode = loadCode();
-	if (errorCode != 0)return  std::make_pair(errorCode, instructionString);
+	if (errorCode != 0) {
+		PCB->setStateTerminated();
+		return std::make_pair(errorCode, instructionString);
+	}
 	
 	errorCode = interpret();
 
-	if (errorCode != 0)return  std::make_pair(errorCode, instructionString);
+	if (errorCode != 0) {
+		PCB->setStateTerminated();
+		return  std::make_pair(errorCode, instructionString);
+	}
 	returnToPCB();
 
 	if (changeToTerminated) PCB->setStateTerminated();
