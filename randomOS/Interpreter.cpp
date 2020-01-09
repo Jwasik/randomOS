@@ -34,11 +34,10 @@ void Interpreter::loadPCB() {
 
 uint8_t Interpreter::loadCode()
 {
-	uint8_t error = memory->getMemoryContent(PID, PC).first;
-	if (error != 0) return error;
-	this->code = memory->getMemoryContent(PID, PC).second;
+	std::pair<uint8_t, int8_t> w = memory->getMemoryContent(PID, PC);
+	if (w.first != 0) return w.first;
+	this->code = w.second;
 	PC++;
-	//std::cout << "CODE " << int(this->code) << std::endl;
 	instructionHex.push_back(this->code);
 	return 0;
 }
@@ -149,6 +148,10 @@ uint8_t Interpreter::interpret() {
 	case 0x19:
 		instructionString += "CPR";
 		errorCode = CPR();
+		break;
+	case 0x1A:
+		instructionString += "KIL";
+		errorCode = KIL();
 		break;
 	case -0x01:
 		instructionString += "NOP";
@@ -505,6 +508,13 @@ uint8_t Interpreter::CPR() {
 	return 0;
 }
 
+uint8_t Interpreter::KIL() {
+	std::string a = loadArgText(2);
+	uint8_t error = processManager->deleteProcess(a);
+	if (error != 0) return error;
+	return 0;
+}
+
 void Interpreter::NOP() {}
 
 // ******************************************
@@ -606,6 +616,7 @@ std::vector<int8_t> Interpreter::convertToMachine(std::string m) {
 	if (code == "AFI") machine.push_back(0x17);
 	if (code == "LFI") machine.push_back(0x18);
 	if (code == "CPR") machine.push_back(0x19);
+	if (code == "KIL") machine.push_back(0x1A);
 	if (code == "NOP") machine.push_back(0xFF);
 
 	if (arg.size() > 0) {
