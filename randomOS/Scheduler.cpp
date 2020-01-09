@@ -1,8 +1,8 @@
 #include "Scheduler.h"
 #include "ProcessManager.h"
 
-Scheduler::Scheduler(std::shared_ptr<FileMenager> fileManager, std::shared_ptr<VirtualMemory> virtualMemory):
-fileManager(fileManager), virtualMemory(virtualMemory)
+Scheduler::Scheduler(std::shared_ptr<FileMenager> fileManager, std::shared_ptr<VirtualMemory> virtualMemory, std::shared_ptr<Memory> memoryManager):
+fileManager(fileManager), virtualMemory(virtualMemory), memoryManager(memoryManager)
 { 
 	this->active = std::make_shared<std::vector<std::shared_ptr<PCB>>>();
 	this->expired = std::make_shared<std::vector<std::shared_ptr<PCB>>>();
@@ -48,7 +48,7 @@ uint8_t Scheduler::nextProcess()
 			this->addProcess(RUNNING, this->expired); }
 		//if it was terminated call processManager to deleteIt
 		if (RUNNING->getIsTerminated()) {
-			ProcessManager::deleteProcess(RUNNING,this->fileManager, shared_from_this(),virtualMemory); }
+			ProcessManager::deleteProcess(RUNNING,this->fileManager, shared_from_this(),virtualMemory,memoryManager); }
 		else if (active->size() > 0) { 
 			this->active->erase(this->active->begin()); }
 
