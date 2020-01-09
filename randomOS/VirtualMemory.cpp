@@ -50,6 +50,11 @@ std::pair<uint8_t, Page> VirtualMemory::getPage(int pid, int pageNumber) {
 	return std::make_pair(0, swapFile.find(pid)->second[pageNumber]);
 }
 
+void VirtualMemory::removeProgram(unsigned int PID)
+{
+	swapFile.erase(PID);
+}
+
 void VirtualMemory::printSwapFile() {
 	std::cout << "---------- SWAP FILE ----------" << std::endl;
 	for (auto &program : swapFile) {

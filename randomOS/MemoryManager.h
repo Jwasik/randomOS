@@ -14,8 +14,6 @@ class Memory
 
 	//pamiec wlasciwa
 	int8_t ram[128];
-	//czyscze ramke
-	void deleteFromMem(int);
 	// informacja czy ramka jest zajeta i jaka strona jest w niej wpisana
 	Frame FrameTable[8];
 
@@ -24,19 +22,7 @@ public:
 	Memory();
 	Memory(std::shared_ptr<VirtualMemory>);
 
-
-	std::vector<std::pair<int, bool>> ProcessPages
-	{
-		{ -1, 0 },
-		{ -1, 0 },
-		{ -1, 0 },
-		{ -1, 0 },
-		{ -1, 0 },
-		{ -1, 0 },
-		{ -1, 0 },
-		{ -1, 0 }
-	};
-
+	//Indicates if frame is taken by process
 	struct tempFrame
 	{
 		unsigned int pid;
@@ -62,6 +48,8 @@ public:
 	//assigns page table to PID if not present, else does nothing
 	void assignPageTable(unsigned int pid);
 
+	//free frames taken by designed pid
+	void removeProgram(int PID);
 
 	friend class Shell;
 };

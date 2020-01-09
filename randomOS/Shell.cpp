@@ -1339,7 +1339,7 @@ void Shell::run()
 				{
 					int color = 14;
 					int result = memoryManager->FrameTable[z].pid;
-					if (result == -1) { break; }
+					if (result == -1)continue;
 
 					bool printLegend = true;
 					for (auto p : addedPIDs) { if (p == result) { printLegend = false; } }
