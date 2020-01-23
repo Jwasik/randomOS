@@ -122,6 +122,18 @@ void Shell::run()
 		{
 			system("cls");
 		}
+		else if (std::regex_match(command, match, std::regex("^(p b )([0-9]+)")))
+		{
+			this->printLine("BLOCK CONTENTS: ", 13);
+			int block = std::stoi(match[2]);
+			block = block * BlockSize;
+			for (int i = 0; i < BlockSize; i++)
+			{
+				print(Containers::DiskArray[block + i],14);
+			}
+			std::cout << std::endl;
+			
+		}
 		else if (std::regex_match(command, match, std::regex("(.*)( )(--help)$")))
 		{
 			std::string helpFor = match[1];
